@@ -1,17 +1,27 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
+import { geocoder } from "../lib/geocode";
 
-const projets = await getCollection(
+const candidats = await getCollection(
   "projets",
-  ({ data }) => data.categorie === "autour-du-monde" && data.latitude != null && data.longitude != null
+  ({ data }) => data.categorie === "autour-du-monde" && (!!data.lieu || (data.latitude != null && data.longitude != null))
 );
 
 const lieux = new Map();
-for (const p of projets) {
-  const cle = `${p.data.latitude},${p.data.longitude}`;
+for (const p of candidats) {
+  const coords =
+    p.data.latitude != null && p.data.longitude != null
+      ? { lat: p.data.latitude, lng: p.data.longitude }
+      : p.data.lieu
+        ? await geocoder(p.data.lieu)
+        : null;
+
+  if (!coords) continue;
+
+  const cle = `${coords.lat},${coords.lng}`;
   if (!lieux.has(cle)) {
-    lieux.set(cle, { lat: p.data.latitude, lng: p.data.longitude, nom: p.data.lieu, projets: [] });
+    lieux.set(cle, { lat: coords.lat, lng: coords.lng, nom: p.data.lieu, projets: [] });
   }
   lieux.get(cle).projets.push({ id: p.id, titre: p.data.titre });
 }
@@ -46,6 +56,9 @@ const description = "Tournages à l'étranger d'Alexandre Berger, réalisateur f
       zoomControl: true,
       attributionControl: true,
     }).setView([20, 10], 2);
+
+    map.attributionControl.setPrefix('<a href="https://leafletjs.com">Leaflet</a>');
+    map.attributionControl.addAttribution('Géocodage <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>');
 
     const markers = points.map((point) => {
       const marker = L.circleMarker([point.lat, point.lng], {
