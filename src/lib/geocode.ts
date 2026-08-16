@@ -1,7 +1,11 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 
-const CACHE_PATH = fileURLToPath(new URL("../data/geocode-cache.json", import.meta.url));
+// process.cwd() plutôt qu'un chemin relatif à import.meta.url : lors du
+// build (astro build), ce module est copié dans dist/.prerender/ et
+// import.meta.url pointerait vers un chemin qui n'existe plus une fois
+// le dossier dist supprimé, cassant le cache silencieusement.
+const CACHE_PATH = join(process.cwd(), "src/data/geocode-cache.json");
 const DELAI_MIN_MS = 1100; // Nominatim autorise au maximum 1 requête/seconde.
 
 type Coordonnees = { lat: number; lng: number };
