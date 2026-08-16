@@ -44,9 +44,17 @@ const description = "Tournages à l'étranger d'Alexandre Berger, réalisateur f
   import L from "leaflet";
   import "leaflet/dist/leaflet.css";
 
-  const el = document.getElementById("carte-monde");
+  let carteActuelle: L.Map | null = null;
 
-  if (el) {
+  function initCarte() {
+    if (carteActuelle) {
+      carteActuelle.remove();
+      carteActuelle = null;
+    }
+
+    const el = document.getElementById("carte-monde");
+    if (!el) return;
+
     const points = JSON.parse(el.dataset.points ?? "[]");
 
     const map = L.map(el, {
@@ -56,6 +64,7 @@ const description = "Tournages à l'étranger d'Alexandre Berger, réalisateur f
       zoomControl: true,
       attributionControl: true,
     }).setView([20, 10], 2);
+    carteActuelle = map;
 
     map.attributionControl.setPrefix('<a href="https://leafletjs.com">Leaflet</a>');
     map.attributionControl.addAttribution('Géocodage <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>');
@@ -86,6 +95,21 @@ const description = "Tournages à l'étranger d'Alexandre Berger, réalisateur f
         markers.forEach((marker) => marker.bringToFront());
       });
   }
+
+  // astro:page-load se déclenche au chargement initial ET après chaque
+  // navigation par transition — contrairement au corps du script, qui ne
+  // s'exécute qu'une fois par session puisque la page ne recharge pas.
+  document.addEventListener("astro:page-load", initCarte);
+
+  // Le conteneur n'est pas persisté entre les pages : sans ça, la carte
+  // et ses écouteurs (resize, etc.) resteraient accrochés à un <div>
+  // déjà retiré du DOM après avoir quitté la page.
+  document.addEventListener("astro:before-swap", () => {
+    if (carteActuelle) {
+      carteActuelle.remove();
+      carteActuelle = null;
+    }
+  });
 </script>
 
 <style>
