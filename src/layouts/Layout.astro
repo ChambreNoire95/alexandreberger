@@ -32,7 +32,56 @@ const clients = ["Bon Marché Rive Gauche", "Petit Bateau", "Univers Sel", "Syno
     <header class="topbar" transition:persist>
       <span class="nom">Alexandre Berger</span>
       <span class="role">Réalisateur</span>
+      <div class="menu-wrap">
+        <button
+          type="button"
+          class="menu-toggle"
+          id="menu-toggle"
+          aria-expanded="false"
+          aria-controls="menu-secondaire"
+          aria-label="Ouvrir le menu"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
+        <nav id="menu-secondaire" class="menu-secondaire" aria-label="Menu secondaire" hidden>
+          <a href="/carnet" aria-current={currentPath.startsWith("/carnet") ? "page" : undefined}>Carnet</a>
+        </nav>
+      </div>
     </header>
+    <script>
+      const toggle = document.getElementById("menu-toggle");
+      const menu = document.getElementById("menu-secondaire");
+
+      if (toggle && menu) {
+        toggle.addEventListener("click", () => {
+          const isOpen = !menu.hidden;
+          menu.hidden = isOpen;
+          toggle.setAttribute("aria-expanded", String(!isOpen));
+        });
+
+        document.addEventListener("click", (event) => {
+          if (menu.hidden) return;
+          if (menu.contains(event.target) || toggle.contains(event.target)) return;
+          menu.hidden = true;
+          toggle.setAttribute("aria-expanded", "false");
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && !menu.hidden) {
+            menu.hidden = true;
+            toggle.setAttribute("aria-expanded", "false");
+            toggle.focus();
+          }
+        });
+
+        document.addEventListener("astro:after-swap", () => {
+          menu.hidden = true;
+          toggle.setAttribute("aria-expanded", "false");
+        });
+      }
+    </script>
     <main>
       <slot name="above-nav" />
       <nav class="onglets" aria-label="Sections">
@@ -62,8 +111,32 @@ const clients = ["Bon Marché Rive Gauche", "Petit Bateau", "Univers Sel", "Syno
     padding: 2.5rem clamp(1.5rem, 4vw, 3rem);
     text-align:center;
   }
+  .topbar { position:relative; }
   .topbar .nom { font-size:1.0rem; font-weight:400; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.85); }
   .topbar .role { display:block; margin-top:.4rem; font-size:.65rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); }
+  .menu-wrap { position:absolute; top:0; right:0; text-align:left; }
+  .menu-toggle {
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    width:2.25rem; height:2.25rem; padding:0;
+    background:transparent; border:1px solid rgba(255,255,255,.5); border-radius:2px;
+    cursor:pointer; transition: background 140ms ease, border-color 140ms ease;
+  }
+  .menu-toggle span { display:block; width:14px; height:1px; background:#fff; transition: background 140ms ease; }
+  .menu-toggle:hover { background:#fff; border-color:#fff; }
+  .menu-toggle:hover span { background:#0b0b0b; }
+  .menu-secondaire {
+    position:absolute; top:calc(100% + .6rem); right:0; z-index:10;
+    display:flex; flex-direction:column; align-items:flex-end; gap:.9rem;
+    min-width:160px; background:#0b0b0b; border:1px solid rgba(255,255,255,.14); padding:1.25rem 1.5rem;
+  }
+  .menu-secondaire[hidden] { display:none; }
+  .menu-secondaire a {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:.75rem; letter-spacing:.18em; text-transform:uppercase;
+    color:rgba(255,255,255,.9); text-decoration:none; transition:color 140ms ease;
+  }
+  .menu-secondaire a:hover { color:#fff; }
+  .menu-secondaire a[aria-current="page"] { color:#fff; text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
   main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4rem 0; }
   .onglets { display:flex; flex-wrap:wrap; justify-content:center; gap:clamp(2rem, 6vw, 4.5rem); }
   .onglets a {
