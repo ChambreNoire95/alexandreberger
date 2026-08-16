@@ -1,6 +1,5 @@
 ---
 import { getCollection, render } from "astro:content";
-import { Image } from "astro:assets";
 import Layout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
@@ -24,9 +23,7 @@ const description = `${projet.data.titre}. Un projet réalisé par Alexandre Ber
 <Layout title={titre} description={description} currentPath={currentPath}>
   <article class="projet">
     {projet.data.couverture && (
-      typeof projet.data.couverture === "string"
-        ? <img class="couverture" src={projet.data.couverture} alt={projet.data.titre} />
-        : <Image class="couverture" src={projet.data.couverture} alt={projet.data.titre} />
+      <img class="couverture" src={projet.data.couverture} alt={projet.data.titre} />
     )}
     <h1>{projet.data.titre}</h1>
     {(projet.data.client || projet.data.date) && (

@@ -1,6 +1,5 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 
 const projets = (await getCollection("projets", ({ data }) => data.categorie === "creations")).sort(
@@ -20,11 +19,7 @@ const description = "Créations personnelles d'Alexandre Berger, réalisateur fr
           <a class="creation-lien" href={`/projets/${p.id}`}>
             {images.length > 0 && (
               <div class="creation-images" data-count={images.length}>
-                {images.map((img) => (
-                  typeof img === "string"
-                    ? <img src={img} alt={p.data.titre} />
-                    : <Image src={img} alt={p.data.titre} />
-                ))}
+                {images.map((img) => <img src={img} alt={p.data.titre} />)}
               </div>
             )}
             <span class="creation-titre">{p.data.titre}</span>
