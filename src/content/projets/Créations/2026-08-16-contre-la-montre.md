@@ -2,6 +2,7 @@
 titre: Contre La Montre
 categorie: creations
 annee: 2013
+duree: 1min
 description: Contre La Montre a pris part au Mobile Film Festival. Tournée
   entièrement au Smartphone et d'une durée d'1 minute, il racontait la traversée
   de Paris d'une employée devant poster absolument un pli important avant
