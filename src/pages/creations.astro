@@ -16,15 +16,13 @@ const description = "Créations personnelles d'Alexandre Berger, réalisateur fr
       const images = [p.data.image1, p.data.image2, p.data.image3].filter((img) => !!img);
       return (
         <li class="creation">
-          <a class="creation-lien" href={`/projets/${p.id}`}>
-            {images.length > 0 && (
-              <div class="creation-images" data-count={images.length}>
-                {images.map((img) => <img src={img} alt={p.data.titre} />)}
-              </div>
-            )}
-            <span class="creation-titre">{p.data.titre}</span>
-            {p.data.description && <span class="creation-description">{p.data.description}</span>}
-          </a>
+          {images.length > 0 && (
+            <div class="creation-images" data-count={images.length}>
+              {images.map((img) => <img src={img} alt={p.data.titre} />)}
+            </div>
+          )}
+          <h2 class="creation-titre">{p.data.titre}</h2>
+          {p.data.description && <p class="creation-description">{p.data.description}</p>}
         </li>
       );
     })}
@@ -34,25 +32,26 @@ const description = "Créations personnelles d'Alexandre Berger, réalisateur fr
 <style>
   .creations {
     list-style:none; margin:3.5rem 0 0; padding:0;
-    display:flex; flex-direction:column; align-items:center; gap:3.5rem;
+    display:flex; flex-direction:column; align-items:center;
     width:100%; max-width:900px;
   }
-  .creation { width:100%; }
-  .creation-lien { display:flex; flex-direction:column; gap:1.1rem; text-decoration:none; text-align:left; }
+  .creation {
+    width:100%; display:flex; flex-direction:column; gap:1.1rem; text-align:left;
+    padding:3rem 0;
+  }
+  .creation + .creation { border-top:1px solid rgba(255,255,255,.14); }
+  .creation:first-child { padding-top:0; }
   .creation-images { display:grid; grid-template-columns:repeat(3, 1fr); gap:.5rem; }
   .creation-images[data-count="1"] { grid-template-columns:1fr; max-width:22rem; }
   .creation-images[data-count="2"] { grid-template-columns:repeat(2, 1fr); }
   .creation-images img {
-    width:100%; height:100%; aspect-ratio:4/3; object-fit:cover; display:block;
-    border-radius:2px; transition:opacity 140ms ease;
+    width:100%; height:100%; aspect-ratio:4/3; object-fit:cover; display:block; border-radius:2px;
   }
-  .creation-lien:hover .creation-images img { opacity:.85; }
   .creation-titre {
     font-weight:300; font-size:clamp(1.4rem, 2.4vw, 1.9rem); line-height:1.2;
-    color:rgba(255,255,255,.85); transition:color 140ms ease;
+    color:#fff; margin:0;
   }
-  .creation-lien:hover .creation-titre { color:#fff; }
   .creation-description {
-    font-weight:300; font-size:.95rem; line-height:1.6; color:rgba(255,255,255,.6); max-width:65ch;
+    font-weight:300; font-size:.95rem; line-height:1.6; color:rgba(255,255,255,.65); max-width:65ch; margin:0;
   }
 </style>
