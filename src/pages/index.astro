@@ -28,9 +28,19 @@ const description = "Alexandre Berger, réalisateur freelance en Île-de-France.
 
   <a class="cta" href="/a-propos">En savoir +</a>
   <ul class="accroches">
-    {projets.map((p) => (
-      <li><a href={`/projets/${p.id}`}>{p.data.titre}</a></li>
-    ))}
+    {projets.map((p) => {
+      const meta = p.data.role && p.data.client
+        ? `${p.data.role} pour ${p.data.client}`
+        : p.data.role || p.data.client || null;
+      return (
+        <li>
+          <a href={`/projets/${p.id}`}>
+            <span class="accroche-titre">{p.data.titre}</span>
+            {meta && <span class="accroche-meta">{meta}</span>}
+          </a>
+        </li>
+      );
+    })}
   </ul>
 </Layout>
 
@@ -40,13 +50,20 @@ const description = "Alexandre Berger, réalisateur freelance en Île-de-France.
     font-weight:700; font-size:clamp(1.4rem, 3.2vw, 2rem);
     color:#fff;
   }
-  .accroches { list-style:none; margin:3.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:1.8rem; }
+  .accroches { list-style:none; margin:3.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:3.25rem; }
   .accroches a {
-    font-weight:300; font-size:clamp(1.5rem, 2.6vw, 2.14rem); line-height:1.2;
-    color:rgba(255,255,255,.72); text-decoration:none; display:inline-block;
-    max-width:40ch; transition:color 140ms ease;
+    display:flex; flex-direction:column; align-items:center; gap:.6rem;
+    text-decoration:none; max-width:40ch; transition:opacity 140ms ease;
   }
-  .accroches a:hover { color:#fff; }
+  .accroches a:hover { opacity:.7; }
+  .accroche-titre {
+    font-weight:700; font-size:clamp(1.5rem, 2.6vw, 2.14rem); line-height:1.2;
+    color:#fff;
+  }
+  .accroche-meta {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.45);
+  }
 </style>
 
 <script>

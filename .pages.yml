@@ -12,6 +12,7 @@ content:
     fields:
       - { name: titre, label: Accroche, type: string, required: true }
       - { name: categorie, type: string, hidden: true, default: commandes }
+      - { name: role, label: "Rôle", type: string, description: "Ex. Réalisateur / Monteur — affiché avec le client sous l'accroche, sur la page Commandes." }
       - { name: client, label: Client, type: string }
       - { name: date, label: Date, type: date, options: { format: "yyyy-MM-dd" } }
       - { name: couverture, label: Couverture, type: image }
