@@ -9,7 +9,7 @@ const projets = defineCollection({
       categorie: z.enum(["commandes", "creations", "autour-du-monde"]),
       client: z.string().optional(),
       date: z.coerce.date().optional(),
-      couverture: image().optional(),
+      couverture: image().or(z.string()).optional(),
       ordre: z.number().optional(),
     }),
 });
@@ -21,7 +21,7 @@ const carnet = defineCollection({
       titre: z.string(),
       date: z.coerce.date(),
       extrait: z.string().optional(),
-      couverture: image().optional(),
+      couverture: image().or(z.string()).optional(),
       brouillon: z.boolean().optional().default(false),
     }),
 });
