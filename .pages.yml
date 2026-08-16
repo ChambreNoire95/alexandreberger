@@ -11,7 +11,7 @@ content:
       fields: [titre, categorie, client, date]
     fields:
       - { name: titre, label: Accroche, type: string, required: true }
-      - { name: categorie, label: Catégorie, type: select, required: true, options: { values: [commandes, creations, autour-du-monde] } }
+      - { name: categorie, label: Catégorie, type: select, required: true, options: { values: [{ label: Commandes, value: commandes }, { label: Créations, value: creations }, { label: "Autour du monde", value: autour-du-monde }] } }
       - { name: client, label: Client, type: string }
       - { name: date, label: Date, type: date, options: { format: "yyyy-MM-dd" } }
       - { name: couverture, label: Couverture, type: image }
