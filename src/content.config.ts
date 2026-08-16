@@ -6,7 +6,7 @@ const projets = defineCollection({
   schema: ({ image }) =>
     z.object({
       titre: z.string(),
-      categorie: z.enum(["commandes", "creations", "autour-du-monde"]),
+      categorie: z.enum(["commandes", "creations"]),
       client: z.string().optional(),
       date: z.coerce.date().optional(),
       couverture: image().or(z.string()).optional(),
