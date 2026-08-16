@@ -20,6 +20,10 @@ content:
       - { name: lieu, label: "Lieu (pour la carte)", type: string, description: "Ex. Troyes, France, ou Île-de-France pour regrouper plusieurs projets sur un même point. Rempli = le projet apparaît sur la carte \"Autour du monde\", quelle que soit sa catégorie ; sa position est calculée automatiquement à partir de ce nom." }
       - { name: latitude, label: Latitude, type: number, options: { min: -90, max: 90 }, description: "Optionnel : ne remplir que pour forcer une position précise si la recherche automatique se trompe (doit être rempli avec Longitude)." }
       - { name: longitude, label: Longitude, type: number, options: { min: -180, max: 180 }, description: "Optionnel : idem, à remplir avec Latitude." }
+      - { name: description, label: "Description (carte Créations)", type: text, description: "Utilisée uniquement sur la page Créations, sous les 3 images." }
+      - { name: image1, label: "Image 1 (carte Créations)", type: image }
+      - { name: image2, label: "Image 2 (carte Créations)", type: image }
+      - { name: image3, label: "Image 3 (carte Créations)", type: image }
       - { name: body, label: Contenu, type: rich-text }
 
   - name: carnet

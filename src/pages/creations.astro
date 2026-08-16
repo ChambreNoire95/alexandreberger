@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 
 const projets = (await getCollection("projets", ({ data }) => data.categorie === "creations")).sort(
@@ -11,19 +12,52 @@ const description = "Créations personnelles d'Alexandre Berger, réalisateur fr
 ---
 
 <Layout title={titre} description={description} currentPath="/creations">
-  <ul class="accroches">
-    {projets.map((p) => (
-      <li><a href={`/projets/${p.id}`}>{p.data.titre}</a></li>
-    ))}
+  <ul class="creations">
+    {projets.map((p) => {
+      const images = [p.data.image1, p.data.image2, p.data.image3].filter((img) => !!img);
+      return (
+        <li class="creation">
+          <a class="creation-lien" href={`/projets/${p.id}`}>
+            {images.length > 0 && (
+              <div class="creation-images" data-count={images.length}>
+                {images.map((img) => (
+                  typeof img === "string"
+                    ? <img src={img} alt={p.data.titre} />
+                    : <Image src={img} alt={p.data.titre} />
+                ))}
+              </div>
+            )}
+            <span class="creation-titre">{p.data.titre}</span>
+            {p.data.description && <span class="creation-description">{p.data.description}</span>}
+          </a>
+        </li>
+      );
+    })}
   </ul>
 </Layout>
 
 <style>
-  .accroches { list-style:none; margin:3.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:1.8rem; }
-  .accroches a {
-    font-weight:300; font-size:clamp(1.5rem, 2.6vw, 2.14rem); line-height:1.2;
-    color:rgba(255,255,255,.72); text-decoration:none; display:inline-block;
-    max-width:40ch; transition:color 140ms ease;
+  .creations {
+    list-style:none; margin:3.5rem 0 0; padding:0;
+    display:flex; flex-direction:column; align-items:center; gap:3.5rem;
+    width:100%; max-width:900px;
   }
-  .accroches a:hover { color:#fff; }
+  .creation { width:100%; }
+  .creation-lien { display:flex; flex-direction:column; gap:1.1rem; text-decoration:none; text-align:left; }
+  .creation-images { display:grid; grid-template-columns:repeat(3, 1fr); gap:.5rem; }
+  .creation-images[data-count="1"] { grid-template-columns:1fr; max-width:22rem; }
+  .creation-images[data-count="2"] { grid-template-columns:repeat(2, 1fr); }
+  .creation-images img {
+    width:100%; height:100%; aspect-ratio:4/3; object-fit:cover; display:block;
+    border-radius:2px; transition:opacity 140ms ease;
+  }
+  .creation-lien:hover .creation-images img { opacity:.85; }
+  .creation-titre {
+    font-weight:300; font-size:clamp(1.4rem, 2.4vw, 1.9rem); line-height:1.2;
+    color:rgba(255,255,255,.85); transition:color 140ms ease;
+  }
+  .creation-lien:hover .creation-titre { color:#fff; }
+  .creation-description {
+    font-weight:300; font-size:.95rem; line-height:1.6; color:rgba(255,255,255,.6); max-width:65ch;
+  }
 </style>

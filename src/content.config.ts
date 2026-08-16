@@ -23,6 +23,10 @@ const projets = defineCollection({
       lieu: z.string().optional(),
       latitude: z.number().optional(),
       longitude: z.number().optional(),
+      description: z.string().optional(),
+      image1: image().or(z.string()).optional(),
+      image2: image().or(z.string()).optional(),
+      image3: image().or(z.string()).optional(),
     }),
 });
 
