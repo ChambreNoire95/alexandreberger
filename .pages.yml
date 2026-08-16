@@ -3,28 +3,40 @@ media:
   output: /uploads
 
 content:
-  - name: projets
-    label: Projets
+  - name: projets-commandes
+    label: "Projets — Commandes"
     type: collection
-    path: src/content/projets
-    subfolders: true
+    path: src/content/projets/Commandes
     view:
-      fields: [titre, categorie, client, date]
+      fields: [titre, client, date]
     fields:
       - { name: titre, label: Accroche, type: string, required: true }
-      - { name: categorie, label: Catégorie, type: select, required: true, options: { values: [{ label: Commandes, value: commandes }, { label: Créations, value: creations }] } }
+      - { name: categorie, type: string, hidden: true, default: commandes }
       - { name: client, label: Client, type: string }
       - { name: date, label: Date, type: date, options: { format: "yyyy-MM-dd" } }
       - { name: couverture, label: Couverture, type: image }
       - { name: ordre, label: Ordre, type: number }
-      - { name: lieu, label: "Lieu (pour la carte)", type: string, description: "Ex. Troyes, France, ou Île-de-France pour regrouper plusieurs projets sur un même point. Rempli = le projet apparaît sur la carte \"Autour du monde\", quelle que soit sa catégorie ; sa position est calculée automatiquement à partir de ce nom." }
+      - { name: lieu, label: "Lieu (pour la carte)", type: string, description: "Ex. Troyes, France, ou Île-de-France pour regrouper plusieurs projets sur un même point. Rempli = le projet apparaît sur la carte \"Autour du monde\" ; sa position est calculée automatiquement à partir de ce nom." }
       - { name: latitude, label: Latitude, type: number, options: { min: -90, max: 90 }, description: "Optionnel : ne remplir que pour forcer une position précise si la recherche automatique se trompe (doit être rempli avec Longitude)." }
       - { name: longitude, label: Longitude, type: number, options: { min: -180, max: 180 }, description: "Optionnel : idem, à remplir avec Latitude." }
-      - { name: description, label: "Description (carte Créations)", type: text, description: "Utilisée uniquement sur la page Créations, sous les 3 images." }
-      - { name: image1, label: "Image 1 (carte Créations)", type: image }
-      - { name: image2, label: "Image 2 (carte Créations)", type: image }
-      - { name: image3, label: "Image 3 (carte Créations)", type: image }
       - { name: body, label: Contenu, type: rich-text }
+
+  - name: projets-creations
+    label: "Projets — Créations"
+    type: collection
+    path: "src/content/projets/Créations"
+    view:
+      fields: [titre, annee]
+    fields:
+      - { name: titre, label: Accroche, type: string, required: true }
+      - { name: categorie, type: string, hidden: true, default: creations }
+      - { name: annee, label: Année, type: number, options: { min: 1980, max: 2100 } }
+      - { name: couverture, label: Couverture, type: image }
+      - { name: ordre, label: Ordre, type: number }
+      - { name: description, label: Description, type: text, description: "Affichée sur la page Créations, sous les images." }
+      - { name: image1, label: "Image 1", type: image }
+      - { name: image2, label: "Image 2", type: image }
+      - { name: image3, label: "Image 3", type: image }
 
   - name: carnet
     label: Carnet

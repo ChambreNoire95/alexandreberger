@@ -26,13 +26,16 @@ const description = `${projet.data.titre}. Un projet réalisé par Alexandre Ber
       <img class="couverture" src={projet.data.couverture} alt={projet.data.titre} />
     )}
     <h1>{projet.data.titre}</h1>
-    {(projet.data.client || projet.data.date) && (
+    {(projet.data.client || projet.data.date || projet.data.annee) && (
       <dl class="meta">
         {projet.data.client && (
           <div><dt>Client</dt><dd>{projet.data.client}</dd></div>
         )}
         {projet.data.date && (
           <div><dt>Date</dt><dd>{projet.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long" })}</dd></div>
+        )}
+        {!projet.data.date && projet.data.annee && (
+          <div><dt>Année</dt><dd>{projet.data.annee}</dd></div>
         )}
       </dl>
     )}

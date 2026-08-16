@@ -23,6 +23,7 @@ const projets = defineCollection({
       categorie: z.enum(["commandes", "creations"]),
       client: z.string().optional(),
       date: z.coerce.date().optional(),
+      annee: z.number().optional(),
       couverture: z.string().optional(),
       ordre: z.number().optional(),
       lieu: z.string().optional(),
