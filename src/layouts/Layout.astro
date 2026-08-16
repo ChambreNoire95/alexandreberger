@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions";
+import { getCollection } from "astro:content";
 
 interface Props {
   title: string;
@@ -10,6 +11,11 @@ interface Props {
 const { title, description, currentPath } = Astro.props;
 
 const clients = ["Bon Marché Rive Gauche", "Petit Bateau", "Univers Sel", "Synology", "Université Paris Nanterre", "Pompiers 95", "SDIS Guadeloupe"];
+
+const presentation = "Réalisateur freelance basé en Île-de-France, je raconte des histoires en documentaire, fiction et film de marque — de la commande institutionnelle aux projets tournés aux quatre coins du monde.";
+
+const entreesCarnet = await getCollection("carnet", ({ data }) => !data.brouillon);
+const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())[0];
 ---
 
 <!doctype html>
@@ -96,6 +102,24 @@ const clients = ["Bon Marché Rive Gauche", "Petit Bateau", "Univers Sel", "Syno
       <p class="refs-titre">Ils m'ont fait confiance</p>
       <p class="refs">{clients.join(" · ")}</p>
     </footer>
+
+    <section class="bandeau" transition:persist>
+      <div class="bandeau-texte">
+        <p>{presentation}</p>
+      </div>
+      <div class="bandeau-carnet">
+        {derniereEntree ? (
+          <a class="carnet-apercu" href={`/carnet/${derniereEntree.id}`}>
+            <span class="carnet-label">Dernière entrée du carnet</span>
+            <span class="carnet-titre">{derniereEntree.data.titre}</span>
+            <span class="carnet-date">{derniereEntree.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}</span>
+            {derniereEntree.data.extrait && <span class="carnet-extrait">{derniereEntree.data.extrait}</span>}
+          </a>
+        ) : (
+          <p class="carnet-vide">De nouvelles entrées du carnet arrivent bientôt.</p>
+        )}
+      </div>
+    </section>
   </body>
 </html>
 
@@ -108,8 +132,9 @@ const clients = ["Bon Marché Rive Gauche", "Petit Bateau", "Univers Sel", "Syno
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing: antialiased;
     display:flex; flex-direction:column; min-height:100vh;
-    padding: 2.5rem clamp(1.5rem, 4vw, 3rem);
+    padding: 2.5rem clamp(1.5rem, 4vw, 3rem) 0;
     text-align:center;
+    overflow-x:hidden;
   }
   .topbar { position:relative; }
   .topbar .nom { font-size:1.0rem; font-weight:400; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.85); }
@@ -157,4 +182,30 @@ const clients = ["Bon Marché Rive Gauche", "Petit Bateau", "Univers Sel", "Syno
   footer { border-top:1px solid rgba(255,255,255,.14); padding-top:1.5rem; margin-top:3rem; }
   .refs-titre { font-size:.7rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); margin:0 0 .5rem; }
   .refs { font-size:.9rem; font-weight:300; color:rgba(255,255,255,.65); margin:0; }
+
+  .bandeau {
+    width:100vw; position:relative; left:50%; margin-left:-50vw;
+    margin-top:3rem;
+    display:flex; min-height:22rem;
+    border-top:1px solid rgba(255,255,255,.14);
+  }
+  .bandeau-texte, .bandeau-carnet {
+    flex:1 1 50%; display:flex; flex-direction:column; justify-content:center;
+    padding:3rem clamp(1.5rem, 4vw, 3rem);
+    text-align:left;
+  }
+  .bandeau-texte { border-right:1px solid rgba(255,255,255,.14); }
+  .bandeau-texte p { font-weight:300; font-size:1.05rem; line-height:1.7; color:rgba(255,255,255,.8); margin:0; max-width:30rem; }
+  .carnet-apercu { display:flex; flex-direction:column; gap:.6rem; max-width:30rem; text-decoration:none; transition:opacity 140ms ease; }
+  .carnet-apercu:hover { opacity:.7; }
+  .carnet-label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:.65rem; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.45); }
+  .carnet-titre { font-weight:300; font-size:clamp(1.3rem, 2.2vw, 1.7rem); color:#fff; }
+  .carnet-date { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.45); }
+  .carnet-extrait { font-weight:300; font-size:.95rem; color:rgba(255,255,255,.65); }
+  .carnet-vide { font-weight:300; font-size:.95rem; color:rgba(255,255,255,.5); margin:0; max-width:30rem; }
+
+  @media (max-width: 720px) {
+    .bandeau { flex-direction:column; min-height:0; }
+    .bandeau-texte { border-right:none; border-bottom:1px solid rgba(255,255,255,.14); }
+  }
 </style>
