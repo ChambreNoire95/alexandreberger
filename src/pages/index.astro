@@ -53,12 +53,15 @@ const description = "Alexandre Berger, réalisateur freelance en Île-de-France.
   .accroches { list-style:none; margin:3.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:3.25rem; }
   .accroches a {
     display:flex; flex-direction:column; align-items:center; gap:.6rem;
-    text-decoration:none; max-width:40ch; transition:opacity 140ms ease;
+    text-decoration:none; transition:opacity 140ms ease;
   }
   .accroches a:hover { opacity:.7; }
   .accroche-titre {
-    font-weight:700; font-size:clamp(1.5rem, 2.6vw, 2.14rem); line-height:1.2;
-    color:#fff;
+    font-weight:700; font-size:clamp(1.1rem, 2.6vw, 2.14rem); line-height:1.2;
+    color:#fff; white-space:nowrap;
+  }
+  @media (max-width: 700px) {
+    .accroche-titre { white-space:normal; max-width:40ch; text-align:center; }
   }
   .accroche-meta {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
