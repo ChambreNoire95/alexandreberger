@@ -39,6 +39,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       <span class="nom">Alexandre Berger</span>
       <span class="role">Réalisateur</span>
       <div class="menu-wrap">
+        <a class="booking-btn" href="/booking" aria-current={currentPath === "/booking" ? "page" : undefined}>Booking</a>
         <button
           type="button"
           class="menu-toggle"
@@ -53,6 +54,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
         </button>
         <nav id="menu-secondaire" class="menu-secondaire" aria-label="Menu secondaire" hidden>
           <a href="/carnet" aria-current={currentPath.startsWith("/carnet") ? "page" : undefined}>Carnet</a>
+          <a href="/a-propos" aria-current={currentPath === "/a-propos" ? "page" : undefined}>À propos</a>
         </nav>
       </div>
     </header>
@@ -139,7 +141,17 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   .topbar { position:relative; }
   .topbar .nom { font-size:1.0rem; font-weight:400; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.85); }
   .topbar .role { display:block; margin-top:.4rem; font-size:.65rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); }
-  .menu-wrap { position:absolute; top:0; right:0; text-align:left; }
+  .menu-wrap { position:absolute; top:0; right:0; display:flex; align-items:center; gap:.5rem; text-align:left; }
+  .booking-btn {
+    display:flex; align-items:center; justify-content:center;
+    height:2.25rem; padding:0 .9rem;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:.7rem; letter-spacing:.15em; text-transform:uppercase;
+    color:#fff; text-decoration:none; white-space:nowrap;
+    border:1px solid rgba(255,255,255,.5); border-radius:2px;
+    transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+  }
+  .booking-btn:hover { background:#fff; color:#0b0b0b; border-color:#fff; }
   .menu-toggle {
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
     width:2.25rem; height:2.25rem; padding:0;
@@ -208,5 +220,12 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   @media (max-width: 720px) {
     .bandeau { flex-direction:column; min-height:0; }
     .bandeau-texte { border-right:none; border-bottom:1px solid rgba(255,255,255,.14); }
+  }
+
+  @media (max-width: 600px) {
+    /* Le bouton Booking rend le groupe booking+menu trop large pour tenir
+       à côté du nom sur mobile sans les superposer : il passe sur sa
+       propre ligne, centrée, sous "Réalisateur". */
+    .menu-wrap { position:static; width:100%; justify-content:center; margin-top:1rem; }
   }
 </style>
