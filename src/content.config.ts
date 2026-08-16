@@ -24,6 +24,7 @@ const projets = defineCollection({
       client: z.string().optional(),
       date: z.coerce.date().optional(),
       annee: z.number().optional(),
+      duree: z.string().optional(),
       couverture: z.string().optional(),
       ordre: z.number().optional(),
       lieu: z.string().optional(),

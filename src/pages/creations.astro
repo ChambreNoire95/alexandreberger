@@ -14,16 +14,19 @@ const description = "Créations personnelles d'Alexandre Berger, réalisateur fr
   <ul class="creations">
     {projets.map((p) => {
       const images = [p.data.image1, p.data.image2, p.data.image3].filter((img) => !!img);
+      const meta = [p.data.annee, p.data.duree].filter((v) => !!v).join(" · ");
       return (
-        <li class="creation">
+        <li class="creation" data-count={images.length}>
           {images.length > 0 && (
-            <div class="creation-images" data-count={images.length}>
+            <div class="creation-images">
               {images.map((img) => <img src={img} alt={p.data.titre} />)}
             </div>
           )}
-          {p.data.annee && <p class="creation-annee">{p.data.annee}</p>}
-          <h2 class="creation-titre">{p.data.titre}</h2>
-          {p.data.description && <p class="creation-description">{p.data.description}</p>}
+          <div class="creation-texte">
+            {meta && <p class="creation-meta">{meta}</p>}
+            <h2 class="creation-titre">{p.data.titre}</h2>
+            {p.data.description && <p class="creation-description">{p.data.description}</p>}
+          </div>
         </li>
       );
     })}
@@ -34,21 +37,23 @@ const description = "Créations personnelles d'Alexandre Berger, réalisateur fr
   .creations {
     list-style:none; margin:3.5rem 0 0; padding:0;
     display:flex; flex-direction:column; align-items:center;
-    width:100%; max-width:900px;
+    width:100%; max-width:700px;
   }
   .creation {
     width:100%; display:flex; flex-direction:column; gap:1.1rem; text-align:left;
     padding:3rem 0;
   }
+  .creation[data-count="1"] { max-width:22rem; }
   .creation + .creation { border-top:1px solid rgba(255,255,255,.14); }
   .creation:first-child { padding-top:0; }
-  .creation-images { display:grid; grid-template-columns:repeat(3, 1fr); gap:.5rem; }
-  .creation-images[data-count="1"] { grid-template-columns:1fr; max-width:22rem; }
-  .creation-images[data-count="2"] { grid-template-columns:repeat(2, 1fr); }
+  .creation-images { display:grid; grid-template-columns:repeat(3, 1fr); gap:.5rem; width:100%; }
+  .creation[data-count="1"] .creation-images { grid-template-columns:1fr; }
+  .creation[data-count="2"] .creation-images { grid-template-columns:repeat(2, 1fr); }
   .creation-images img {
     width:100%; height:100%; aspect-ratio:4/3; object-fit:cover; display:block; border-radius:2px;
   }
-  .creation-annee {
+  .creation-texte { display:flex; flex-direction:column; gap:1.1rem; width:100%; }
+  .creation-meta {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
     font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.45);
     margin:0;
@@ -58,6 +63,6 @@ const description = "Créations personnelles d'Alexandre Berger, réalisateur fr
     color:#fff; margin:0;
   }
   .creation-description {
-    font-weight:300; font-size:.95rem; line-height:1.6; color:rgba(255,255,255,.65); max-width:65ch; margin:0;
+    font-weight:300; font-size:.95rem; line-height:1.6; color:rgba(255,255,255,.65); margin:0;
   }
 </style>

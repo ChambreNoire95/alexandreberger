@@ -31,6 +31,7 @@ content:
       - { name: titre, label: Accroche, type: string, required: true }
       - { name: categorie, type: string, hidden: true, default: creations }
       - { name: annee, label: Année, type: number, options: { min: 1980, max: 2100 } }
+      - { name: duree, label: Durée, type: string, description: "Ex. 12 min, 1h30. Affichée à côté de l'année." }
       - { name: couverture, label: Couverture, type: image }
       - { name: ordre, label: Ordre, type: number }
       - { name: description, label: Description, type: text, description: "Affichée sur la page Créations, sous les images." }
