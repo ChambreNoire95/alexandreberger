@@ -1,8 +1,17 @@
 import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
+import { basename, extname } from "node:path";
 
 const projets = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/projets" }),
+  loader: glob({
+    pattern: "**/*.md",
+    base: "./src/content/projets",
+    // Par défaut, Astro préfixe l'id avec le sous-dossier (ex. "commandes/mon-projet"),
+    // ce qui changerait l'URL publique du projet. Les dossiers Commandes/Créations créés
+    // dans Pages CMS ne servent qu'à ranger les fichiers : on ignore le dossier et on ne
+    // garde que le nom de fichier, pour ne jamais toucher aux slugs déjà indexés.
+    generateId: ({ entry }) => basename(entry, extname(entry)),
+  }),
   schema: ({ image }) =>
     z.object({
       titre: z.string(),

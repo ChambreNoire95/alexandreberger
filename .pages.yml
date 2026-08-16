@@ -7,6 +7,7 @@ content:
     label: Projets
     type: collection
     path: src/content/projets
+    subfolders: true
     view:
       fields: [titre, categorie, client, date]
     fields:
