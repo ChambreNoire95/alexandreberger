@@ -116,8 +116,12 @@ const description = "La carte des tournages d'Alexandre Berger, réalisateur fre
 
 <style>
   .carte-intro {
-    max-width:640px; margin:0 0 2rem;
-    font-weight:300; font-size:.95rem; color:rgba(255,255,255,.65); text-align:center;
+    margin:3.5rem 0 2rem;
+    font-weight:300; font-size:.85rem; color:rgba(255,255,255,.65); text-align:center;
+    white-space:nowrap;
+  }
+  @media (max-width: 700px) {
+    .carte-intro { white-space:normal; max-width:32rem; margin-left:auto; margin-right:auto; }
   }
   .carte {
     width:100%; max-width:1100px; height:min(60vh, 560px);
