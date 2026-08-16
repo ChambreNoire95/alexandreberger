@@ -3,7 +3,9 @@ import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 
 const projets = (await getCollection("projets", ({ data }) => data.categorie === "creations")).sort(
-  (a, b) => (a.data.ordre ?? Infinity) - (b.data.ordre ?? Infinity)
+  // Plus récente en premier, plus ancienne en bas. Les créations sans année
+  // renseignée passent en dernier plutôt que de perturber le classement.
+  (a, b) => (b.data.annee ?? -Infinity) - (a.data.annee ?? -Infinity)
 );
 
 const titre = "Créations — Alexandre Berger, réalisateur";
