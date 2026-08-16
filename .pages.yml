@@ -1,0 +1,33 @@
+media:
+  input: src/assets
+  output: /src/assets
+
+content:
+  - name: projets
+    label: Projets
+    type: collection
+    path: src/content/projets
+    view:
+      fields: [titre, categorie, client, date]
+    fields:
+      - { name: titre, label: Accroche, type: string, required: true }
+      - { name: categorie, label: Catégorie, type: select, required: true, options: { values: [commandes, creations, autour-du-monde] } }
+      - { name: client, label: Client, type: string }
+      - { name: date, label: Date, type: date, options: { format: "yyyy-MM-dd" } }
+      - { name: couverture, label: Couverture, type: image }
+      - { name: ordre, label: Ordre, type: number }
+      - { name: body, label: Contenu, type: rich-text }
+
+  - name: carnet
+    label: Carnet
+    type: collection
+    path: src/content/carnet
+    view:
+      fields: [titre, date, brouillon]
+    fields:
+      - { name: titre, label: Titre, type: string, required: true }
+      - { name: date, label: Date, type: date, required: true, options: { format: "yyyy-MM-dd" } }
+      - { name: extrait, label: Extrait, type: text }
+      - { name: couverture, label: Couverture, type: image }
+      - { name: brouillon, label: Brouillon, type: boolean, default: false }
+      - { name: body, label: Article, type: rich-text }
