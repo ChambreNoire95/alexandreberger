@@ -1,0 +1,16 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const titre = "À propos — Alexandre Berger, réalisateur freelance";
+const description = "Alexandre Berger, réalisateur freelance en Île-de-France : parcours, démarche et champs d'expertise en documentaire, fiction et film de marque.";
+---
+
+<Layout title={titre} description={description} currentPath="/a-propos">
+  <div class="contenu">
+    <p>À rédiger.</p>
+  </div>
+</Layout>
+
+<style>
+  .contenu { margin-top:3.5rem; font-weight:300; font-size:1.1rem; color:rgba(255,255,255,.72); }
+</style>

@@ -1,13 +1,11 @@
 ---
-const projets = [
-  { slug: "peggy-frey-lieu-iconique-troyes", accroche: "Peggy Frey visite un lieu iconique à Troyes" },
-  { slug: "artus-cinema-francais", accroche: "Comment Artus a marqué le cinéma français" },
-  { slug: "mosaert-stromae-bon-marche", accroche: "Stromae fait battre le cœur de Mosaert à Paris" },
-  { slug: "paludiers-sel-guinee-bissau", accroche: "Des Guérandais fabriquent du sel en Guinée-Bissau" },
-  { slug: "nendo-oki-sato-bon-marche", accroche: "Oki Sato transforme la pluie en fleurs" },
-];
+import Layout from "../layouts/Layout.astro";
+import { getCollection } from "astro:content";
 
-// 
+const projets = (await getCollection("projets", ({ data }) => data.categorie === "commandes")).sort(
+  (a, b) => (a.data.ordre ?? Infinity) - (b.data.ordre ?? Infinity)
+);
+
 const signatures = [
   "Raconter des histoires",
   "Fabriquer des images",
@@ -15,78 +13,33 @@ const signatures = [
   "Gérer des productions",
 ];
 
-const clients = ["Bon Marché Rive Gauche", "Petit Bateau", "Univers Sel", "Synology", "Université Paris Nanterre", "Pompiers 95", "SDIS Guadeloupe"];
-
 const titre = "Alexandre Berger — Réalisateur documentaire, fiction & film de marque";
 const description = "Alexandre Berger, réalisateur freelance en Île-de-France. Je fabrique des films — documentaire, fiction et film de marque, souvent dans des contextes hors du commun.";
 ---
 
-<!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{titre}</title>
-    <meta name="description" content={description} />
-    <meta property="og:title" content={titre} />
-    <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
-    <meta property="og:locale" content="fr_FR" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet" />
-  </head>
-  <body>
-    <header class="topbar">
-  <span class="nom">Alexandre Berger</span>
-  <span class="role">Réalisateur</span>
-</header>
-    <main>
-      <div class="signature" id="sig" aria-label={signatures[0]}>
-        {signatures.map((s, i) => (
-          <span class="phrase" style={`position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);opacity:${i === 0 ? 1 : 0};transition:opacity 800ms ease`}>{s}</span>
-        ))}
-      </div>
-      <nav class="onglets" aria-label="Sections">
-        <a href="/" aria-current="page">Commandes</a>
-        <a href="/creations">Créations</a>
-        <a href="/autour-du-monde">Autour du monde</a>
-      </nav>
-      <a class="cta" href="/a-propos">En savoir +</a>
-      <ul class="accroches">
-        {projets.map((p) => (
-          <li><a href={`/projets/${p.slug}`}>{p.accroche}</a></li>
-        ))}
-      </ul>
-    </main>
+<Layout title={titre} description={description} currentPath="/">
+  <Fragment slot="above-nav">
+    <div class="signature" id="sig" aria-label={signatures[0]}>
+      {signatures.map((s, i) => (
+        <span class="phrase" style={`position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);opacity:${i === 0 ? 1 : 0};transition:opacity 800ms ease`}>{s}</span>
+      ))}
+    </div>
+  </Fragment>
 
-    <footer>
-      <p class="refs-titre">Ils m'ont fait confiance</p>
-      <p class="refs">{clients.join(" · ")}</p>
-    </footer>
-  </body>
-</html>
+  <a class="cta" href="/a-propos">En savoir +</a>
+  <ul class="accroches">
+    {projets.map((p) => (
+      <li><a href={`/projets/${p.id}`}>{p.data.titre}</a></li>
+    ))}
+  </ul>
+</Layout>
 
 <style>
-  :root { --fond:#0b0b0b; }
-  * { box-sizing:border-box; }
-  html, body { margin:0; padding:0; }
-  body {
-    background: var(--fond); color:#fff;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    display:flex; flex-direction:column; min-height:100vh;
-    padding: 2.5rem clamp(1.5rem, 4vw, 3rem);
-    text-align:center;
-  }
-  .topbar .nom { font-size:1.0rem; font-weight:400; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.85); }
-  main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4rem 0; }
   .signature { position:relative; width:100%; min-height:3rem; margin:0 0 5.5rem; }
   .phrase {
     font-weight:700; font-size:clamp(1.4rem, 3.2vw, 2rem);
     color:#fff;
   }
-  .topbar .role { display:block; margin-top:.4rem; font-size:.65rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); }
   .accroches { list-style:none; margin:3.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:1.8rem; }
   .accroches a {
     font-weight:300; font-size:clamp(1.5rem, 2.6vw, 2.14rem); line-height:1.2;
@@ -94,36 +47,26 @@ const description = "Alexandre Berger, réalisateur freelance en Île-de-France.
     max-width:40ch; transition:color 140ms ease;
   }
   .accroches a:hover { color:#fff; }
-  .onglets { display:flex; flex-wrap:wrap; justify-content:center; gap:clamp(2rem, 6vw, 4.5rem); }
-  .onglets a {
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size:.75rem; letter-spacing:.18em; text-transform:uppercase;
-    color:rgba(255,255,255,.9); text-decoration:none; transition:color 140ms ease;
-  }
-  .onglets a:hover { color:#fff; }
-  .onglets a[aria-current="page"] { color:#fff; text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
-  .cta {
-    display:inline-block; margin-top:3.5rem;
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size:.85rem; letter-spacing:.18em; text-transform:uppercase; color:#fff; text-decoration:none;
-    border:1px solid rgba(255,255,255,.5); padding:1.1rem 2.4rem;
-    transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
-  }
-  .cta:hover { background:#fff; color:#0b0b0b; border-color:#fff; }
-  footer { border-top:1px solid rgba(255,255,255,.14); padding-top:1.5rem; margin-top:3rem; }
-  .refs-titre { font-size:.7rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); margin:0 0 .5rem; }
-  .refs { font-size:.9rem; font-weight:300; color:rgba(255,255,255,.65); margin:0; }
 </style>
 
 <script>
-  const phrases = document.querySelectorAll('#sig .phrase');
-  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (phrases.length > 1 && !reduce) {
-    let i = 0;
-    setInterval(() => {
-      phrases[i].style.opacity = '0';
-      i = (i + 1) % phrases.length;
-      phrases[i].style.opacity = '1';
-    }, 5000);
+  let timer: ReturnType<typeof setInterval> | undefined;
+
+  function setupSignature() {
+    const phrases = document.querySelectorAll<HTMLElement>('#sig .phrase');
+    if (timer) clearInterval(timer);
+    if (!phrases.length) return;
+
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (phrases.length > 1 && !reduce) {
+      let i = 0;
+      timer = setInterval(() => {
+        phrases[i].style.opacity = '0';
+        i = (i + 1) % phrases.length;
+        phrases[i].style.opacity = '1';
+      }, 5000);
+    }
   }
+
+  document.addEventListener('astro:page-load', setupSignature);
 </script>

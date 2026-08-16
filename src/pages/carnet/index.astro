@@ -1,0 +1,34 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+const entrees = (await getCollection("carnet", ({ data }) => !data.brouillon)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const titre = "Carnet — Alexandre Berger, réalisateur";
+const description = "Le carnet d'Alexandre Berger, réalisateur freelance en Île-de-France : notes de tournage, coulisses et réflexions sur le documentaire, la fiction et le film de marque.";
+---
+
+<Layout title={titre} description={description} currentPath="/carnet">
+  <ul class="entrees">
+    {entrees.map((e) => (
+      <li>
+        <a href={`/carnet/${e.id}`}>
+          <span class="entree-titre">{e.data.titre}</span>
+          <span class="entree-date">{e.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}</span>
+          {e.data.extrait && <span class="entree-extrait">{e.data.extrait}</span>}
+        </a>
+      </li>
+    ))}
+  </ul>
+</Layout>
+
+<style>
+  .entrees { list-style:none; margin:3.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:2.4rem; width:100%; max-width:640px; }
+  .entrees a { text-decoration:none; display:flex; flex-direction:column; gap:.4rem; transition:opacity 140ms ease; }
+  .entrees a:hover { opacity:.7; }
+  .entree-titre { font-weight:300; font-size:clamp(1.3rem, 2.2vw, 1.7rem); color:#fff; }
+  .entree-date { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.45); }
+  .entree-extrait { font-weight:300; font-size:.95rem; color:rgba(255,255,255,.65); }
+</style>

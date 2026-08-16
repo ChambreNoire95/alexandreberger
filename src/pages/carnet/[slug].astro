@@ -1,0 +1,42 @@
+---
+import { getCollection, render } from "astro:content";
+import { Image } from "astro:assets";
+import Layout from "../../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+  const entrees = await getCollection("carnet", ({ data }) => !data.brouillon);
+  return entrees.map((e) => ({
+    params: { slug: e.id },
+    props: { entree: e },
+  }));
+}
+
+const { entree } = Astro.props;
+const { Content } = await render(entree);
+
+const titre = `${entree.data.titre} — Carnet, Alexandre Berger`;
+const description = entree.data.extrait ?? `${entree.data.titre}. Notes de tournage et réflexions d'Alexandre Berger, réalisateur freelance en Île-de-France.`;
+---
+
+<Layout title={titre} description={description} currentPath="/carnet">
+  <article class="entree">
+    {entree.data.couverture && (
+      <Image class="couverture" src={entree.data.couverture} alt={entree.data.titre} />
+    )}
+    <p class="date">{entree.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}</p>
+    <h1>{entree.data.titre}</h1>
+    <div class="corps">
+      <Content />
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .entree { text-align:left; width:100%; max-width:700px; margin-top:3.5rem; }
+  .couverture { width:100%; height:auto; border-radius:2px; margin-bottom:2rem; }
+  .date { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.45); margin:0 0 .75rem; }
+  .entree h1 { font-weight:300; font-size:clamp(1.6rem, 3vw, 2.4rem); margin:0 0 1.5rem; color:#fff; }
+  .corps { font-weight:300; font-size:1rem; line-height:1.7; color:rgba(255,255,255,.8); }
+  .corps :global(p) { margin:0 0 1.25rem; }
+  .corps :global(img) { max-width:100%; height:auto; border-radius:2px; margin:1.5rem 0; }
+</style>

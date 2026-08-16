@@ -1,0 +1,57 @@
+---
+import { getCollection, render } from "astro:content";
+import { Image } from "astro:assets";
+import Layout from "../../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+  const projets = await getCollection("projets");
+  return projets.map((p) => ({
+    params: { slug: p.id },
+    props: { projet: p },
+  }));
+}
+
+const { projet } = Astro.props;
+const { Content } = await render(projet);
+
+const currentPath =
+  projet.data.categorie === "commandes" ? "/" : `/${projet.data.categorie}`;
+
+const titre = `${projet.data.titre} — Alexandre Berger, réalisateur`;
+const description = `${projet.data.titre}. Un projet réalisé par Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.`;
+---
+
+<Layout title={titre} description={description} currentPath={currentPath}>
+  <article class="projet">
+    {projet.data.couverture && (
+      <Image class="couverture" src={projet.data.couverture} alt={projet.data.titre} />
+    )}
+    <h1>{projet.data.titre}</h1>
+    {(projet.data.client || projet.data.date) && (
+      <dl class="meta">
+        {projet.data.client && (
+          <div><dt>Client</dt><dd>{projet.data.client}</dd></div>
+        )}
+        {projet.data.date && (
+          <div><dt>Date</dt><dd>{projet.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long" })}</dd></div>
+        )}
+      </dl>
+    )}
+    <div class="corps">
+      <Content />
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .projet { text-align:left; width:100%; max-width:700px; margin-top:3.5rem; }
+  .couverture { width:100%; height:auto; border-radius:2px; margin-bottom:2rem; }
+  .projet h1 { font-weight:300; font-size:clamp(1.6rem, 3vw, 2.4rem); margin:0 0 1.25rem; color:#fff; }
+  .meta { display:flex; flex-wrap:wrap; gap:1.5rem; margin:0 0 2rem; }
+  .meta > div { display:flex; flex-direction:column; gap:.2rem; }
+  .meta dt { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:.65rem; letter-spacing:.15em; text-transform:uppercase; color:rgba(255,255,255,.45); }
+  .meta dd { margin:0; font-size:.85rem; color:rgba(255,255,255,.85); font-weight:300; }
+  .corps { font-weight:300; font-size:1rem; line-height:1.7; color:rgba(255,255,255,.8); }
+  .corps :global(p) { margin:0 0 1.25rem; }
+  .corps :global(img) { max-width:100%; height:auto; border-radius:2px; margin:1.5rem 0; }
+</style>

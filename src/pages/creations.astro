@@ -1,0 +1,29 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const projets = (await getCollection("projets", ({ data }) => data.categorie === "creations")).sort(
+  (a, b) => (a.data.ordre ?? Infinity) - (b.data.ordre ?? Infinity)
+);
+
+const titre = "Créations — Alexandre Berger, réalisateur";
+const description = "Créations personnelles d'Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.";
+---
+
+<Layout title={titre} description={description} currentPath="/creations">
+  <ul class="accroches">
+    {projets.map((p) => (
+      <li><a href={`/projets/${p.id}`}>{p.data.titre}</a></li>
+    ))}
+  </ul>
+</Layout>
+
+<style>
+  .accroches { list-style:none; margin:3.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:1.8rem; }
+  .accroches a {
+    font-weight:300; font-size:clamp(1.5rem, 2.6vw, 2.14rem); line-height:1.2;
+    color:rgba(255,255,255,.72); text-decoration:none; display:inline-block;
+    max-width:40ch; transition:color 140ms ease;
+  }
+  .accroches a:hover { color:#fff; }
+</style>

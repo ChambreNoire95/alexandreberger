@@ -1,0 +1,87 @@
+---
+import { ClientRouter } from "astro:transitions";
+
+interface Props {
+  title: string;
+  description: string;
+  currentPath: string;
+}
+
+const { title, description, currentPath } = Astro.props;
+
+const clients = ["Bon Marché Rive Gauche", "Petit Bateau", "Univers Sel", "Synology", "Université Paris Nanterre", "Pompiers 95", "SDIS Guadeloupe"];
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet" />
+    <ClientRouter />
+  </head>
+  <body>
+    <header class="topbar" transition:persist>
+      <span class="nom">Alexandre Berger</span>
+      <span class="role">Réalisateur</span>
+    </header>
+    <main>
+      <slot name="above-nav" />
+      <nav class="onglets" aria-label="Sections">
+        <a href="/" aria-current={currentPath === "/" ? "page" : undefined}>Commandes</a>
+        <a href="/creations" aria-current={currentPath === "/creations" ? "page" : undefined}>Créations</a>
+        <a href="/autour-du-monde" aria-current={currentPath === "/autour-du-monde" ? "page" : undefined}>Autour du monde</a>
+      </nav>
+      <slot />
+    </main>
+
+    <footer transition:persist>
+      <p class="refs-titre">Ils m'ont fait confiance</p>
+      <p class="refs">{clients.join(" · ")}</p>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  :root { --fond:#0b0b0b; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; padding:0; }
+  body {
+    background: var(--fond); color:#fff;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display:flex; flex-direction:column; min-height:100vh;
+    padding: 2.5rem clamp(1.5rem, 4vw, 3rem);
+    text-align:center;
+  }
+  .topbar .nom { font-size:1.0rem; font-weight:400; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.85); }
+  .topbar .role { display:block; margin-top:.4rem; font-size:.65rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); }
+  main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4rem 0; }
+  .onglets { display:flex; flex-wrap:wrap; justify-content:center; gap:clamp(2rem, 6vw, 4.5rem); }
+  .onglets a {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:.75rem; letter-spacing:.18em; text-transform:uppercase;
+    color:rgba(255,255,255,.9); text-decoration:none; transition:color 140ms ease;
+  }
+  .onglets a:hover { color:#fff; }
+  .onglets a[aria-current="page"] { color:#fff; text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
+  .cta {
+    display:inline-block; margin-top:3.5rem;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:.85rem; letter-spacing:.18em; text-transform:uppercase; color:#fff; text-decoration:none;
+    border:1px solid rgba(255,255,255,.5); padding:1.1rem 2.4rem;
+    transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+  }
+  .cta:hover { background:#fff; color:#0b0b0b; border-color:#fff; }
+  footer { border-top:1px solid rgba(255,255,255,.14); padding-top:1.5rem; margin-top:3rem; }
+  .refs-titre { font-size:.7rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); margin:0 0 .5rem; }
+  .refs { font-size:.9rem; font-weight:300; color:rgba(255,255,255,.65); margin:0; }
+</style>
