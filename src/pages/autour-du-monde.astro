@@ -2,28 +2,117 @@
 import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 
-const projets = (await getCollection("projets", ({ data }) => data.categorie === "autour-du-monde")).sort(
-  (a, b) => (a.data.ordre ?? Infinity) - (b.data.ordre ?? Infinity)
+const projets = await getCollection(
+  "projets",
+  ({ data }) => data.categorie === "autour-du-monde" && data.latitude != null && data.longitude != null
 );
+
+const lieux = new Map();
+for (const p of projets) {
+  const cle = `${p.data.latitude},${p.data.longitude}`;
+  if (!lieux.has(cle)) {
+    lieux.set(cle, { lat: p.data.latitude, lng: p.data.longitude, nom: p.data.lieu, projets: [] });
+  }
+  lieux.get(cle).projets.push({ id: p.id, titre: p.data.titre });
+}
+const points = Array.from(lieux.values());
 
 const titre = "Autour du monde — Alexandre Berger, réalisateur";
 const description = "Tournages à l'étranger d'Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque aux quatre coins du monde.";
 ---
 
 <Layout title={titre} description={description} currentPath="/autour-du-monde">
-  <ul class="accroches">
-    {projets.map((p) => (
-      <li><a href={`/projets/${p.id}`}>{p.data.titre}</a></li>
-    ))}
-  </ul>
+  <p class="carte-intro">Les points rouges marquent les lieux de tournage. Cliquez dessus pour découvrir le(s) projet(s).</p>
+  {points.length > 0 ? (
+    <div id="carte-monde" class="carte" data-points={JSON.stringify(points)}></div>
+  ) : (
+    <p class="carte-vide">Aucun lieu de tournage n'est encore renseigné.</p>
+  )}
 </Layout>
 
-<style>
-  .accroches { list-style:none; margin:3.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:1.8rem; }
-  .accroches a {
-    font-weight:300; font-size:clamp(1.5rem, 2.6vw, 2.14rem); line-height:1.2;
-    color:rgba(255,255,255,.72); text-decoration:none; display:inline-block;
-    max-width:40ch; transition:color 140ms ease;
+<script>
+  import L from "leaflet";
+  import "leaflet/dist/leaflet.css";
+
+  const el = document.getElementById("carte-monde");
+
+  if (el) {
+    const points = JSON.parse(el.dataset.points ?? "[]");
+
+    const map = L.map(el, {
+      worldCopyJump: true,
+      minZoom: 1,
+      maxZoom: 6,
+      zoomControl: true,
+      attributionControl: true,
+    }).setView([20, 10], 2);
+
+    const markers = points.map((point) => {
+      const marker = L.circleMarker([point.lat, point.lng], {
+        radius: 8,
+        color: "#e11d2e",
+        fillColor: "#e11d2e",
+        fillOpacity: 0.9,
+        weight: 0,
+      }).addTo(map);
+
+      const liens = point.projets
+        .map((p) => `<a href="/projets/${p.id}">${p.titre}</a>`)
+        .join("");
+      const nomLieu = point.nom ? `<p class="popup-lieu">${point.nom}</p>` : "";
+      marker.bindPopup(`<div class="popup-carte">${nomLieu}${liens}</div>`);
+      return marker;
+    });
+
+    fetch("/world.geo.json")
+      .then((r) => r.json())
+      .then((geo) => {
+        L.geoJSON(geo, {
+          style: { color: "#ffffff", weight: 1, fillOpacity: 0 },
+        }).addTo(map);
+        markers.forEach((marker) => marker.bringToFront());
+      });
   }
-  .accroches a:hover { color:#fff; }
+</script>
+
+<style>
+  .carte-intro {
+    max-width:640px; margin:0 0 2rem;
+    font-weight:300; font-size:.95rem; color:rgba(255,255,255,.65); text-align:center;
+  }
+  .carte {
+    width:100%; max-width:1100px; height:min(60vh, 560px);
+    border:1px solid rgba(255,255,255,.14); background:#0b0b0b;
+  }
+  .carte-vide {
+    margin-top:1rem; font-weight:300; font-size:.95rem; color:rgba(255,255,255,.5);
+  }
+</style>
+
+<style is:global>
+  .leaflet-container { background:#0b0b0b; font-family:'Inter', sans-serif; }
+  .leaflet-control-zoom a {
+    background:#0b0b0b !important; color:#fff !important; border-color:rgba(255,255,255,.3) !important;
+  }
+  .leaflet-control-zoom a:hover { background:#1a1a1a !important; }
+  .leaflet-control-attribution {
+    background:rgba(11,11,11,.75) !important; color:rgba(255,255,255,.5) !important;
+  }
+  .leaflet-control-attribution a { color:rgba(255,255,255,.7) !important; }
+  .leaflet-container .leaflet-popup-content-wrapper,
+  .leaflet-container .leaflet-popup-tip {
+    background:#0b0b0b !important; color:#fff !important; border:1px solid rgba(255,255,255,.2);
+    border-radius:2px; box-shadow:none;
+  }
+  .leaflet-container .leaflet-popup-content { margin:.9rem 1rem; }
+  .leaflet-container .leaflet-popup-close-button { color:rgba(255,255,255,.5) !important; }
+  .leaflet-container .popup-carte { display:flex; flex-direction:column; gap:.4rem; font-family:'Inter', sans-serif; }
+  .leaflet-container .popup-lieu {
+    margin:0; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:.65rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.5);
+  }
+  .leaflet-container .popup-carte a {
+    font-weight:300; font-size:.95rem; color:#fff !important; text-decoration:none; transition:opacity 140ms ease;
+  }
+  .leaflet-container .popup-carte a:hover { opacity:.7; }
 </style>

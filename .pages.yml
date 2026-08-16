@@ -16,6 +16,9 @@ content:
       - { name: date, label: Date, type: date, options: { format: "yyyy-MM-dd" } }
       - { name: couverture, label: Couverture, type: image }
       - { name: ordre, label: Ordre, type: number }
+      - { name: lieu, label: "Lieu (pour la carte)", type: string, description: "Ex. Troyes, France — affiché dans la bulle de la carte \"Autour du monde\"." }
+      - { name: latitude, label: Latitude, type: number, options: { min: -90, max: 90 } }
+      - { name: longitude, label: Longitude, type: number, options: { min: -180, max: 180 } }
       - { name: body, label: Contenu, type: rich-text }
 
   - name: carnet

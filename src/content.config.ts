@@ -11,6 +11,9 @@ const projets = defineCollection({
       date: z.coerce.date().optional(),
       couverture: image().or(z.string()).optional(),
       ordre: z.number().optional(),
+      lieu: z.string().optional(),
+      latitude: z.number().optional(),
+      longitude: z.number().optional(),
     }),
 });
 
