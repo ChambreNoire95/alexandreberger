@@ -1,7 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Signature from "../components/Signature.astro";
-import Interrupteur from "../components/Interrupteur.astro";
 import { getCollection } from "astro:content";
 
 const projets = (await getCollection("projets", ({ data }) => data.categorie === "creations")).sort(
@@ -19,10 +18,9 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.genre
 ---
 
 <Layout title={titre} description={description} currentPath="/creations">
-  <Interrupteur actif="creations" />
   <Signature />
 
-  <h1 class="titre-page titre-page-masque-desktop">Créations</h1>
+  <h1 class="titre-page">Créations</h1>
 
   {typesPresents.length > 0 && (
     <nav class="filtres" id="filtres" aria-label="Filtrer par genre">
