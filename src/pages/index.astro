@@ -16,6 +16,10 @@ const signatures = [
 
 const titre = "Alexandre Berger — Réalisateur documentaire, fiction & film de marque";
 const description = "Alexandre Berger, réalisateur freelance en Île-de-France. Je fabrique des films — documentaire, fiction et film de marque, souvent dans des contextes hors du commun.";
+
+// N'affiche dans le filtre que les types réellement utilisés par au moins un projet.
+const ORDRE_TYPES = ["Making-of", "Documentaire", "Aftermovie"];
+const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type === t));
 ---
 
 <Layout title={titre} description={description} currentPath="/">
@@ -28,13 +32,22 @@ const description = "Alexandre Berger, réalisateur freelance en Île-de-France.
     </div>
   </Fragment>
 
-  <ul class="accroches">
+  {typesPresents.length > 0 && (
+    <nav class="filtres" id="filtres" aria-label="Filtrer par type de film">
+      <button type="button" data-type="all" aria-pressed="true">Tous</button>
+      {typesPresents.map((t) => (
+        <button type="button" data-type={t} aria-pressed="false">{t}</button>
+      ))}
+    </nav>
+  )}
+
+  <ul id="accroches" class:list={["accroches", { "sans-filtres": typesPresents.length === 0 }]}>
     {projets.map((p) => {
       const meta = p.data.role && p.data.client
         ? `${p.data.role} pour ${p.data.client}`
         : p.data.role || p.data.client || null;
       return (
-        <li>
+        <li data-type={p.data.type || ""}>
           <a href={`/projets/${p.id}`}>
             <span class="accroche-titre">{p.data.titre}</span>
             {meta && <span class="accroche-meta">{meta}</span>}
@@ -51,7 +64,19 @@ const description = "Alexandre Berger, réalisateur freelance en Île-de-France.
     font-weight:700; font-size:clamp(1.32rem, 3.12vw, 2.57rem);
     color:#fff;
   }
-  .accroches { list-style:none; margin:7rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:3.575rem; }
+  .filtres { display:flex; flex-wrap:wrap; justify-content:center; gap:.75rem; margin:3.5rem 0 0; }
+  .filtres button {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
+    color:rgba(255,255,255,.5); background:transparent; cursor:pointer;
+    border:1px solid rgba(255,255,255,.3); border-radius:2px; padding:.4rem .8rem;
+    transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+  }
+  .filtres button:hover { color:#fff; border-color:rgba(255,255,255,.6); }
+  .filtres button[aria-pressed="true"] { background:#fff; color:#0b0b0b; border-color:#fff; }
+  .accroches { list-style:none; margin:3.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:3.575rem; }
+  .accroches.sans-filtres { margin-top:7rem; }
+  .accroches li[hidden] { display:none; }
   .accroches a {
     display:flex; flex-direction:column; align-items:center; gap:.6rem;
     text-decoration:none;
@@ -90,4 +115,23 @@ const description = "Alexandre Berger, réalisateur freelance en Île-de-France.
   }
 
   document.addEventListener('astro:page-load', setupSignature);
+
+  function setupFiltres() {
+    const nav = document.getElementById('filtres');
+    const items = document.querySelectorAll<HTMLLIElement>('#accroches li');
+    if (!nav || !items.length) return;
+
+    nav.addEventListener('click', (event) => {
+      const bouton = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-type]');
+      if (!bouton) return;
+      const type = bouton.dataset.type;
+
+      nav.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === bouton)));
+      items.forEach((li) => {
+        li.hidden = type !== 'all' && li.dataset.type !== type;
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', setupFiltres);
 </script>
