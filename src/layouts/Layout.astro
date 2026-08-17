@@ -15,7 +15,15 @@ const clients = [
   "Pompiers 95", "SDIS Guadeloupe", "Ruush", "Agence Trafic", "Disney+", "Fiap Paris", "Burger King",
   "Cine Nominé", "Dessine l'Espoir", "The Ivory Fondation", "Polytech Montpellier", "Madame Arthur",
   "AG2R La Mondiale", "SloSlo", "Concord Label Group", "Universal", "Hachette", "Tonies",
+  "La Semaine De La Critique", "Voilà Chef", "JoyVox", "Uniscité",
 ].sort((a, b) => a.localeCompare(b, "fr"));
+
+const LARGEUR_LIGNE_CLIENTS = 12;
+const lignesClients = clients.reduce((lignes, client, i) => {
+  if (i % LARGEUR_LIGNE_CLIENTS === 0) lignes.push([]);
+  lignes[lignes.length - 1].push(client);
+  return lignes;
+}, [] as string[][]);
 
 const presentation = "Réalisateur freelance basé en Île-de-France, je raconte des histoires en documentaire, fiction et film de marque — de la commande institutionnelle aux projets tournés aux quatre coins du monde.";
 
@@ -116,7 +124,9 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
 
     <footer transition:persist>
       <p class="refs-titre">Ils m'ont fait confiance pour fabriquer leurs films</p>
-      <p class="refs">{clients.join(" · ")}</p>
+      {lignesClients.map((ligne) => (
+        <p class="refs">{ligne.join(" · ")}</p>
+      ))}
     </footer>
 
     <section class="bandeau" transition:persist>
@@ -209,6 +219,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   footer { border-top:1px solid rgba(255,255,255,.14); padding-top:1.5rem; margin-top:3rem; }
   .refs-titre { font-size:.7rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); margin:0 0 .5rem; }
   .refs { font-size:.9rem; font-weight:300; color:rgba(255,255,255,.65); margin:0; }
+  .refs + .refs { margin-top:.3rem; }
 
   .bandeau {
     width:100vw; position:relative; left:50%; margin-left:-50vw;
