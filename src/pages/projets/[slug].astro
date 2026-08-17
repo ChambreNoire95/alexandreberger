@@ -17,7 +17,9 @@ const currentPath =
   projet.data.categorie === "commandes" ? "/" : `/${projet.data.categorie}`;
 
 const titre = `${projet.data.titre} — Alexandre Berger, réalisateur`;
-const description = `${projet.data.titre}. Un projet réalisé par Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.`;
+const description = projet.data.description
+  ? `${projet.data.titre}. ${projet.data.description}`
+  : `${projet.data.titre}. Un projet réalisé par Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.`;
 
 const galerie = [projet.data.image1, projet.data.image2, projet.data.image3].filter((img) => !!img);
 

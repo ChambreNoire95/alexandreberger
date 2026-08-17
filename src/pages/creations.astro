@@ -13,6 +13,7 @@ const description = "Créations personnelles d'Alexandre Berger, réalisateur fr
 ---
 
 <Layout title={titre} description={description} currentPath="/creations">
+  <h1 class="sr-only">Créations — Alexandre Berger, réalisateur</h1>
   <ul class="creations">
     {projets.map((p) => {
       const images = [p.data.image1, p.data.image2, p.data.image3].filter((img) => !!img);

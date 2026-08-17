@@ -28,7 +28,6 @@ const projets = defineCollection({
       genre: z.string().optional(),
       duree: z.string().optional(),
       couverture: z.string().optional(),
-      ordre: z.number().optional(),
       lieu: z.string().optional(),
       latitude: z.number().optional(),
       longitude: z.number().optional(),

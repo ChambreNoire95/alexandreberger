@@ -20,6 +20,7 @@ const description = "Alexandre Berger, réalisateur freelance en Île-de-France.
 
 <Layout title={titre} description={description} currentPath="/">
   <Fragment slot="above-nav">
+    <h1 class="sr-only">Alexandre Berger, réalisateur freelance en Île-de-France — documentaire, fiction, film de marque</h1>
     <div class="signature" id="sig" aria-label={signatures[0]}>
       {signatures.map((s, i) => (
         <span class="phrase" style={`position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);opacity:${i === 0 ? 1 : 0};transition:opacity 800ms ease`}>{s}</span>
