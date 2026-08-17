@@ -16,7 +16,7 @@ const description = "Créations personnelles d'Alexandre Berger, réalisateur fr
   <ul class="creations">
     {projets.map((p) => {
       const images = [p.data.image1, p.data.image2, p.data.image3].filter((img) => !!img);
-      const meta = [p.data.annee, p.data.duree].filter((v) => !!v).join(" · ");
+      const meta = [p.data.annee, p.data.genre, p.data.duree].filter((v) => !!v).join(" · ");
       return (
         <li class="creation" data-count={images.length}>
           {images.length > 0 && (

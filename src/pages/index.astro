@@ -3,7 +3,8 @@ import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 
 const projets = (await getCollection("projets", ({ data }) => data.categorie === "commandes")).sort(
-  (a, b) => (a.data.ordre ?? Infinity) - (b.data.ordre ?? Infinity)
+  // Plus récente en premier, plus ancienne en bas (comme sur Créations).
+  (a, b) => (b.data.date?.valueOf() ?? -Infinity) - (a.data.date?.valueOf() ?? -Infinity)
 );
 
 const signatures = [
@@ -27,19 +28,14 @@ const description = "Alexandre Berger, réalisateur freelance en Île-de-France.
   </Fragment>
 
   <ul class="accroches">
-    {projets.map((p) => {
-      const meta = p.data.role && p.data.client
-        ? `${p.data.role} pour ${p.data.client}`
-        : p.data.role || p.data.client || null;
-      return (
-        <li>
-          <a href={`/projets/${p.id}`}>
-            <span class="accroche-titre">{p.data.titre}</span>
-            {meta && <span class="accroche-meta">{meta}</span>}
-          </a>
-        </li>
-      );
-    })}
+    {projets.map((p) => (
+      <li>
+        <a href={`/projets/${p.id}`}>
+          <span class="accroche-titre">{p.data.titre}</span>
+          {p.data.client && <span class="accroche-meta">{p.data.client}</span>}
+        </a>
+      </li>
+    ))}
   </ul>
 </Layout>
 

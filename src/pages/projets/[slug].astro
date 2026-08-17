@@ -19,10 +19,31 @@ const currentPath =
 const titre = `${projet.data.titre} — Alexandre Berger, réalisateur`;
 const description = `${projet.data.titre}. Un projet réalisé par Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.`;
 
-const roleLabel = projet.data.role ? "Rôle" : "Client";
-const roleValeur = projet.data.role && projet.data.client
-  ? `${projet.data.role} pour ${projet.data.client}`
-  : projet.data.role || projet.data.client || null;
+const galerie = [projet.data.image1, projet.data.image2, projet.data.image3].filter((img) => !!img);
+
+/** Convertit une URL YouTube/Vimeo en URL d'embed ; renvoie l'URL telle quelle pour les autres plateformes (Vidéas...). */
+function urlEmbed(url: string) {
+  try {
+    const u = new URL(url);
+    const hote = u.hostname.replace(/^www\./, "");
+    if (hote === "youtu.be") return `https://www.youtube.com/embed/${u.pathname.slice(1)}`;
+    if (hote === "youtube.com" || hote === "m.youtube.com") {
+      if (u.pathname === "/watch") {
+        const id = u.searchParams.get("v");
+        return id ? `https://www.youtube.com/embed/${id}` : url;
+      }
+      if (u.pathname.startsWith("/shorts/")) return `https://www.youtube.com/embed/${u.pathname.split("/")[2]}`;
+      return url;
+    }
+    if (hote === "vimeo.com") {
+      const id = u.pathname.split("/").filter(Boolean)[0];
+      return id ? `https://player.vimeo.com/video/${id}` : url;
+    }
+    return url;
+  } catch {
+    return url;
+  }
+}
 ---
 
 <Layout title={titre} description={description} currentPath={currentPath}>
@@ -31,10 +52,10 @@ const roleValeur = projet.data.role && projet.data.client
       <img class="couverture" src={projet.data.couverture} alt={projet.data.titre} />
     )}
     <h1>{projet.data.titre}</h1>
-    {(roleValeur || projet.data.date || projet.data.annee || projet.data.duree) && (
+    {(projet.data.client || projet.data.date || projet.data.annee || projet.data.genre || projet.data.duree) && (
       <dl class="meta">
-        {roleValeur && (
-          <div><dt>{roleLabel}</dt><dd>{roleValeur}</dd></div>
+        {projet.data.client && (
+          <div><dt>Client</dt><dd>{projet.data.client}</dd></div>
         )}
         {projet.data.date && (
           <div><dt>Date</dt><dd>{projet.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long" })}</dd></div>
@@ -42,14 +63,33 @@ const roleValeur = projet.data.role && projet.data.client
         {!projet.data.date && projet.data.annee && (
           <div><dt>Année</dt><dd>{projet.data.annee}</dd></div>
         )}
+        {projet.data.genre && (
+          <div><dt>Genre</dt><dd>{projet.data.genre}</dd></div>
+        )}
         {projet.data.duree && (
           <div><dt>Durée</dt><dd>{projet.data.duree}</dd></div>
         )}
       </dl>
     )}
+    {projet.data.video && (
+      <div class="video-embed">
+        <iframe
+          src={urlEmbed(projet.data.video)}
+          title={`Vidéo — ${projet.data.titre}`}
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+        ></iframe>
+      </div>
+    )}
     <div class="corps">
       <Content />
     </div>
+    {galerie.length > 0 && (
+      <div class="galerie" data-count={galerie.length}>
+        {galerie.map((img) => <img src={img} alt={projet.data.titre} />)}
+      </div>
+    )}
   </article>
 </Layout>
 
@@ -64,4 +104,10 @@ const roleValeur = projet.data.role && projet.data.client
   .corps { font-weight:300; font-size:1rem; line-height:1.7; color:rgba(255,255,255,.8); }
   .corps :global(p) { margin:0 0 1.25rem; }
   .corps :global(img) { max-width:100%; height:auto; border-radius:2px; margin:1.5rem 0; }
+  .video-embed { position:relative; width:100%; aspect-ratio:16/9; margin:0 0 2rem; background:#000; border-radius:2px; overflow:hidden; }
+  .video-embed iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+  .galerie { display:grid; grid-template-columns:repeat(3, 1fr); gap:.5rem; margin-top:2.5rem; }
+  .galerie[data-count="1"] { grid-template-columns:1fr; max-width:28.6rem; }
+  .galerie[data-count="2"] { grid-template-columns:repeat(2, 1fr); }
+  .galerie img { width:100%; height:100%; aspect-ratio:4/3; object-fit:cover; display:block; border-radius:2px; }
 </style>

@@ -2,15 +2,179 @@
 import Layout from "../layouts/Layout.astro";
 
 const titre = "Booking — Alexandre Berger, réalisateur freelance";
-const description = "Réserver Alexandre Berger, réalisateur freelance en Île-de-France, pour un projet en documentaire, fiction ou film de marque.";
+const description = "Demande de tournage auprès d'Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.";
+
+const emailContact = "alexandrebrgr@gmail.com";
 ---
 
 <Layout title={titre} description={description} currentPath="/booking">
-  <div class="contenu">
-    <p>À rédiger.</p>
+  <div class="booking">
+    <h1>Demande de tournage</h1>
+    <p class="intro">Décrivez votre projet dans le formulaire ci-dessous. Je reviendrai vers vous dans les plus brefs délais.</p>
+
+    <form id="form-booking" data-email={emailContact}>
+      <label class="champ">
+        <span>Entreprise / Institution / Structure *</span>
+        <input type="text" name="entreprise" required />
+      </label>
+
+      <div class="ligne">
+        <label class="champ">
+          <span>Nom *</span>
+          <input type="text" name="nom" required />
+        </label>
+        <label class="champ">
+          <span>Prénom *</span>
+          <input type="text" name="prenom" required />
+        </label>
+      </div>
+
+      <label class="champ">
+        <span>Fonction / Service</span>
+        <input type="text" name="fonction" />
+      </label>
+
+      <div class="ligne">
+        <label class="champ">
+          <span>Email *</span>
+          <input type="email" name="email" required />
+        </label>
+        <label class="champ">
+          <span>Téléphone *</span>
+          <input type="tel" name="telephone" required />
+        </label>
+      </div>
+
+      <div class="ligne">
+        <label class="champ">
+          <span>Type de projet</span>
+          <select name="type">
+            <option value="Documentaire">Documentaire</option>
+            <option value="Fiction">Fiction</option>
+            <option value="Film de marque">Film de marque</option>
+            <option value="Autre">Autre</option>
+          </select>
+        </label>
+        <label class="champ">
+          <span>Durée du tournage</span>
+          <input type="text" name="duree" />
+        </label>
+      </div>
+
+      <div class="ligne">
+        <label class="champ">
+          <span>Date souhaitée</span>
+          <input type="date" name="date" />
+        </label>
+        <label class="champ">
+          <span>Lieu</span>
+          <input type="text" name="lieu" />
+        </label>
+      </div>
+
+      <label class="champ">
+        <span>Budget estimé</span>
+        <input type="text" name="budget" />
+      </label>
+
+      <label class="champ">
+        <span>Description du projet *</span>
+        <textarea name="description" rows="6" placeholder="Sujet, intention, contraintes, références…" required></textarea>
+      </label>
+
+      <button type="submit">Envoyer la demande</button>
+      <p class="statut" role="status" hidden></p>
+    </form>
   </div>
 </Layout>
 
+<script>
+  function labelPour(nom: string) {
+    const labels: Record<string, string> = {
+      entreprise: "Entreprise / Institution / Structure",
+      nom: "Nom",
+      prenom: "Prénom",
+      fonction: "Fonction / Service",
+      email: "Email",
+      telephone: "Téléphone",
+      type: "Type de projet",
+      duree: "Durée du tournage",
+      date: "Date souhaitée",
+      lieu: "Lieu",
+      budget: "Budget estimé",
+      description: "Description du projet",
+    };
+    return labels[nom] ?? nom;
+  }
+
+  function initFormBooking() {
+    const form = document.getElementById("form-booking") as HTMLFormElement | null;
+    if (!form) return;
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const email = form.dataset.email;
+      const donnees = new FormData(form);
+      const entreprise = String(donnees.get("entreprise") ?? "");
+
+      const corps = Array.from(donnees.entries())
+        .filter(([, valeur]) => String(valeur).trim() !== "")
+        .map(([nom, valeur]) => `${labelPour(nom)} : ${valeur}`)
+        .join("\n");
+
+      const sujet = `Demande de tournage — ${entreprise}`;
+      const lien = `mailto:${email}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`;
+
+      const statut = form.querySelector<HTMLElement>(".statut");
+      if (statut) {
+        statut.hidden = false;
+        statut.textContent = "Votre messagerie va s'ouvrir avec la demande pré-remplie : il ne vous reste qu'à l'envoyer.";
+      }
+
+      window.location.href = lien;
+    });
+  }
+
+  document.addEventListener("astro:page-load", initFormBooking);
+</script>
+
 <style>
-  .contenu { margin-top:3.5rem; font-weight:300; font-size:1.1rem; color:rgba(255,255,255,.72); }
+  .booking { width:100%; max-width:640px; text-align:left; margin-top:3.5rem; }
+  .booking h1 { font-weight:700; font-size:clamp(1.8rem, 4vw, 2.6rem); margin:0 0 1rem; color:#fff; }
+  .intro { font-weight:300; font-size:1rem; line-height:1.6; color:rgba(255,255,255,.65); margin:0 0 3rem; }
+
+  form { display:flex; flex-direction:column; gap:1.75rem; }
+  .ligne { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+  .champ { display:flex; flex-direction:column; gap:.6rem; }
+  .champ span {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.5);
+  }
+  .champ input, .champ select, .champ textarea {
+    font-family: 'Inter', sans-serif; font-size:.95rem; font-weight:300; color:#fff;
+    background:transparent; border:1px solid rgba(255,255,255,.3); border-radius:2px;
+    padding:.85rem 1rem; transition:border-color 140ms ease;
+  }
+  .champ input:focus, .champ select:focus, .champ textarea:focus {
+    outline:none; border-color:rgba(255,255,255,.8);
+  }
+  .champ textarea { resize:vertical; font-family:'Inter', sans-serif; }
+  .champ select { appearance:none; cursor:pointer; }
+  .champ select option { background:#0b0b0b; color:#fff; }
+
+  button[type="submit"] {
+    margin-top:.5rem; padding:1.1rem 2.4rem;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:.85rem; letter-spacing:.18em; text-transform:uppercase;
+    color:#0b0b0b; background:#fff; border:1px solid #fff; border-radius:2px;
+    cursor:pointer; transition:opacity 140ms ease;
+  }
+  button[type="submit"]:hover { opacity:.85; }
+
+  .statut { font-weight:300; font-size:.9rem; color:rgba(255,255,255,.6); margin:0; }
+
+  @media (max-width: 600px) {
+    .ligne { grid-template-columns:1fr; }
+  }
 </style>

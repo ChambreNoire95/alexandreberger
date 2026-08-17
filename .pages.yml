@@ -12,11 +12,13 @@ content:
     fields:
       - { name: titre, label: Accroche, type: string, required: true }
       - { name: categorie, type: string, hidden: true, default: commandes }
-      - { name: role, label: "Rôle", type: string, description: "Ex. Réalisateur / Monteur — affiché avec le client (\"Rôle pour Client\") sous l'accroche sur la page Commandes, et dans les métadonnées de la fiche projet." }
       - { name: client, label: Client, type: string }
-      - { name: date, label: Date, type: date, options: { format: "yyyy-MM-dd" } }
+      - { name: date, label: Date, type: date, options: { format: "yyyy-MM-dd" }, description: "Détermine aussi l'ordre d'affichage sur la home (plus récente en premier)." }
       - { name: couverture, label: Couverture, type: image }
-      - { name: ordre, label: Ordre, type: number }
+      - { name: image1, label: "Photo 1", type: image, description: "Photos supplémentaires (optionnelles), affichées sur la fiche projet en plus de la couverture." }
+      - { name: image2, label: "Photo 2", type: image }
+      - { name: image3, label: "Photo 3", type: image }
+      - { name: video, label: "Vidéo (URL)", type: string, description: "Lien YouTube, Vimeo ou autre plateforme d'embed (Vidéas...). Affichée sur la fiche projet." }
       - { name: lieu, label: "Lieu (pour la carte)", type: string, description: "Ex. Troyes, France, ou Île-de-France pour regrouper plusieurs projets sur un même point. Rempli = le projet apparaît sur la carte \"Autour du monde\" ; sa position est calculée automatiquement à partir de ce nom." }
       - { name: latitude, label: Latitude, type: number, options: { min: -90, max: 90 }, description: "Optionnel : ne remplir que pour forcer une position précise si la recherche automatique se trompe (doit être rempli avec Longitude)." }
       - { name: longitude, label: Longitude, type: number, options: { min: -180, max: 180 }, description: "Optionnel : idem, à remplir avec Latitude." }
@@ -32,6 +34,7 @@ content:
       - { name: titre, label: Accroche, type: string, required: true }
       - { name: categorie, type: string, hidden: true, default: creations }
       - { name: annee, label: Année, type: number, options: { min: 1980, max: 2100 }, description: "Détermine aussi l'ordre d'affichage sur la page Créations (plus récente en premier)." }
+      - { name: genre, label: Genre, type: string, description: "Ex. Fiction, Documentaire, Film de marque. Affiché à côté de l'année." }
       - { name: duree, label: Durée, type: string, description: "Ex. 12 min, 1h30. Affichée à côté de l'année." }
       - { name: couverture, label: Couverture, type: image }
       - { name: description, label: Description, type: text, description: "Affichée sur la page Créations, sous les images." }

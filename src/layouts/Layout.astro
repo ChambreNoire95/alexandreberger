@@ -10,7 +10,10 @@ interface Props {
 
 const { title, description, currentPath } = Astro.props;
 
-const clients = ["Bon Marché Rive Gauche", "Petit Bateau", "Univers Sel", "Synology", "Université Paris Nanterre", "Pompiers 95", "SDIS Guadeloupe"];
+const clients = [
+  "Bon Marché Rive Gauche", "Petit Bateau", "Univers Sel", "Synology", "Université Paris Nanterre",
+  "Pompiers 95", "SDIS Guadeloupe", "Ruush", "Agence Trafic", "Disney+", "Fiap Paris", "Burger King",
+].sort((a, b) => a.localeCompare(b, "fr"));
 
 const presentation = "Réalisateur freelance basé en Île-de-France, je raconte des histoires en documentaire, fiction et film de marque — de la commande institutionnelle aux projets tournés aux quatre coins du monde.";
 
@@ -36,8 +39,10 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   </head>
   <body>
     <header class="topbar" transition:persist>
-      <span class="nom">Alexandre Berger</span>
-      <span class="role">Réalisateur</span>
+      <a class="logo" href="/" aria-label="Retour à l'accueil">
+        <span class="nom">Alexandre Berger</span>
+        <span class="role">Réalisateur</span>
+      </a>
       <div class="menu-wrap">
         <a class="booking-btn" href="/booking" aria-current={currentPath === "/booking" ? "page" : undefined}>Booking</a>
         <button
@@ -101,7 +106,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     </main>
 
     <footer transition:persist>
-      <p class="refs-titre">Ils m'ont fait confiance</p>
+      <p class="refs-titre">Ils m'ont fait confiance pour fabriquer leurs films</p>
       <p class="refs">{clients.join(" · ")}</p>
     </footer>
 
@@ -111,7 +116,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       </div>
       <div class="bandeau-carnet">
         {derniereEntree ? (
-          <a class="carnet-apercu" href={`/carnet/${derniereEntree.id}`}>
+          <a class="carnet-apercu" href="/carnet">
             <span class="carnet-label">Dernière entrée du carnet</span>
             <span class="carnet-titre">{derniereEntree.data.titre}</span>
             <span class="carnet-date">{derniereEntree.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}</span>
@@ -139,6 +144,8 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     overflow-x:hidden;
   }
   .topbar { position:relative; text-align:left; }
+  .logo { display:inline-block; text-decoration:none; transition:opacity 140ms ease; }
+  .logo:hover { opacity:.7; }
   .topbar .nom { font-size:1.0rem; font-weight:400; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.85); }
   .topbar .role { display:block; margin-top:.4rem; font-size:.65rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); }
   .menu-wrap { position:absolute; top:0; right:0; display:flex; align-items:center; gap:.5rem; text-align:left; }
