@@ -3,6 +3,7 @@ titre: Comment Artus a marqué le cinéma français
 categorie: commandes
 role: Réalisateur
 client: Cine Nomine / Pan Distribution
+type: Making-of
 date: 2024-06-01
 couverture: /uploads/UPTE_visuel_site.jpg
 image1: /uploads/UPTE_visuel_site_2.jpg
