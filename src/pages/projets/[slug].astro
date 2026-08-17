@@ -21,6 +21,11 @@ const description = `${projet.data.titre}. Un projet réalisé par Alexandre Ber
 
 const galerie = [projet.data.image1, projet.data.image2, projet.data.image3].filter((img) => !!img);
 
+const roleLabel = projet.data.role ? "Rôle" : "Client";
+const roleValeur = projet.data.role && projet.data.client
+  ? `${projet.data.role} pour ${projet.data.client}`
+  : projet.data.role || projet.data.client || null;
+
 /** Convertit une URL YouTube/Vimeo en URL d'embed ; renvoie l'URL telle quelle pour les autres plateformes (Vidéas...). */
 function urlEmbed(url: string) {
   try {
@@ -52,10 +57,10 @@ function urlEmbed(url: string) {
       <img class="couverture" src={projet.data.couverture} alt={projet.data.titre} />
     )}
     <h1>{projet.data.titre}</h1>
-    {(projet.data.client || projet.data.date || projet.data.annee || projet.data.genre || projet.data.duree) && (
+    {(roleValeur || projet.data.date || projet.data.annee || projet.data.genre || projet.data.duree) && (
       <dl class="meta">
-        {projet.data.client && (
-          <div><dt>Client</dt><dd>{projet.data.client}</dd></div>
+        {roleValeur && (
+          <div><dt>{roleLabel}</dt><dd>{roleValeur}</dd></div>
         )}
         {projet.data.date && (
           <div><dt>Date</dt><dd>{projet.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long" })}</dd></div>

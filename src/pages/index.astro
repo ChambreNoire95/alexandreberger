@@ -28,14 +28,19 @@ const description = "Alexandre Berger, réalisateur freelance en Île-de-France.
   </Fragment>
 
   <ul class="accroches">
-    {projets.map((p) => (
-      <li>
-        <a href={`/projets/${p.id}`}>
-          <span class="accroche-titre">{p.data.titre}</span>
-          {p.data.client && <span class="accroche-meta">{p.data.client}</span>}
-        </a>
-      </li>
-    ))}
+    {projets.map((p) => {
+      const meta = p.data.role && p.data.client
+        ? `${p.data.role} pour ${p.data.client}`
+        : p.data.role || p.data.client || null;
+      return (
+        <li>
+          <a href={`/projets/${p.id}`}>
+            <span class="accroche-titre">{p.data.titre}</span>
+            {meta && <span class="accroche-meta">{meta}</span>}
+          </a>
+        </li>
+      );
+    })}
   </ul>
 </Layout>
 
