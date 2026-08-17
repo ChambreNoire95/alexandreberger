@@ -1,0 +1,18 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const titre = "Mentions légales — Alexandre Berger, réalisateur freelance";
+const description = "Mentions légales du site d'Alexandre Berger, réalisateur freelance en Île-de-France.";
+---
+
+<Layout title={titre} description={description} currentPath="/mentions-legales">
+  <div class="contenu">
+    <h1>Mentions légales</h1>
+    <p>À rédiger.</p>
+  </div>
+</Layout>
+
+<style>
+  .contenu { text-align:left; width:100%; max-width:640px; margin-top:3.5rem; font-weight:300; font-size:1.1rem; color:rgba(255,255,255,.72); }
+  .contenu h1 { font-weight:300; font-size:clamp(1.6rem, 3vw, 2.4rem); margin:0 0 1.25rem; color:#fff; }
+</style>
