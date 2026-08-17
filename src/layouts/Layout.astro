@@ -224,6 +224,15 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     position:absolute; width:1px; height:1px; padding:0; margin:-1px;
     overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
   }
+  /* Comme .sr-only, mais uniquement en desktop : sur ces pages, le titre visible
+     est remplacé par l'interrupteur Films de commande / Créations, mais reste
+     affiché normalement en mobile (où l'interrupteur ne s'affiche pas). */
+  @media (min-width: 801px) {
+    .titre-page-masque-desktop {
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+      overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+    }
+  }
   .topbar { position:relative; text-align:left; }
   .logo { display:inline-block; text-decoration:none; transition:opacity 140ms ease; }
   .logo:hover { opacity:.7; }

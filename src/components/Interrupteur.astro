@@ -1,0 +1,36 @@
+---
+interface Props {
+  actif: "commandes" | "creations";
+}
+const { actif } = Astro.props;
+---
+
+<div class="interrupteur" data-actif={actif}>
+  <a href="/" aria-label="Films de commande" aria-current={actif === "commandes" ? "page" : undefined}></a>
+  <a href="/creations" aria-label="Créations" aria-current={actif === "creations" ? "page" : undefined}></a>
+</div>
+
+<style>
+  /* Desktop uniquement : sur mobile le switch vers Créations reste dans le
+     menu déroulant, cf. le mémo sur le périmètre desktop des styles. */
+  .interrupteur { display:none; }
+
+  @media (min-width: 801px) {
+    .interrupteur {
+      display:block;
+      position:relative;
+      width:min(85vw, 380px);
+      aspect-ratio: 2048 / 576;
+      margin:0 auto 3.5rem;
+      background-image:url('/uploads/selecteur_site_films_commande_creations.png');
+      background-repeat:no-repeat;
+      background-size:100% 200%;
+      background-position:0 0%;
+      border-radius:4px;
+    }
+    .interrupteur[data-actif="creations"] { background-position:0 100%; }
+    .interrupteur a { position:absolute; top:0; bottom:0; width:50%; }
+    .interrupteur a:first-child { left:0; }
+    .interrupteur a:last-child { right:0; }
+  }
+</style>
