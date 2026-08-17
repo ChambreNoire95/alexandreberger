@@ -13,7 +13,7 @@ const { title, description, currentPath } = Astro.props;
 const clients = [
   "Bon Marché Rive Gauche", "Petit Bateau", "Univers Sel", "Synology", "Université Paris Nanterre",
   "Pompiers 95", "SDIS Guadeloupe", "Ruush", "Agence Trafic", "Disney+", "Fiap Paris", "Burger King",
-  "Cine Nominé", "Dessine l'Espoir", "The Ivory Fondation", "Polytech Montpellier", "Madame Arthur - Divan du Monde",
+  "Cine Nominé", "Dessine l'Espoir", "The Ivory Fondation", "Polytech Montpellier", "Madame Arthur/Divan du monde",
   "AG2R La Mondiale", "SloSlo", "Concord Label Group", "Universal Music France", "Hachette", "Tonies",
   "La Semaine De La Critique", "Voilà Chef", "JoyVox", "UnisCité",
   "Sapari Productions", "Supermerci", "Webfleet",
@@ -23,19 +23,36 @@ const clients = [
 ].sort((a, b) => a.localeCompare(b, "fr"));
 
 // Vise ~10 clients par ligne, mais répartit le total à l'exact plutôt que de
-// couper en blocs fixes de 10 : évite une dernière ligne clairsemée (ex. 2
-// noms perdus) et donne un bloc de lignes visuellement plus équilibré.
+// couper en blocs fixes de 10 : évite une ligne clairsemée en bout de bloc
+// et donne un ensemble de lignes visuellement plus équilibré.
 const CIBLE_PAR_LIGNE = 10;
-const nbLignes = Math.max(1, Math.round(clients.length / CIBLE_PAR_LIGNE));
-const tailleBase = Math.floor(clients.length / nbLignes);
-const lignesEnPlus = clients.length % nbLignes;
-const lignesClients: string[][] = [];
-let curseur = 0;
-for (let i = 0; i < nbLignes; i++) {
-  const taille = tailleBase + (i < lignesEnPlus ? 1 : 0);
-  lignesClients.push(clients.slice(curseur, curseur + taille));
-  curseur += taille;
+function repartirEnLignes(items: string[]): string[][] {
+  const nbLignes = Math.max(1, Math.round(items.length / CIBLE_PAR_LIGNE));
+  const tailleBase = Math.floor(items.length / nbLignes);
+  const enPlus = items.length % nbLignes;
+  const lignes: string[][] = [];
+  let curseur = 0;
+  for (let i = 0; i < nbLignes; i++) {
+    const taille = tailleBase + (i < enPlus ? 1 : 0);
+    lignes.push(items.slice(curseur, curseur + taille));
+    curseur += taille;
+  }
+  return lignes;
 }
+
+// Noms qui doivent toujours commencer une nouvelle ligne. On découpe la liste
+// en segments à ces points-là, puis on rééquilibre chaque segment séparément
+// (plutôt que de forcer le saut et laisser le déséquilibre se répercuter
+// jusqu'à la fin de la liste).
+const SAUTS_DE_LIGNE_FORCES = new Set(["Palinal"]);
+const segments: string[][] = [[]];
+for (const client of clients) {
+  if (SAUTS_DE_LIGNE_FORCES.has(client) && segments[segments.length - 1].length > 0) {
+    segments.push([]);
+  }
+  segments[segments.length - 1].push(client);
+}
+const lignesClients = segments.flatMap(repartirEnLignes);
 
 const presentation = "Réalisateur freelance basé en Île-de-France, je raconte des histoires en documentaire, fiction et film de marque — de la commande institutionnelle aux projets tournés aux quatre coins du monde.";
 
