@@ -1,7 +1,8 @@
 ---
 titre: Des Guérandais fabriquent du sel en Guinée-Bissau
 categorie: commandes
-client: Univers-Sel
+role: Producteur / Réalisateur
+client: Univers Sel
 date: 2026-08-16
 lieu: Guinée-Bissau
 ---
