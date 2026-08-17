@@ -1,18 +1,12 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Signature from "../components/Signature.astro";
 import { getCollection } from "astro:content";
 
 const projets = (await getCollection("projets", ({ data }) => data.categorie === "commandes")).sort(
   // Plus récente en premier, plus ancienne en bas (comme sur Créations).
   (a, b) => (b.data.date?.valueOf() ?? -Infinity) - (a.data.date?.valueOf() ?? -Infinity)
 );
-
-const signatures = [
-  "Raconter des histoires",
-  "Fabriquer des images",
-  "Réaliser des films",
-  "Gérer des productions",
-];
 
 const titre = "Alexandre Berger — Réalisateur documentaire, fiction & film de marque";
 const description = "Alexandre Berger, réalisateur freelance en Île-de-France. Je fabrique des films — documentaire, fiction et film de marque, souvent dans des contextes hors du commun.";
@@ -23,14 +17,8 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 ---
 
 <Layout title={titre} description={description} currentPath="/">
-  <Fragment slot="above-nav">
-    <p class="sr-only">Alexandre Berger, réalisateur freelance en Île-de-France — documentaire, fiction, film de marque</p>
-    <div class="signature" id="sig" aria-label={signatures[0]}>
-      {signatures.map((s, i) => (
-        <span class="phrase" style={`position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);opacity:${i === 0 ? 1 : 0};transition:opacity 800ms ease`}>{s}</span>
-      ))}
-    </div>
-  </Fragment>
+  <p class="sr-only">Alexandre Berger, réalisateur freelance en Île-de-France — documentaire, fiction, film de marque</p>
+  <Signature />
 
   <h1 class="titre-page">Films de commande</h1>
 
@@ -61,11 +49,6 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 </Layout>
 
 <style>
-  .signature { position:relative; width:100%; min-height:3rem; margin:0 0 5.5rem; }
-  .phrase {
-    font-weight:700; font-size:clamp(1.32rem, 3.12vw, 2.57rem);
-    color:#fff;
-  }
   .filtres { display:flex; flex-wrap:wrap; justify-content:center; gap:.75rem; margin:3.5rem 0 0; }
   .filtres button {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
@@ -98,26 +81,6 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 </style>
 
 <script>
-  let timer: ReturnType<typeof setInterval> | undefined;
-
-  function setupSignature() {
-    const phrases = document.querySelectorAll<HTMLElement>('#sig .phrase');
-    if (timer) clearInterval(timer);
-    if (!phrases.length) return;
-
-    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (phrases.length > 1 && !reduce) {
-      let i = 0;
-      timer = setInterval(() => {
-        phrases[i].style.opacity = '0';
-        i = (i + 1) % phrases.length;
-        phrases[i].style.opacity = '1';
-      }, 5000);
-    }
-  }
-
-  document.addEventListener('astro:page-load', setupSignature);
-
   function setupFiltres() {
     const nav = document.getElementById('filtres');
     const items = document.querySelectorAll<HTMLLIElement>('#accroches li');

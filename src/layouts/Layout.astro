@@ -91,7 +91,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       </a>
       <div class="menu-wrap">
         <nav class="onglets-header" aria-label="Sections">
-          <a href="/" data-nav aria-current={currentPath === "/" ? "page" : undefined}>Commandes</a>
+          <a href="/" data-nav aria-current={currentPath === "/" ? "page" : undefined}>Films de commande</a>
           <a href="/creations" data-nav aria-current={currentPath === "/creations" ? "page" : undefined}>Créations</a>
           <a href="/autour-du-monde" data-nav aria-current={currentPath === "/autour-du-monde" ? "page" : undefined}>Autour du monde</a>
         </nav>
@@ -161,7 +161,6 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       document.addEventListener("astro:page-load", majNavActive);
     </script>
     <main>
-      <slot name="above-nav" />
       <slot />
     </main>
 
@@ -267,7 +266,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   }
   .onglets-header a:hover { color:#fff; }
   .onglets-header a[aria-current="page"] { color:#fff; text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
-  main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4rem 0; }
+  main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:7rem 0 4rem; }
   .titre-page {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
     font-size:1.3rem; letter-spacing:.22em; text-transform:uppercase;
