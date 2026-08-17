@@ -319,12 +319,13 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     .bandeau-carnet { order:-1; border-bottom:1px solid rgba(255,255,255,.14); }
   }
 
-  @media (max-width: 600px) {
-    /* Le bouton Booking rend le groupe booking+menu trop large pour tenir
-       à côté du nom sur mobile sans les superposer : il passe sur sa
-       propre ligne. Le header s'étire jusqu'aux phrases qui tournent, et
-       des marges auto centrent verticalement le groupe booking+menu dans
-       cet espace, entre le logo et les phrases. */
+  @media (max-width: 800px) {
+    /* Seuil à 800px et non 600px : le groupe booking+menu+onglets est déjà
+       trop large pour tenir à côté du nom sans le chevaucher dès qu'on
+       repasse sous ~750px (ex. un iPhone en paysage, ~660-810px selon le
+       modèle). Il passe donc sur sa propre ligne. Le header s'étire jusqu'aux
+       phrases qui tournent, et des marges auto centrent verticalement le
+       groupe booking+menu dans cet espace, entre le logo et les phrases. */
     .topbar { display:flex; flex-direction:column; align-items:center; text-align:center; min-height:11rem; }
     .menu-wrap { position:static; width:100%; justify-content:center; margin-top:auto; margin-bottom:auto; }
     main { padding-top:0; }
