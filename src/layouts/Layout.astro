@@ -19,7 +19,7 @@ const clients = [
   "Sapari Productions", "Supermerci", "Webfleet",
   "PlayStation", "Team Vitality", "La Métropole du Grand Paris", "BeIn Sports",
   "Jule et Lily", "Cosmopolitan", "L'Equipe Explore", "Les Cahiers Pour Décider Et Agir",
-  "Palinal",
+  "Palinal", "Epikure Studio", "progress Associés", "Adopt",
 ].sort((a, b) => a.localeCompare(b, "fr"));
 
 const LARGEUR_LIGNE_CLIENTS = 10;
@@ -221,9 +221,9 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   .onglets a:hover { color:#fff; }
   .onglets a[aria-current="page"] { color:#fff; text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
   footer { border-top:1px solid rgba(255,255,255,.14); padding-top:1.5rem; margin-top:3rem; }
-  .refs-titre { font-size:.7rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); margin:0 0 .5rem; }
-  .refs { font-size:.9rem; font-weight:300; color:rgba(255,255,255,.65); margin:0; }
-  .refs + .refs { margin-top:.3rem; }
+  .refs-titre { font-size:.7rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); margin:0 0 1.25rem; }
+  .refs { font-size:.9rem; font-weight:300; line-height:1.8; color:rgba(255,255,255,.65); margin:0; }
+  .refs + .refs { margin-top:.4rem; }
 
   .bandeau {
     width:100vw; position:relative; left:50%; margin-left:-50vw;
