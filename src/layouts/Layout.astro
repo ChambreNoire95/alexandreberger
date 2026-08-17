@@ -19,15 +19,23 @@ const clients = [
   "Sapari Productions", "Supermerci", "Webfleet",
   "PlayStation", "Team Vitality", "La Métropole du Grand Paris", "BeIn Sports",
   "Jule et Lily", "Cosmopolitan", "L'Equipe Explore", "Les Cahiers Pour Décider Et Agir",
-  "Palinal", "Epikure Studio", "progress Associés", "Adopt",
+  "Palinal", "Epikure Studio", "Progress Associés", "Adopt", "Pan Distribution",
 ].sort((a, b) => a.localeCompare(b, "fr"));
 
-const LARGEUR_LIGNE_CLIENTS = 10;
-const lignesClients = clients.reduce((lignes, client, i) => {
-  if (i % LARGEUR_LIGNE_CLIENTS === 0) lignes.push([]);
-  lignes[lignes.length - 1].push(client);
-  return lignes;
-}, [] as string[][]);
+// Vise ~10 clients par ligne, mais répartit le total à l'exact plutôt que de
+// couper en blocs fixes de 10 : évite une dernière ligne clairsemée (ex. 2
+// noms perdus) et donne un bloc de lignes visuellement plus équilibré.
+const CIBLE_PAR_LIGNE = 10;
+const nbLignes = Math.max(1, Math.round(clients.length / CIBLE_PAR_LIGNE));
+const tailleBase = Math.floor(clients.length / nbLignes);
+const lignesEnPlus = clients.length % nbLignes;
+const lignesClients: string[][] = [];
+let curseur = 0;
+for (let i = 0; i < nbLignes; i++) {
+  const taille = tailleBase + (i < lignesEnPlus ? 1 : 0);
+  lignesClients.push(clients.slice(curseur, curseur + taille));
+  curseur += taille;
+}
 
 const presentation = "Réalisateur freelance basé en Île-de-France, je raconte des histoires en documentaire, fiction et film de marque — de la commande institutionnelle aux projets tournés aux quatre coins du monde.";
 
