@@ -10,16 +10,30 @@ const projets = (await getCollection("projets", ({ data }) => data.categorie ===
 
 const titre = "Créations — Alexandre Berger, réalisateur";
 const description = "Créations personnelles d'Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.";
+
+// N'affiche dans le filtre que les genres réellement utilisés par au moins un projet.
+const ORDRE_TYPES = ["Fiction", "Documentaire", "Clip", "Expérimental"];
+const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.genre === t));
 ---
 
 <Layout title={titre} description={description} currentPath="/creations">
   <h1 class="sr-only">Créations — Alexandre Berger, réalisateur</h1>
-  <ul class="creations">
+
+  {typesPresents.length > 0 && (
+    <nav class="filtres" id="filtres" aria-label="Filtrer par genre">
+      <button type="button" data-type="all" aria-pressed="true">Tous</button>
+      {typesPresents.map((t) => (
+        <button type="button" data-type={t} aria-pressed="false">{t}</button>
+      ))}
+    </nav>
+  )}
+
+  <ul id="creations" class:list={["creations", { "sans-filtres": typesPresents.length === 0 }]}>
     {projets.map((p) => {
       const images = [p.data.image1, p.data.image2, p.data.image3].filter((img) => !!img);
       const meta = [p.data.annee, p.data.genre, p.data.duree].filter((v) => !!v).join(" · ");
       return (
-        <li class="creation" data-count={images.length}>
+        <li class="creation" data-count={images.length} data-type={p.data.genre || ""}>
           {images.length > 0 && (
             <div class="creation-images">
               {images.map((img) => <img src={img} alt={p.data.titre} />)}
@@ -37,11 +51,23 @@ const description = "Créations personnelles d'Alexandre Berger, réalisateur fr
 </Layout>
 
 <style>
+  .filtres { display:flex; flex-wrap:wrap; justify-content:center; gap:.75rem; margin:0 0 0; }
+  .filtres button {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
+    color:rgba(255,255,255,.5); background:transparent; cursor:pointer;
+    border:1px solid rgba(255,255,255,.3); border-radius:2px; padding:.4rem .8rem;
+    transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+  }
+  .filtres button:hover { color:#fff; border-color:rgba(255,255,255,.6); }
+  .filtres button[aria-pressed="true"] { background:#fff; color:#0b0b0b; border-color:#fff; }
   .creations {
-    list-style:none; margin:5.5rem 0 0; padding:0;
+    list-style:none; margin:2.5rem 0 0; padding:0;
     display:flex; flex-direction:column; align-items:center;
     width:100%; max-width:910px;
   }
+  .creations.sans-filtres { margin-top:5.5rem; }
+  .creations li[hidden] { display:none; }
   .creation {
     width:100%; display:flex; flex-direction:column; gap:1.1rem; text-align:left;
     padding:3rem 0;
@@ -49,6 +75,7 @@ const description = "Créations personnelles d'Alexandre Berger, réalisateur fr
   .creation[data-count="1"] { max-width:28.6rem; }
   .creation + .creation { border-top:1px solid rgba(255,255,255,.14); }
   .creation:first-child { padding-top:0; }
+  #creations .creation.premier-visible { border-top:none; padding-top:0; }
   .creation-images { display:grid; grid-template-columns:repeat(3, 1fr); gap:.5rem; width:100%; }
   .creation[data-count="1"] .creation-images { grid-template-columns:1fr; }
   .creation[data-count="2"] .creation-images { grid-template-columns:repeat(2, 1fr); }
@@ -69,3 +96,33 @@ const description = "Créations personnelles d'Alexandre Berger, réalisateur fr
     font-weight:300; font-size:.95rem; line-height:1.6; color:rgba(255,255,255,.65); margin:0;
   }
 </style>
+
+<script>
+  function setupFiltres() {
+    const nav = document.getElementById('filtres');
+    const items = document.querySelectorAll<HTMLLIElement>('#creations li');
+    if (!nav || !items.length) return;
+
+    function majPremierVisible() {
+      items.forEach((li) => li.classList.remove('premier-visible'));
+      const premier = [...items].find((li) => !li.hidden);
+      if (premier) premier.classList.add('premier-visible');
+    }
+
+    nav.addEventListener('click', (event) => {
+      const bouton = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-type]');
+      if (!bouton) return;
+      const type = bouton.dataset.type;
+
+      nav.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === bouton)));
+      items.forEach((li) => {
+        li.hidden = type !== 'all' && li.dataset.type !== type;
+      });
+      majPremierVisible();
+    });
+
+    majPremierVisible();
+  }
+
+  document.addEventListener('astro:page-load', setupFiltres);
+</script>

@@ -36,7 +36,7 @@ content:
       - { name: titre, label: Accroche, type: string, required: true }
       - { name: categorie, type: string, hidden: true, default: creations }
       - { name: annee, label: Année, type: number, options: { min: 1980, max: 2100 }, description: "Détermine aussi l'ordre d'affichage sur la page Créations (plus récente en premier)." }
-      - { name: genre, label: Genre, type: string, description: "Ex. Fiction, Documentaire, Film de marque. Affiché à côté de l'année." }
+      - { name: genre, label: Genre, type: select, options: { values: ["Fiction", "Documentaire", "Clip", "Expérimental"] }, description: "Affiché à côté de l'année. Utilisé pour le filtre par catégorie sur la page Créations." }
       - { name: duree, label: Durée, type: string, description: "Ex. 12 min, 1h30. Affichée à côté de l'année." }
       - { name: couverture, label: Couverture, type: image }
       - { name: description, label: Description, type: text, description: "Affichée sur la page Créations, sous les images." }
