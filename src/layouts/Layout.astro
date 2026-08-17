@@ -19,9 +19,10 @@ const clients = [
   "Sapari Productions", "Supermerci", "Webfleet",
   "PlayStation", "Team Vitality", "La Métropole du Grand Paris", "BeIn Sports",
   "Jule et Lily", "Cosmopolitan", "L'Equipe Explore", "Les Cahiers Pour Décider Et Agir",
+  "Palinal",
 ].sort((a, b) => a.localeCompare(b, "fr"));
 
-const LARGEUR_LIGNE_CLIENTS = 12;
+const LARGEUR_LIGNE_CLIENTS = 10;
 const lignesClients = clients.reduce((lignes, client, i) => {
   if (i % LARGEUR_LIGNE_CLIENTS === 0) lignes.push([]);
   lignes[lignes.length - 1].push(client);
