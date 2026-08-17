@@ -17,7 +17,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.genre
 ---
 
 <Layout title={titre} description={description} currentPath="/creations">
-  <h1 class="sr-only">Créations — Alexandre Berger, réalisateur</h1>
+  <h1 class="titre-page">Créations</h1>
 
   {typesPresents.length > 0 && (
     <nav class="filtres" id="filtres" aria-label="Filtrer par genre">
@@ -51,7 +51,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.genre
 </Layout>
 
 <style>
-  .filtres { display:flex; flex-wrap:wrap; justify-content:center; gap:.75rem; margin:3.5rem 0 0; }
+  .filtres { display:flex; flex-wrap:wrap; justify-content:center; gap:.75rem; margin:0; }
   .filtres button {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
     font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;

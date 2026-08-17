@@ -89,8 +89,13 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
         <span class="nom">Alexandre Berger</span>
         <span class="role">Réalisateur</span>
       </a>
+      <nav class="onglets-verticaux" aria-label="Sections">
+        <a href="/" data-nav aria-current={currentPath === "/" ? "page" : undefined}>Commandes</a>
+        <a href="/creations" data-nav aria-current={currentPath === "/creations" ? "page" : undefined}>Créations</a>
+        <a href="/autour-du-monde" data-nav aria-current={currentPath === "/autour-du-monde" ? "page" : undefined}>Autour du monde</a>
+      </nav>
       <div class="menu-wrap">
-        <a class="booking-btn" href="/booking" aria-current={currentPath === "/booking" ? "page" : undefined}>Booking</a>
+        <a class="booking-btn" href="/booking" data-nav aria-current={currentPath === "/booking" ? "page" : undefined}>Booking</a>
         <button
           type="button"
           class="menu-toggle"
@@ -104,8 +109,8 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
           <span aria-hidden="true"></span>
         </button>
         <nav id="menu-secondaire" class="menu-secondaire" aria-label="Menu secondaire" hidden>
-          <a href="/carnet" aria-current={currentPath.startsWith("/carnet") ? "page" : undefined}>Carnet</a>
-          <a href="/a-propos" aria-current={currentPath === "/a-propos" ? "page" : undefined}>À propos</a>
+          <a href="/carnet" data-nav data-nav-prefix aria-current={currentPath.startsWith("/carnet") ? "page" : undefined}>Carnet</a>
+          <a href="/a-propos" data-nav aria-current={currentPath === "/a-propos" ? "page" : undefined}>À propos</a>
         </nav>
       </div>
     </header>
@@ -140,14 +145,23 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
           toggle.setAttribute("aria-expanded", "false");
         });
       }
+
+      // Le header est transition:persist (son DOM n'est pas remplacé lors d'une
+      // navigation côté client) : sans ça, les aria-current des liens du header
+      // resteraient figés sur ceux calculés au premier chargement de la session.
+      function majNavActive() {
+        const chemin = location.pathname;
+        document.querySelectorAll<HTMLAnchorElement>("a[data-nav]").forEach((a) => {
+          const cible = new URL(a.href).pathname;
+          const actif = a.hasAttribute("data-nav-prefix") ? chemin.startsWith(cible) : chemin === cible;
+          if (actif) a.setAttribute("aria-current", "page");
+          else a.removeAttribute("aria-current");
+        });
+      }
+      document.addEventListener("astro:page-load", majNavActive);
     </script>
     <main>
       <slot name="above-nav" />
-      <nav class="onglets" aria-label="Sections">
-        <a href="/" aria-current={currentPath === "/" ? "page" : undefined}>Commandes</a>
-        <a href="/creations" aria-current={currentPath === "/creations" ? "page" : undefined}>Créations</a>
-        <a href="/autour-du-monde" aria-current={currentPath === "/autour-du-monde" ? "page" : undefined}>Autour du monde</a>
-      </nav>
       <slot />
     </main>
 
@@ -244,15 +258,20 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   }
   .menu-secondaire a:hover { color:#fff; }
   .menu-secondaire a[aria-current="page"] { color:#fff; text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
-  main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4rem 0; }
-  .onglets { display:flex; flex-wrap:wrap; justify-content:center; gap:clamp(2rem, 6vw, 4.5rem); }
-  .onglets a {
+  .onglets-verticaux { display:flex; flex-direction:column; align-items:flex-start; gap:.75rem; margin-top:1.5rem; }
+  .onglets-verticaux a {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
     font-size:.8625rem; letter-spacing:.18em; text-transform:uppercase;
     color:rgba(255,255,255,.9); text-decoration:none; transition:color 140ms ease;
   }
-  .onglets a:hover { color:#fff; }
-  .onglets a[aria-current="page"] { color:#fff; text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
+  .onglets-verticaux a:hover { color:#fff; }
+  .onglets-verticaux a[aria-current="page"] { color:#fff; text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
+  main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4rem 0; }
+  .titre-page {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:1.3rem; letter-spacing:.22em; text-transform:uppercase;
+    color:#fff; font-weight:400; margin:0 0 3.5rem; text-align:center;
+  }
   footer { border-top:1px solid rgba(255,255,255,.14); padding-top:3rem; margin-top:3rem; }
   .refs-titre { font-size:.7rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); margin:0 0 1.25rem; }
   .refs { font-size:.9rem; font-weight:300; line-height:1.8; color:rgba(255,255,255,.65); margin:0; }

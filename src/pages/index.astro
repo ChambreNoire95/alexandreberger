@@ -24,13 +24,15 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 
 <Layout title={titre} description={description} currentPath="/">
   <Fragment slot="above-nav">
-    <h1 class="sr-only">Alexandre Berger, réalisateur freelance en Île-de-France — documentaire, fiction, film de marque</h1>
+    <p class="sr-only">Alexandre Berger, réalisateur freelance en Île-de-France — documentaire, fiction, film de marque</p>
     <div class="signature" id="sig" aria-label={signatures[0]}>
       {signatures.map((s, i) => (
         <span class="phrase" style={`position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);opacity:${i === 0 ? 1 : 0};transition:opacity 800ms ease`}>{s}</span>
       ))}
     </div>
   </Fragment>
+
+  <h1 class="titre-page">Commandes</h1>
 
   {typesPresents.length > 0 && (
     <nav class="filtres" id="filtres" aria-label="Filtrer par type de film">

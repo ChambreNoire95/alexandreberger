@@ -32,7 +32,7 @@ const description = "La carte des tournages d'Alexandre Berger, réalisateur fre
 ---
 
 <Layout title={titre} description={description} currentPath="/autour-du-monde">
-  <h1 class="sr-only">Autour du monde — Alexandre Berger, réalisateur</h1>
+  <h1 class="titre-page">Autour du monde</h1>
   <p class="carte-intro">Les points rouges marquent les lieux de tournage. Cliquez dessus pour découvrir le(s) projet(s).</p>
   {points.length > 0 ? (
     <div id="carte-monde" class="carte" data-points={JSON.stringify(points)}></div>
@@ -117,7 +117,7 @@ const description = "La carte des tournages d'Alexandre Berger, réalisateur fre
 
 <style>
   .carte-intro {
-    margin:3.5rem 0 2rem;
+    margin:0 0 2rem;
     font-weight:300; font-size:.85rem; color:rgba(255,255,255,.65); text-align:center;
     white-space:nowrap;
   }
