@@ -33,14 +33,15 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 
   <ul id="accroches" class:list={["accroches", { "sans-filtres": typesPresents.length === 0 }]}>
     {projets.map((p) => {
-      const meta = p.data.role && p.data.client
-        ? `${p.data.role} pour ${p.data.client}`
-        : p.data.role || p.data.client || null;
       return (
         <li data-type={p.data.type || ""}>
           <a href={`/projets/${p.id}`}>
             <span class="accroche-titre">{p.data.titre}</span>
-            {meta && <span class="accroche-meta">{meta}</span>}
+            {p.data.role && p.data.client ? (
+              <span class="accroche-meta">{p.data.role}<br class="saut-mobile" />pour {p.data.client}</span>
+            ) : (
+              (p.data.role || p.data.client) && <span class="accroche-meta">{p.data.role || p.data.client}</span>
+            )}
           </a>
         </li>
       );
@@ -77,6 +78,10 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   .accroche-meta {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
     font-size:.77rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.45);
+  }
+  .saut-mobile { display:none; }
+  @media (max-width: 600px) {
+    .saut-mobile { display:inline; }
   }
 </style>
 
