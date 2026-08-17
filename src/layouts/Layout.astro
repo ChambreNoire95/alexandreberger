@@ -178,9 +178,11 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       </div>
     </section>
 
-    <p class="copyright" transition:persist>
-      © Alexandre Berger, Réalisateur Freelance / {new Date().getFullYear()} - <a href="/mentions-legales">Mentions Légales</a>
-    </p>
+    <div class="cloture" transition:persist>
+      <p class="copyright">
+        © Alexandre Berger, Réalisateur Freelance / {new Date().getFullYear()} - <a href="/mentions-legales">Mentions Légales</a>
+      </p>
+    </div>
   </body>
 </html>
 
@@ -257,7 +259,6 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   .refs + .refs { margin-top:.4rem; }
 
   .bandeau {
-    width:100vw; position:relative; left:50%; margin-left:-50vw;
     margin-top:3rem;
     display:flex; min-height:22rem;
     border-top:1px solid rgba(255,255,255,.14);
@@ -278,7 +279,8 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   .carnet-extrait { font-weight:300; font-size:.95rem; color:rgba(255,255,255,.65); }
   .carnet-vide { font-weight:300; font-size:.95rem; color:rgba(255,255,255,.5); margin:0; max-width:30rem; }
 
-  .copyright { font-size:.75rem; font-weight:300; color:rgba(255,255,255,.4); padding:1.5rem clamp(1.5rem, 4vw, 3rem) 2rem; margin:0; text-align:center; }
+  .cloture { border-top:1px solid rgba(255,255,255,.14); padding-top:3rem; margin-top:3rem; }
+  .copyright { font-size:.75rem; font-weight:300; color:rgba(255,255,255,.4); padding:0 clamp(1.5rem, 4vw, 3rem) 2rem; margin:0; text-align:center; }
   .copyright a { color:rgba(255,255,255,.55); text-decoration:underline; text-underline-offset:3px; transition:color 140ms ease; }
   .copyright a:hover { color:#fff; }
 
