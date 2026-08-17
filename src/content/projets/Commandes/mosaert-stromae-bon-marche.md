@@ -4,5 +4,6 @@ categorie: commandes
 role: Producteur / Réalisateur / Monteur
 client: Le Bon Marché Rive Gauche
 date: 2018-04-08
+couverture: /uploads/Mosaert_Fabrique.jpg
 ---
 Stromae crée une usine fantastique au coeur du Grand magasin.
