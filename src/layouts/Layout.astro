@@ -89,12 +89,12 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
         <span class="nom">Alexandre Berger</span>
         <span class="role">Réalisateur</span>
       </a>
-      <nav class="onglets-verticaux" aria-label="Sections">
-        <a href="/" data-nav aria-current={currentPath === "/" ? "page" : undefined}>Commandes</a>
-        <a href="/creations" data-nav aria-current={currentPath === "/creations" ? "page" : undefined}>Créations</a>
-        <a href="/autour-du-monde" data-nav aria-current={currentPath === "/autour-du-monde" ? "page" : undefined}>Autour du monde</a>
-      </nav>
       <div class="menu-wrap">
+        <nav class="onglets-header" aria-label="Sections">
+          <a href="/" data-nav aria-current={currentPath === "/" ? "page" : undefined}>Commandes</a>
+          <a href="/creations" data-nav aria-current={currentPath === "/creations" ? "page" : undefined}>Créations</a>
+          <a href="/autour-du-monde" data-nav aria-current={currentPath === "/autour-du-monde" ? "page" : undefined}>Autour du monde</a>
+        </nav>
         <a class="booking-btn" href="/booking" data-nav aria-current={currentPath === "/booking" ? "page" : undefined}>Booking</a>
         <button
           type="button"
@@ -225,7 +225,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   .logo:hover { opacity:.7; }
   .topbar .nom { font-size:1.0rem; font-weight:400; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.85); }
   .topbar .role { display:block; margin-top:.4rem; font-size:.65rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); }
-  .menu-wrap { position:absolute; top:0; right:0; display:flex; align-items:center; gap:.5rem; text-align:left; }
+  .menu-wrap { position:absolute; top:0; right:0; display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:1rem 1.5rem; text-align:left; }
   .booking-btn {
     display:flex; align-items:center; justify-content:center;
     height:2.25rem; padding:0 .9rem;
@@ -258,14 +258,15 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   }
   .menu-secondaire a:hover { color:#fff; }
   .menu-secondaire a[aria-current="page"] { color:#fff; text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
-  .onglets-verticaux { display:flex; flex-direction:column; align-items:flex-start; gap:.75rem; margin-top:1.5rem; }
-  .onglets-verticaux a {
+  .onglets-header { display:flex; flex-wrap:wrap; align-items:center; gap:1.25rem; }
+  .onglets-header a {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size:.8625rem; letter-spacing:.18em; text-transform:uppercase;
+    font-size:.8rem; letter-spacing:.16em; text-transform:uppercase;
     color:rgba(255,255,255,.9); text-decoration:none; transition:color 140ms ease;
+    white-space:nowrap;
   }
-  .onglets-verticaux a:hover { color:#fff; }
-  .onglets-verticaux a[aria-current="page"] { color:#fff; text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
+  .onglets-header a:hover { color:#fff; }
+  .onglets-header a[aria-current="page"] { color:#fff; text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
   main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4rem 0; }
   .titre-page {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
