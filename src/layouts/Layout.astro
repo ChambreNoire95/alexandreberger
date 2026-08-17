@@ -151,12 +151,14 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       <slot />
     </main>
 
-    <footer transition:persist>
-      <p class="refs-titre">Ils m'ont fait confiance pour fabriquer leurs films</p>
-      {lignesClients.map((ligne) => (
-        <p class="refs">{ligne.join(" · ")}</p>
-      ))}
-    </footer>
+    {currentPath !== "/creations" && (
+      <footer transition:persist>
+        <p class="refs-titre">Ils m'ont fait confiance pour fabriquer leurs films</p>
+        {lignesClients.map((ligne) => (
+          <p class="refs">{ligne.join(" · ")}</p>
+        ))}
+      </footer>
+    )}
 
     <section class="bandeau" transition:persist>
       <div class="bandeau-texte">
@@ -245,7 +247,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   }
   .onglets a:hover { color:#fff; }
   .onglets a[aria-current="page"] { color:#fff; text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
-  footer { border-top:1px solid rgba(255,255,255,.14); padding-top:1.5rem; margin-top:3rem; }
+  footer { border-top:1px solid rgba(255,255,255,.14); padding-top:3rem; margin-top:3rem; }
   .refs-titre { font-size:.7rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); margin:0 0 1.25rem; }
   .refs { font-size:.9rem; font-weight:300; line-height:1.8; color:rgba(255,255,255,.65); margin:0; }
   .refs + .refs { margin-top:.4rem; }
