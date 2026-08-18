@@ -14,7 +14,7 @@ content:
       - { name: categorie, type: string, hidden: true, default: commandes }
       - { name: role, label: "Rôle", type: string, description: "Ex. Réalisateur / Monteur — affiché avec le client (\"Rôle pour Client\") sous l'accroche sur la page Commandes, et dans les métadonnées de la fiche projet." }
       - { name: client, label: Client, type: string }
-      - { name: type, label: "Type de film", type: select, options: { values: ["Making-of", "Documentaire", "Aftermovie", "Brand Content", "RSE"] }, description: "Utilisé pour le filtre par catégorie sur la page Commandes." }
+      - { name: type, label: "Type de film", type: select, options: { values: ["Making-of", "Documentaire", "Aftermovie", "Brand Content", "RSE", "Fiction"] }, description: "Utilisé pour le filtre par catégorie sur la page Commandes." }
       - { name: date, label: Date, type: date, options: { format: "yyyy-MM-dd" }, description: "Détermine aussi l'ordre d'affichage sur la home (plus récente en premier)." }
       - { name: couverture, label: Couverture, type: image }
       - { name: image1, label: "Photo 1", type: image, description: "Photos supplémentaires (optionnelles), affichées sur la fiche projet en plus de la couverture." }
