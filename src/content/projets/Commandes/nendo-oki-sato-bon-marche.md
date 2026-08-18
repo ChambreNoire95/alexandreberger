@@ -1,5 +1,5 @@
 ---
-titre: Oki Sato transforme la pluie en fleurs
+titre: Oki Sato du studio nendo transforme la pluie en fleurs
 categorie: commandes
 role: Producteur / Réalisateur / Monteur
 client: Le Bon Marché Rive Gauche
