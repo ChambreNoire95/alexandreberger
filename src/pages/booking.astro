@@ -1,10 +1,9 @@
 ---
+export const prerender = true;
 import Layout from "../layouts/Layout.astro";
 
 const titre = "Booking — Alexandre Berger, réalisateur freelance";
 const description = "Demande de tournage auprès d'Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.";
-
-const emailContact = "alexandrebrgr@gmail.com";
 ---
 
 <Layout title={titre} description={description} currentPath="/booking">
@@ -13,7 +12,16 @@ const emailContact = "alexandrebrgr@gmail.com";
   <div class="booking">
     <p class="intro">Décrivez votre projet dans le formulaire ci-dessous. Je reviendrai vers vous dans les plus brefs délais.</p>
 
-    <form id="form-booking" data-email={emailContact}>
+    <form id="form-booking">
+      <input
+        type="text"
+        name="site"
+        class="piege"
+        tabindex="-1"
+        autocomplete="off"
+        aria-hidden="true"
+      />
+
       <label class="champ">
         <span>Entreprise / Institution / Structure *</span>
         <input type="text" name="entreprise" required />
@@ -90,50 +98,51 @@ const emailContact = "alexandrebrgr@gmail.com";
 </Layout>
 
 <script>
-  function labelPour(nom: string) {
-    const labels: Record<string, string> = {
-      entreprise: "Entreprise / Institution / Structure",
-      nom: "Nom",
-      prenom: "Prénom",
-      fonction: "Fonction / Service",
-      email: "Email",
-      telephone: "Téléphone",
-      type: "Type de projet",
-      duree: "Durée du tournage",
-      date: "Date de début souhaitée",
-      lieu: "Lieu",
-      budget: "Budget estimé",
-      description: "Description du projet",
-    };
-    return labels[nom] ?? nom;
-  }
-
   function initFormBooking() {
     const form = document.getElementById("form-booking") as HTMLFormElement | null;
     if (!form) return;
 
-    form.addEventListener("submit", (event) => {
+    const bouton = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const statut = form.querySelector<HTMLElement>(".statut");
+
+    function afficherStatut(message: string, succes: boolean) {
+      if (!statut) return;
+      statut.hidden = false;
+      statut.textContent = message;
+      statut.classList.toggle("statut-erreur", !succes);
+    }
+
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
-
-      const email = form.dataset.email;
-      const donnees = new FormData(form);
-      const entreprise = String(donnees.get("entreprise") ?? "");
-
-      const corps = Array.from(donnees.entries())
-        .filter(([, valeur]) => String(valeur).trim() !== "")
-        .map(([nom, valeur]) => `${labelPour(nom)} : ${valeur}`)
-        .join("\n");
-
-      const sujet = `Demande de tournage — ${entreprise}`;
-      const lien = `mailto:${email}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`;
-
-      const statut = form.querySelector<HTMLElement>(".statut");
-      if (statut) {
-        statut.hidden = false;
-        statut.textContent = "Votre messagerie va s'ouvrir avec la demande pré-remplie : il ne vous reste qu'à l'envoyer.";
+      if (bouton) {
+        bouton.disabled = true;
+        bouton.textContent = "Envoi en cours…";
       }
 
-      window.location.href = lien;
+      const donnees = Object.fromEntries(new FormData(form).entries());
+
+      try {
+        const reponse = await fetch("/api/booking", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(donnees),
+        });
+        const resultat = await reponse.json();
+
+        if (reponse.ok && resultat.ok) {
+          afficherStatut("Votre demande a bien été envoyée. Vous allez recevoir un email de confirmation, je reviens vers vous rapidement.", true);
+          form.reset();
+        } else {
+          afficherStatut(resultat.erreur || "Une erreur est survenue. Merci de réessayer.", false);
+        }
+      } catch {
+        afficherStatut("Une erreur est survenue. Vérifiez votre connexion et réessayez.", false);
+      } finally {
+        if (bouton) {
+          bouton.disabled = false;
+          bouton.textContent = "Envoyer la demande";
+        }
+      }
     });
   }
 
@@ -173,6 +182,12 @@ const emailContact = "alexandrebrgr@gmail.com";
   button[type="submit"]:hover { opacity:.85; }
 
   .statut { font-weight:300; font-size:.9rem; color:rgba(255,255,255,.6); margin:0; }
+  .statut-erreur { color:#e11d2e; }
+  .piege {
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+  button[type="submit"]:disabled { opacity:.5; cursor:not-allowed; }
 
   @media (max-width: 600px) {
     .ligne { grid-template-columns:1fr; }
