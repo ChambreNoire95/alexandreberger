@@ -25,21 +25,31 @@ const signatures = [
 </style>
 
 <script>
-  let timer: ReturnType<typeof setInterval> | undefined;
+  let timer: ReturnType<typeof setTimeout> | undefined;
 
   function setupSignature() {
     const phrases = document.querySelectorAll<HTMLElement>('#sig .phrase');
-    if (timer) clearInterval(timer);
+    if (timer) clearTimeout(timer);
     if (!phrases.length) return;
 
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (phrases.length > 1 && !reduce) {
       let i = 0;
-      timer = setInterval(() => {
-        phrases[i].style.opacity = '0';
-        i = (i + 1) % phrases.length;
-        phrases[i].style.opacity = '1';
-      }, 5000);
+      // Délai variable (3,5 à 6,5 s) et prochaine phrase tirée au sort (jamais
+      // la même deux fois de suite) : évite le cycle 1-2-3-4 trop prévisible.
+      const planifierSuivante = () => {
+        timer = setTimeout(() => {
+          phrases[i].style.opacity = '0';
+          let suivant = i;
+          while (suivant === i) {
+            suivant = Math.floor(Math.random() * phrases.length);
+          }
+          i = suivant;
+          phrases[i].style.opacity = '1';
+          planifierSuivante();
+        }, 3500 + Math.random() * 3000);
+      };
+      planifierSuivante();
     }
   }
 
