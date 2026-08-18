@@ -4,7 +4,7 @@ categorie: commandes
 role: Producteur / Réalisateur / Monteur
 client: Le Bon Marché Rive Gauche
 type: Making-of
-date: 2026-08-16
+date: 2020-01-10
 lieu: Tokyo
 ---
 À rédiger.
