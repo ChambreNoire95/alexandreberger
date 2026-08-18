@@ -15,6 +15,10 @@ const description = "Créations personnelles d'Alexandre Berger, réalisateur fr
 // N'affiche dans le filtre que les genres réellement utilisés par au moins un projet.
 const ORDRE_TYPES = ["Fiction", "Documentaire", "Clip", "Expérimental"];
 const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.genre === t));
+
+// Second filtre, indépendant du genre : le rôle tenu sur le projet.
+const ORDRE_ROLES = ["Réalisateur", "Producteur"];
+const rolesPresents = ORDRE_ROLES.filter((r) => projets.some((p) => p.data.role === r));
 ---
 
 <Layout title={titre} description={description} currentPath="/creations">
@@ -31,12 +35,21 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.genre
     </nav>
   )}
 
-  <ul id="creations" class:list={["creations", { "sans-filtres": typesPresents.length === 0 }]}>
+  {rolesPresents.length > 0 && (
+    <nav class="filtres filtres-role" id="filtres-role" aria-label="Filtrer par rôle">
+      <button type="button" data-role="all" aria-pressed="true">Tous</button>
+      {rolesPresents.map((r) => (
+        <button type="button" data-role={r} aria-pressed="false">{r}</button>
+      ))}
+    </nav>
+  )}
+
+  <ul id="creations" class:list={["creations", { "sans-filtres": typesPresents.length === 0 && rolesPresents.length === 0 }]}>
     {projets.map((p) => {
       const images = [p.data.image1, p.data.image2, p.data.image3].filter((img) => !!img);
       const meta = [p.data.annee, p.data.genre, p.data.duree].filter((v) => !!v).join(" · ");
       return (
-        <li class="creation" data-count={images.length} data-type={p.data.genre || ""}>
+        <li class="creation" data-count={images.length} data-type={p.data.genre || ""} data-role={p.data.role || ""}>
           {images.length > 0 && (
             <div class="creation-images">
               {images.map((img) => <img src={img} alt={p.data.titre} />)}
@@ -64,6 +77,12 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.genre
   }
   .filtres button:hover { color:#fff; border-color:rgba(255,255,255,.6); }
   .filtres button[aria-pressed="true"] { background:#fff; color:#0b0b0b; border-color:#fff; }
+  .filtres-role { margin-top:1rem; }
+  .filtres-role button {
+    border-radius:999px; color:rgba(225,29,46,.7); border-color:rgba(225,29,46,.45);
+  }
+  .filtres-role button:hover { color:#e11d2e; border-color:#e11d2e; }
+  .filtres-role button[aria-pressed="true"] { background:#e11d2e; color:#fff; border-color:#e11d2e; }
   .creations {
     list-style:none; margin:4.5rem 0 0; padding:0;
     display:flex; flex-direction:column; align-items:center;
@@ -102,9 +121,13 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.genre
 
 <script>
   function setupFiltres() {
-    const nav = document.getElementById('filtres');
+    const navGenre = document.getElementById('filtres');
+    const navRole = document.getElementById('filtres-role');
     const items = document.querySelectorAll<HTMLLIElement>('#creations li');
-    if (!nav || !items.length) return;
+    if ((!navGenre && !navRole) || !items.length) return;
+
+    let genre = 'all';
+    let role = 'all';
 
     function majPremierVisible() {
       items.forEach((li) => li.classList.remove('premier-visible'));
@@ -112,16 +135,29 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.genre
       if (premier) premier.classList.add('premier-visible');
     }
 
-    nav.addEventListener('click', (event) => {
-      const bouton = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-type]');
-      if (!bouton) return;
-      const type = bouton.dataset.type;
-
-      nav.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === bouton)));
+    function appliquerFiltres() {
       items.forEach((li) => {
-        li.hidden = type !== 'all' && li.dataset.type !== type;
+        const okGenre = genre === 'all' || li.dataset.type === genre;
+        const okRole = role === 'all' || li.dataset.role === role;
+        li.hidden = !(okGenre && okRole);
       });
       majPremierVisible();
+    }
+
+    navGenre?.addEventListener('click', (event) => {
+      const bouton = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-type]');
+      if (!bouton) return;
+      genre = bouton.dataset.type ?? 'all';
+      navGenre.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === bouton)));
+      appliquerFiltres();
+    });
+
+    navRole?.addEventListener('click', (event) => {
+      const bouton = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-role]');
+      if (!bouton) return;
+      role = bouton.dataset.role ?? 'all';
+      navRole.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === bouton)));
+      appliquerFiltres();
     });
 
     majPremierVisible();
