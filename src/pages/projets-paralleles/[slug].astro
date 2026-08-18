@@ -16,13 +16,20 @@ const { Content } = await render(bloc);
 
 const titre = `${bloc.data.titre} — Alexandre Berger, réalisateur`;
 const description = bloc.data.accroche ?? `${bloc.data.titre}. Un projet d'Alexandre Berger, réalisateur freelance en Île-de-France.`;
+
+// Si le lien renseigné dans le CMS n'a pas de protocole (ex. "bigstills.com"
+// au lieu de "https://bigstills.com"), le navigateur le traite comme un
+// chemin relatif à la page courante plutôt que comme une URL externe.
+const lienDecouvrir = bloc.data.lien && !/^[a-z][a-z0-9+.-]*:/i.test(bloc.data.lien)
+  ? `https://${bloc.data.lien}`
+  : bloc.data.lien;
 ---
 
 <Layout title={titre} description={description} currentPath="/projets-paralleles">
   <h1 class="titre-page">{bloc.data.titre}</h1>
 
-  {bloc.data.lien && (
-    <a class="bouton-decouvrir" href={bloc.data.lien} target="_blank" rel="noopener">Découvrir</a>
+  {lienDecouvrir && (
+    <a class="bouton-decouvrir" href={lienDecouvrir} target="_blank" rel="noopener">Découvrir</a>
   )}
 
   <article class="bloc-page">
