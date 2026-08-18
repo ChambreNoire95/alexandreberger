@@ -81,6 +81,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/correctifs-safari.css" />
     <ClientRouter />
   </head>
   <body>
@@ -208,11 +209,6 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   :root { --fond:#0b0b0b; }
   * { box-sizing:border-box; }
   html, body { margin:0; padding:0; }
-  html {
-    /* Sans ça, Safari iOS grossit automatiquement certains textes (le
-       copyright notamment) au passage en orientation paysage. */
-    -webkit-text-size-adjust:100%; text-size-adjust:100%;
-  }
   body {
     background: var(--fond); color:#fff;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
