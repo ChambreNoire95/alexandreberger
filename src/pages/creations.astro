@@ -22,6 +22,12 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.genre
 const ORDRE_ROLES = ["Réalisateur", "Producteur"];
 const rolesPresents = ORDRE_ROLES.filter((r) => projets.some((p) => p.data.role === r));
 const roleParDefaut = rolesPresents.includes("Réalisateur") ? "Réalisateur" : null;
+
+// Un genre reste cliquable seulement s'il existe au moins un projet de ce
+// genre pour le rôle actuellement sélectionné (par défaut : Réalisateur).
+function genreDisponible(genre: string) {
+  return projets.some((p) => p.data.genre === genre && (roleParDefaut === null || p.data.role === roleParDefaut));
+}
 ---
 
 <Layout title={titre} description={description} currentPath="/creations">
@@ -35,7 +41,7 @@ const roleParDefaut = rolesPresents.includes("Réalisateur") ? "Réalisateur" : 
         <nav class="filtres" id="filtres" aria-label="Filtrer par genre">
           <button type="button" data-type="all" aria-pressed="true">Tous</button>
           {typesPresents.map((t) => (
-            <button type="button" data-type={t} aria-pressed="false">{t}</button>
+            <button type="button" data-type={t} aria-pressed="false" disabled={genreDisponible(t) ? undefined : true}>{t}</button>
           ))}
         </nav>
       )}
@@ -86,8 +92,12 @@ const roleParDefaut = rolesPresents.includes("Réalisateur") ? "Réalisateur" : 
     border:1px solid rgba(255,255,255,.3); border-radius:2px; padding:.4rem .8rem;
     transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
   }
-  .filtres button:hover { color:#fff; border-color:rgba(255,255,255,.6); }
+  .filtres button:not(:disabled):hover { color:#fff; border-color:rgba(255,255,255,.6); }
   .filtres button[aria-pressed="true"] { background:#fff; color:#0b0b0b; border-color:#fff; }
+  .filtres button:disabled {
+    color:rgba(255,255,255,.2); border-color:rgba(255,255,255,.12);
+    cursor:not-allowed;
+  }
   @media (min-width: 801px) {
     /* Genre à gauche (aligné avec le contenu des projets), rôle à droite,
        sur la même ligne. En dessous de ce seuil, les deux restent
@@ -160,9 +170,31 @@ const roleParDefaut = rolesPresents.includes("Réalisateur") ? "Réalisateur" : 
       majPremierVisible();
     }
 
+    // Grise les boutons de genre sans aucun projet pour le rôle actuel. Si
+    // le genre sélectionné devient indisponible, on retombe sur "Tous"
+    // plutôt que de laisser un filtre actif qui ne matcherait plus rien.
+    function majDisponibiliteGenres() {
+      if (!navGenre) return;
+      let genreDevenuIndisponible = false;
+
+      navGenre.querySelectorAll<HTMLButtonElement>('button[data-type]').forEach((b) => {
+        if (b.dataset.type === 'all') return;
+        const disponible = [...items].some(
+          (li) => li.dataset.type === b.dataset.type && (role === null || li.dataset.role === role)
+        );
+        b.disabled = !disponible;
+        if (!disponible && b.dataset.type === genre) genreDevenuIndisponible = true;
+      });
+
+      if (genreDevenuIndisponible) {
+        genre = 'all';
+        navGenre.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.type === 'all')));
+      }
+    }
+
     navGenre?.addEventListener('click', (event) => {
       const bouton = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-type]');
-      if (!bouton) return;
+      if (!bouton || bouton.disabled) return;
       genre = bouton.dataset.type ?? 'all';
       navGenre.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === bouton)));
       appliquerFiltres();
@@ -173,6 +205,7 @@ const roleParDefaut = rolesPresents.includes("Réalisateur") ? "Réalisateur" : 
       if (!bouton) return;
       role = bouton.dataset.role ?? null;
       navRole.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === bouton)));
+      majDisponibiliteGenres();
       appliquerFiltres();
     });
 
