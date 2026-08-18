@@ -40,7 +40,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
           <a href={`/projets/${p.id}`}>
             <span class="accroche-titre">{p.data.titre}</span>
             {p.data.role && p.data.client ? (
-              <span class="accroche-meta">{p.data.role}<br class="saut-mobile" />pour {p.data.client}</span>
+              <span class="accroche-meta">{p.data.role} <br class="saut-mobile" />pour {p.data.client}</span>
             ) : (
               (p.data.role || p.data.client) && <span class="accroche-meta">{p.data.role || p.data.client}</span>
             )}
