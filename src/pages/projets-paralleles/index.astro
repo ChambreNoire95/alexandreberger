@@ -3,21 +3,21 @@ export const prerender = true;
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 
-const blocs = (await getCollection("autresProjets")).sort(
+const blocs = (await getCollection("projetsParalleles")).sort(
   (a, b) => (a.data.ordre ?? Infinity) - (b.data.ordre ?? Infinity)
 );
 
-const titre = "Autres Projets — Alexandre Berger, réalisateur";
-const description = "Autres projets d'Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.";
+const titre = "Projets Parallèles — Alexandre Berger, réalisateur";
+const description = "Projets parallèles d'Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.";
 ---
 
-<Layout title={titre} description={description} currentPath="/autres-projets">
-  <h1 class="titre-page">Autres Projets</h1>
+<Layout title={titre} description={description} currentPath="/projets-paralleles">
+  <h1 class="titre-page">Projets Parallèles</h1>
 
   <ul class="blocs">
     {blocs.map((b) => (
       <li>
-        <a href={`/autres-projets/${b.id}`} class="bloc">
+        <a href={`/projets-paralleles/${b.id}`} class="bloc">
           {b.data.couverture && <img src={b.data.couverture} alt={b.data.titre} />}
           <span class="bloc-titre">{b.data.titre}</span>
           {b.data.accroche && <span class="bloc-accroche">{b.data.accroche}</span>}
@@ -30,7 +30,7 @@ const description = "Autres projets d'Alexandre Berger, réalisateur freelance e
 <style>
   .blocs {
     list-style:none; margin:4.5rem 0 0; padding:0;
-    display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.5rem;
+    display:grid; grid-template-columns:1fr; gap:1.5rem;
     width:100%; max-width:910px;
   }
   .bloc {
@@ -39,7 +39,11 @@ const description = "Autres projets d'Alexandre Berger, réalisateur freelance e
     transition:border-color 140ms ease;
   }
   .bloc:hover { border-color:rgba(255,255,255,.4); }
-  .bloc img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; }
+  .bloc img { width:100%; aspect-ratio:3/4; object-fit:cover; display:block; }
   .bloc-titre { font-weight:700; font-size:1.1rem; color:#fff; padding:1.25rem 1.25rem .5rem; text-align:left; }
   .bloc-accroche { font-weight:300; font-size:.85rem; line-height:1.5; color:rgba(255,255,255,.6); padding:0 1.25rem 1.25rem; text-align:left; }
+
+  @media (min-width: 801px) {
+    .blocs { grid-template-columns:repeat(3, 1fr); }
+  }
 </style>
