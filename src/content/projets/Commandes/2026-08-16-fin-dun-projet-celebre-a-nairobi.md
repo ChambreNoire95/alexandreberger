@@ -1,6 +1,7 @@
 ---
 titre: Fin d'un projet célébré à Nairobi
 categorie: commandes
+role: Réalisateur / Monteur
 client: Agropolis Fondation
 type: Aftermovie
 date: 2024-10-01
