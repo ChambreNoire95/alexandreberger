@@ -18,7 +18,7 @@ const description = "Projets parallèles d'Alexandre Berger, réalisateur freela
     {blocs.map((b) => (
       <li>
         <a href={`/projets-paralleles/${b.id}`} class="bloc">
-          {b.data.couverture && <img src={b.data.couverture} alt={b.data.titre} />}
+          {b.data.couverture && <img src={b.data.couverture} alt={b.data.couvertureAlt || b.data.titre} />}
           <span class="bloc-titre">{b.data.titre}</span>
           {b.data.accroche && <span class="bloc-accroche">{b.data.accroche}</span>}
         </a>

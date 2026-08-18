@@ -34,7 +34,7 @@ const lienDecouvrir = bloc.data.lien && !/^[a-z][a-z0-9+.-]*:/i.test(bloc.data.l
 
   <article class="bloc-page">
     {bloc.data.couverture && (
-      <img class="couverture" src={bloc.data.couverture} alt={bloc.data.titre} />
+      <img class="couverture" src={bloc.data.couverture} alt={bloc.data.couvertureAlt || bloc.data.titre} />
     )}
     <div class="corps">
       <Content />

@@ -17,9 +17,13 @@ content:
       - { name: type, label: "Type de film", type: select, options: { values: ["Making-of", "Documentaire", "Aftermovie", "Brand Content", "RSE", "Fiction"] }, description: "Utilisé pour le filtre par catégorie sur la page Commandes." }
       - { name: date, label: Date, type: date, options: { format: "yyyy-MM-dd" }, description: "Détermine aussi l'ordre d'affichage sur la home (plus récente en premier)." }
       - { name: couverture, label: Couverture, type: image }
+      - { name: couvertureAlt, label: "Texte alternatif (couverture)", type: string, description: "Décrit l'image pour le SEO et l'accessibilité. Si vide, le titre du projet est utilisé à la place." }
       - { name: image1, label: "Photo 1", type: image, description: "Photos supplémentaires (optionnelles), affichées sur la fiche projet en plus de la couverture." }
+      - { name: image1Alt, label: "Texte alternatif (photo 1)", type: string }
       - { name: image2, label: "Photo 2", type: image }
+      - { name: image2Alt, label: "Texte alternatif (photo 2)", type: string }
       - { name: image3, label: "Photo 3", type: image }
+      - { name: image3Alt, label: "Texte alternatif (photo 3)", type: string }
       - { name: video, label: "Vidéo (URL)", type: string, description: "Lien YouTube, Vimeo ou autre plateforme d'embed (Vidéas...). Affichée sur la fiche projet." }
       - { name: lieu, label: "Lieu (pour la carte)", type: string, description: "Ex. Troyes, France, ou Île-de-France pour regrouper plusieurs projets sur un même point. Rempli = le projet apparaît sur la carte \"Autour du monde\" ; sa position est calculée automatiquement à partir de ce nom." }
       - { name: latitude, label: Latitude, type: number, options: { min: -90, max: 90 }, description: "Optionnel : ne remplir que pour forcer une position précise si la recherche automatique se trompe (doit être rempli avec Longitude)." }
@@ -40,10 +44,14 @@ content:
       - { name: role, label: "Rôle", type: select, options: { values: ["Réalisateur", "Producteur"] }, description: "Utilisé pour le second filtre (par rôle) sur la page Créations." }
       - { name: duree, label: Durée, type: string, description: "Ex. 12 min, 1h30. Affichée à côté de l'année." }
       - { name: couverture, label: Couverture, type: image }
+      - { name: couvertureAlt, label: "Texte alternatif (couverture)", type: string, description: "Décrit l'image pour le SEO et l'accessibilité. Si vide, le titre du projet est utilisé à la place." }
       - { name: description, label: Description, type: text, description: "Affichée sur la page Créations, sous les images." }
       - { name: image1, label: "Image 1", type: image }
+      - { name: image1Alt, label: "Texte alternatif (image 1)", type: string }
       - { name: image2, label: "Image 2", type: image }
+      - { name: image2Alt, label: "Texte alternatif (image 2)", type: string }
       - { name: image3, label: "Image 3", type: image }
+      - { name: image3Alt, label: "Texte alternatif (image 3)", type: string }
 
   - name: carnet
     label: Carnet
@@ -56,6 +64,7 @@ content:
       - { name: date, label: Date, type: date, required: true, options: { format: "yyyy-MM-dd" } }
       - { name: extrait, label: Extrait, type: text }
       - { name: couverture, label: Couverture, type: image }
+      - { name: couvertureAlt, label: "Texte alternatif (couverture)", type: string, description: "Décrit l'image pour le SEO et l'accessibilité. Si vide, le titre de l'entrée est utilisé à la place." }
       - { name: brouillon, label: Brouillon, type: boolean, default: false }
       - { name: body, label: Article, type: rich-text }
 
@@ -69,6 +78,7 @@ content:
       - { name: titre, label: Titre, type: string, required: true }
       - { name: accroche, label: "Accroche", type: text, description: "Résumé court affiché sur le bloc, dans la page Projets Parallèles." }
       - { name: couverture, label: Couverture, type: image }
+      - { name: couvertureAlt, label: "Texte alternatif (couverture)", type: string, description: "Décrit l'image pour le SEO et l'accessibilité. Si vide, le titre du bloc est utilisé à la place." }
       - { name: ordre, label: "Ordre d'affichage", type: number, description: "Les blocs les plus petits s'affichent en premier. Optionnel." }
       - { name: lien, label: "Lien du bouton Découvrir", type: string, description: "URL externe ou interne. Le bouton n'apparaît sur la page fille que si ce champ est rempli." }
       - { name: body, label: Contenu, type: rich-text }

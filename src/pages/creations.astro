@@ -60,14 +60,18 @@ function genreDisponible(genre: string) {
 
   <ul id="creations" class:list={["creations", { "sans-filtres": typesPresents.length === 0 && rolesPresents.length === 0 }]}>
     {projets.map((p) => {
-      const images = [p.data.image1, p.data.image2, p.data.image3].filter((img) => !!img);
+      const images = [
+        { src: p.data.image1, alt: p.data.image1Alt },
+        { src: p.data.image2, alt: p.data.image2Alt },
+        { src: p.data.image3, alt: p.data.image3Alt },
+      ].filter((img) => !!img.src);
       const meta = [p.data.annee, p.data.genre, p.data.duree].filter((v) => !!v).join(" · ");
       const cachePardefaut = roleParDefaut !== null && p.data.role !== roleParDefaut;
       return (
         <li class="creation" data-count={images.length} data-type={p.data.genre || ""} data-role={p.data.role || ""} hidden={cachePardefaut || undefined}>
           {images.length > 0 && (
             <div class="creation-images">
-              {images.map((img) => <img src={img} alt={p.data.titre} />)}
+              {images.map((img) => <img src={img.src} alt={img.alt || p.data.titre} />)}
             </div>
           )}
           <div class="creation-texte">

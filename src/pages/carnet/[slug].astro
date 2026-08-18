@@ -21,7 +21,7 @@ const description = entree.data.extrait ?? `${entree.data.titre}. Notes de tourn
 <Layout title={titre} description={description} currentPath="/carnet">
   <article class="entree">
     {entree.data.couverture && (
-      <img class="couverture" src={entree.data.couverture} alt={entree.data.titre} />
+      <img class="couverture" src={entree.data.couverture} alt={entree.data.couvertureAlt || entree.data.titre} />
     )}
     <p class="date">{entree.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}</p>
     <h1>{entree.data.titre}</h1>

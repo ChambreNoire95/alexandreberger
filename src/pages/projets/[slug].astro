@@ -22,7 +22,11 @@ const description = projet.data.description
   ? `${projet.data.titre}. ${projet.data.description}`
   : `${projet.data.titre}. Un projet réalisé par Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.`;
 
-const galerie = [projet.data.image1, projet.data.image2, projet.data.image3].filter((img) => !!img);
+const galerie = [
+  { src: projet.data.image1, alt: projet.data.image1Alt },
+  { src: projet.data.image2, alt: projet.data.image2Alt },
+  { src: projet.data.image3, alt: projet.data.image3Alt },
+].filter((img) => !!img.src);
 
 const roleLabel = projet.data.role ? "Rôle" : "Client";
 const roleValeur = projet.data.role && projet.data.client
@@ -57,7 +61,7 @@ function urlEmbed(url: string) {
 <Layout title={titre} description={description} currentPath={currentPath}>
   <article class="projet">
     {projet.data.couverture && (
-      <img class="couverture" src={projet.data.couverture} alt={projet.data.titre} />
+      <img class="couverture" src={projet.data.couverture} alt={projet.data.couvertureAlt || projet.data.titre} />
     )}
     <h1>{projet.data.titre}</h1>
     {(roleValeur || projet.data.date || projet.data.annee || projet.data.genre || projet.data.duree) && (
@@ -95,7 +99,7 @@ function urlEmbed(url: string) {
     </div>
     {galerie.length > 0 && (
       <div class="galerie" data-count={galerie.length}>
-        {galerie.map((img) => <img src={img} alt={projet.data.titre} />)}
+        {galerie.map((img) => <img src={img.src} alt={img.alt || projet.data.titre} />)}
       </div>
     )}
   </article>
