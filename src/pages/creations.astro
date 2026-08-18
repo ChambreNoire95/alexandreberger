@@ -17,8 +17,11 @@ const ORDRE_TYPES = ["Fiction", "Documentaire", "Clip", "Expérimental"];
 const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.genre === t));
 
 // Second filtre, indépendant du genre : le rôle tenu sur le projet.
+// Pas de "Tous" ici : par défaut on ne montre que les projets Réalisateur,
+// les projets Producteur n'apparaissent qu'au clic sur ce bouton.
 const ORDRE_ROLES = ["Réalisateur", "Producteur"];
 const rolesPresents = ORDRE_ROLES.filter((r) => projets.some((p) => p.data.role === r));
+const roleParDefaut = rolesPresents.includes("Réalisateur") ? "Réalisateur" : null;
 ---
 
 <Layout title={titre} description={description} currentPath="/creations">
@@ -26,30 +29,34 @@ const rolesPresents = ORDRE_ROLES.filter((r) => projets.some((p) => p.data.role 
 
   <h1 class="titre-page">Créations</h1>
 
-  {typesPresents.length > 0 && (
-    <nav class="filtres" id="filtres" aria-label="Filtrer par genre">
-      <button type="button" data-type="all" aria-pressed="true">Tous</button>
-      {typesPresents.map((t) => (
-        <button type="button" data-type={t} aria-pressed="false">{t}</button>
-      ))}
-    </nav>
-  )}
+  {(typesPresents.length > 0 || rolesPresents.length > 0) && (
+    <div class="filtres-ligne">
+      {typesPresents.length > 0 && (
+        <nav class="filtres" id="filtres" aria-label="Filtrer par genre">
+          <button type="button" data-type="all" aria-pressed="true">Tous</button>
+          {typesPresents.map((t) => (
+            <button type="button" data-type={t} aria-pressed="false">{t}</button>
+          ))}
+        </nav>
+      )}
 
-  {rolesPresents.length > 0 && (
-    <nav class="filtres filtres-role" id="filtres-role" aria-label="Filtrer par rôle">
-      <button type="button" data-role="all" aria-pressed="true">Tous</button>
-      {rolesPresents.map((r) => (
-        <button type="button" data-role={r} aria-pressed="false">{r}</button>
-      ))}
-    </nav>
+      {rolesPresents.length > 0 && (
+        <nav class="filtres filtres-role" id="filtres-role" aria-label="Filtrer par rôle">
+          {rolesPresents.map((r) => (
+            <button type="button" data-role={r} aria-pressed={r === roleParDefaut ? "true" : "false"}>{r}</button>
+          ))}
+        </nav>
+      )}
+    </div>
   )}
 
   <ul id="creations" class:list={["creations", { "sans-filtres": typesPresents.length === 0 && rolesPresents.length === 0 }]}>
     {projets.map((p) => {
       const images = [p.data.image1, p.data.image2, p.data.image3].filter((img) => !!img);
       const meta = [p.data.annee, p.data.genre, p.data.duree].filter((v) => !!v).join(" · ");
+      const cachePardefaut = roleParDefaut !== null && p.data.role !== roleParDefaut;
       return (
-        <li class="creation" data-count={images.length} data-type={p.data.genre || ""} data-role={p.data.role || ""}>
+        <li class="creation" data-count={images.length} data-type={p.data.genre || ""} data-role={p.data.role || ""} hidden={cachePardefaut || undefined}>
           {images.length > 0 && (
             <div class="creation-images">
               {images.map((img) => <img src={img} alt={p.data.titre} />)}
@@ -67,6 +74,10 @@ const rolesPresents = ORDRE_ROLES.filter((r) => projets.some((p) => p.data.role 
 </Layout>
 
 <style>
+  .filtres-ligne {
+    display:flex; flex-direction:column; align-items:center; gap:1rem;
+    width:100%;
+  }
   .filtres { display:flex; flex-wrap:wrap; justify-content:center; gap:.75rem; margin:0; }
   .filtres button {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
@@ -77,12 +88,14 @@ const rolesPresents = ORDRE_ROLES.filter((r) => projets.some((p) => p.data.role 
   }
   .filtres button:hover { color:#fff; border-color:rgba(255,255,255,.6); }
   .filtres button[aria-pressed="true"] { background:#fff; color:#0b0b0b; border-color:#fff; }
-  .filtres-role { margin-top:1rem; }
-  .filtres-role button {
-    border-radius:999px; color:rgba(225,29,46,.7); border-color:rgba(225,29,46,.45);
+  @media (min-width: 801px) {
+    /* Genre à gauche (aligné avec le contenu des projets), rôle à droite,
+       sur la même ligne. En dessous de ce seuil, les deux restent
+       empilées et centrées (cf. le mémo sur le périmètre desktop). */
+    .filtres-ligne { flex-direction:row; justify-content:space-between; max-width:910px; }
+    .filtres, .filtres-role { justify-content:flex-start; }
+    .filtres-role { justify-content:flex-end; }
   }
-  .filtres-role button:hover { color:#e11d2e; border-color:#e11d2e; }
-  .filtres-role button[aria-pressed="true"] { background:#e11d2e; color:#fff; border-color:#e11d2e; }
   .creations {
     list-style:none; margin:4.5rem 0 0; padding:0;
     display:flex; flex-direction:column; align-items:center;
@@ -126,8 +139,11 @@ const rolesPresents = ORDRE_ROLES.filter((r) => projets.some((p) => p.data.role 
     const items = document.querySelectorAll<HTMLLIElement>('#creations li');
     if ((!navGenre && !navRole) || !items.length) return;
 
-    let genre = 'all';
-    let role = 'all';
+    // L'état initial (genre "Tous", rôle par défaut) est déjà posé côté
+    // serveur via aria-pressed/hidden : on le relit ici plutôt que de le
+    // redéfinir en dur, pour rester cohérent au premier chargement.
+    let genre = navGenre?.querySelector('[aria-pressed="true"]')?.getAttribute('data-type') ?? 'all';
+    let role = navRole?.querySelector('[aria-pressed="true"]')?.getAttribute('data-role') ?? null;
 
     function majPremierVisible() {
       items.forEach((li) => li.classList.remove('premier-visible'));
@@ -138,7 +154,7 @@ const rolesPresents = ORDRE_ROLES.filter((r) => projets.some((p) => p.data.role 
     function appliquerFiltres() {
       items.forEach((li) => {
         const okGenre = genre === 'all' || li.dataset.type === genre;
-        const okRole = role === 'all' || li.dataset.role === role;
+        const okRole = role === null || li.dataset.role === role;
         li.hidden = !(okGenre && okRole);
       });
       majPremierVisible();
@@ -155,7 +171,7 @@ const rolesPresents = ORDRE_ROLES.filter((r) => projets.some((p) => p.data.role 
     navRole?.addEventListener('click', (event) => {
       const bouton = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-role]');
       if (!bouton) return;
-      role = bouton.dataset.role ?? 'all';
+      role = bouton.dataset.role ?? null;
       navRole.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === bouton)));
       appliquerFiltres();
     });
