@@ -2,6 +2,7 @@
 titre: Fin d'un projet célébré à Nairobi
 categorie: commandes
 client: Agropolis Fondation
-date: 2026-08-16
+type: Aftermovie
+date: 2024-10-01
 lieu: Nairobi
 ---
