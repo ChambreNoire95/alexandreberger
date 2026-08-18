@@ -2,6 +2,7 @@
 export const prerender = true;
 import Layout from "../layouts/Layout.astro";
 import Signature from "../components/Signature.astro";
+import TitreSwitch from "../components/TitreSwitch.astro";
 import { getCollection } from "astro:content";
 
 const projets = (await getCollection("projets", ({ data }) => data.categorie === "creations")).sort(
@@ -34,7 +35,7 @@ function genreDisponible(genre: string) {
 <Layout title={titre} description={description} currentPath="/creations">
   <Signature />
 
-  <h1 class="titre-page">Créations</h1>
+  <TitreSwitch actif="creations" />
 
   {(typesPresents.length > 0 || rolesPresents.length > 0) && (
     <div class="filtres-ligne">

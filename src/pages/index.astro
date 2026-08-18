@@ -2,6 +2,7 @@
 export const prerender = true;
 import Layout from "../layouts/Layout.astro";
 import Signature from "../components/Signature.astro";
+import TitreSwitch from "../components/TitreSwitch.astro";
 import { getCollection } from "astro:content";
 
 const projets = (await getCollection("projets", ({ data }) => data.categorie === "commandes")).sort(
@@ -21,7 +22,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   <p class="sr-only">Alexandre Berger, réalisateur freelance en Île-de-France — documentaire, fiction, film de marque</p>
   <Signature />
 
-  <h1 class="titre-page">Films de commande</h1>
+  <TitreSwitch actif="commandes" />
 
   {typesPresents.length > 0 && (
     <nav class="filtres" id="filtres" aria-label="Filtrer par type de film">

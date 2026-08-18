@@ -1,0 +1,41 @@
+---
+interface Props {
+  actif: "commandes" | "creations";
+}
+const { actif } = Astro.props;
+---
+
+<div class="titre-switch">
+  {actif === "commandes" ? (
+    <h1 class="titre-page">Films de commande</h1>
+  ) : (
+    <a href="/" class="titre-inactif">Films de commande</a>
+  )}
+  <span class="separateur" aria-hidden="true"></span>
+  {actif === "creations" ? (
+    <h1 class="titre-page">Créations</h1>
+  ) : (
+    <a href="/creations" class="titre-inactif">Créations</a>
+  )}
+</div>
+
+<style>
+  .titre-switch { display:flex; align-items:center; justify-content:center; gap:1rem; margin:0 0 3.5rem; }
+  .titre-switch :global(.titre-page) { margin:0; }
+
+  /* Desktop uniquement : sur mobile, seul le titre de la page active reste
+     affiché, comme avant (cf. le mémo sur le périmètre desktop). */
+  .separateur, .titre-inactif { display:none; }
+
+  @media (min-width: 801px) {
+    .separateur { display:block; width:1px; height:1.1em; background:rgba(255,255,255,.3); }
+    .titre-inactif {
+      display:inline-block;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size:1.3rem; letter-spacing:.22em; text-transform:uppercase;
+      color:rgba(255,255,255,.35); text-decoration:none; font-weight:400;
+      transition:color 140ms ease;
+    }
+    .titre-inactif:hover { color:rgba(255,255,255,.7); }
+  }
+</style>
