@@ -328,7 +328,10 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
        phrases qui tournent, et des marges auto centrent verticalement le
        groupe booking+menu dans cet espace, entre le logo et les phrases. */
     .topbar { display:flex; flex-direction:column; align-items:center; text-align:center; min-height:11rem; }
-    .menu-wrap { position:static; width:100%; justify-content:center; margin-top:auto; margin-bottom:auto; }
+    /* position:relative (et non static) : le menu déroulant s'ancre à ce
+       bloc plutôt qu'au topbar (devenu haut pour le centrage ci-dessus),
+       sinon il s'affiche beaucoup trop bas. */
+    .menu-wrap { position:relative; width:100%; justify-content:center; margin-top:auto; margin-bottom:auto; }
     main { padding-top:0; }
 
     .topbar .nom { font-size:1.3rem; }
@@ -343,5 +346,12 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
        s'enroule naturellement selon la largeur de l'écran. */
     .refs-desktop { display:none; }
     .refs-mobile { display:block; }
+  }
+
+  @media (orientation: landscape) and (max-height: 500px) {
+    /* Téléphone tenu à l'horizontale (hauteur d'écran réduite) : l'espace
+       avant le trait du footer, hérité du padding-bottom de main, est
+       divisé par 2. */
+    main { padding-bottom:1rem; }
   }
 </style>
