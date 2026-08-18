@@ -3,6 +3,7 @@ titre: Hiroshima, the next days
 categorie: creations
 annee: 2013
 genre: Expérimental
+role: Réalisateur
 duree: 6 min
 description: |-
   Film expérimental réalisé sur la base d'images d'archives. 
