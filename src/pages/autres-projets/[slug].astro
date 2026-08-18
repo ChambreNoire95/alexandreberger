@@ -1,0 +1,40 @@
+---
+export const prerender = true;
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+  const blocs = await getCollection("autresProjets");
+  return blocs.map((b) => ({
+    params: { slug: b.id },
+    props: { bloc: b },
+  }));
+}
+
+const { bloc } = Astro.props;
+const { Content } = await render(bloc);
+
+const titre = `${bloc.data.titre} — Alexandre Berger, réalisateur`;
+const description = bloc.data.accroche ?? `${bloc.data.titre}. Un projet d'Alexandre Berger, réalisateur freelance en Île-de-France.`;
+---
+
+<Layout title={titre} description={description} currentPath="/autres-projets">
+  <article class="bloc-page">
+    {bloc.data.couverture && (
+      <img class="couverture" src={bloc.data.couverture} alt={bloc.data.titre} />
+    )}
+    <h1>{bloc.data.titre}</h1>
+    <div class="corps">
+      <Content />
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .bloc-page { text-align:left; width:100%; max-width:700px; margin-top:3.5rem; }
+  .couverture { width:100%; height:auto; border-radius:2px; margin-bottom:2rem; }
+  .bloc-page h1 { font-weight:300; font-size:clamp(1.6rem, 3vw, 2.4rem); margin:0 0 1.5rem; color:#fff; }
+  .corps { font-weight:300; font-size:1rem; line-height:1.7; color:rgba(255,255,255,.8); }
+  .corps :global(p) { margin:0 0 1.25rem; }
+  .corps :global(img) { max-width:100%; height:auto; border-radius:2px; margin:1.5rem 0; }
+</style>

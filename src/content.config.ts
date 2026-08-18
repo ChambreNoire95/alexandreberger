@@ -52,4 +52,18 @@ const carnet = defineCollection({
     }),
 });
 
-export const collections = { projets, carnet };
+// Les blocs de la page sommaire "Autres Projets" : chacun mène à sa propre
+// page fille (même principe que le Carnet). Nouveau bloc = nouvelle entrée
+// dans le CMS, sans toucher au code.
+const autresProjets = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/autres-projets" }),
+  schema: () =>
+    z.object({
+      titre: z.string(),
+      accroche: z.string().optional(),
+      couverture: z.string().optional(),
+      ordre: z.number().optional(),
+    }),
+});
+
+export const collections = { projets, carnet, autresProjets };
