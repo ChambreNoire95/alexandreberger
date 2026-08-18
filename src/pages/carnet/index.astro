@@ -11,7 +11,7 @@ const description = "Le carnet d'Alexandre Berger, réalisateur freelance en Îl
 ---
 
 <Layout title={titre} description={description} currentPath="/carnet">
-  <h1 class="sr-only">Carnet — Alexandre Berger, réalisateur</h1>
+  <h1 class="titre-page">Carnet</h1>
   <ul class="entrees">
     {entrees.map((e) => (
       <li>
@@ -26,7 +26,7 @@ const description = "Le carnet d'Alexandre Berger, réalisateur freelance en Îl
 </Layout>
 
 <style>
-  .entrees { list-style:none; margin:3.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:2.4rem; width:100%; max-width:640px; }
+  .entrees { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; align-items:center; gap:2.4rem; width:100%; max-width:640px; }
   .entrees a { text-decoration:none; display:flex; flex-direction:column; gap:.4rem; transition:opacity 140ms ease; }
   .entrees a:hover { opacity:.7; }
   .entree-titre { font-weight:300; font-size:clamp(1.3rem, 2.2vw, 1.7rem); color:#fff; }

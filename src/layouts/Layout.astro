@@ -208,6 +208,11 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   :root { --fond:#0b0b0b; }
   * { box-sizing:border-box; }
   html, body { margin:0; padding:0; }
+  html {
+    /* Sans ça, Safari iOS grossit automatiquement certains textes (le
+       copyright notamment) au passage en orientation paysage. */
+    -webkit-text-size-adjust:100%; text-size-adjust:100%;
+  }
   body {
     background: var(--fond); color:#fff;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -272,7 +277,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   .onglets-header a:hover { color:#fff; }
   .onglets-header a[aria-current="page"] { color:#fff; text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
   .onglet-mobile { display:none; }
-  main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:7rem 0 4rem; }
+  main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:7rem 0 2rem; }
   .titre-page {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
     font-size:1.3rem; letter-spacing:.22em; text-transform:uppercase;
