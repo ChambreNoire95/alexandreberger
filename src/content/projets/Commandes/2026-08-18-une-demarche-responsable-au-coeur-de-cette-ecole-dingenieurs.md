@@ -1,5 +1,5 @@
 ---
-titre: Une démarche responsable au coeur de cette école d'ingénieurs
+titre: Une démarche responsable au cœur de cette école d'ingénieurs
 categorie: commandes
 role: Réalisateur / Monteur
 client: Polytech montpellier
