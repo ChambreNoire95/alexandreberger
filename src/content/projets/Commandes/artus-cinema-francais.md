@@ -1,5 +1,5 @@
 ---
-titre: Comment Artus a marqué le cinéma français
+titre: Artus a marqué le cinéma français à jamais
 categorie: commandes
 role: Réalisateur
 client: Cine Nomine / Pan Distribution
