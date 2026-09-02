@@ -42,6 +42,11 @@ const projets = defineCollection({
       image2Alt: z.string().optional(),
       image3: z.string().optional(),
       image3Alt: z.string().optional(),
+      carrousel: z.boolean().optional(),
+      ordreCarrousel: z.number().optional(),
+      carrouselTitre: z.string().optional(),
+      carrouselImage: z.string().optional(),
+      carrouselImageAlt: z.string().optional(),
     }),
 });
 

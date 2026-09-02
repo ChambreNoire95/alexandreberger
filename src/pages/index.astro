@@ -3,12 +3,25 @@ export const prerender = true;
 import Layout from "../layouts/Layout.astro";
 import Signature from "../components/Signature.astro";
 import TitreSwitch from "../components/TitreSwitch.astro";
+import CarrouselHome from "../components/CarrouselHome.astro";
 import { getCollection } from "astro:content";
 
 const projets = (await getCollection("projets", ({ data }) => data.categorie === "commandes")).sort(
   // Plus récente en premier, plus ancienne en bas (comme sur Créations).
   (a, b) => (b.data.date?.valueOf() ?? -Infinity) - (a.data.date?.valueOf() ?? -Infinity)
 );
+
+const projetsCarrousel = (await getCollection(
+  "projets",
+  ({ data }) => !!data.carrousel && !!(data.carrouselImage || data.couverture)
+)).sort((a, b) => (a.data.ordreCarrousel ?? Infinity) - (b.data.ordreCarrousel ?? Infinity));
+const itemsCarrousel = projetsCarrousel.map((p) => ({
+  href: `/projets/${p.id}`,
+  src: (p.data.carrouselImage || p.data.couverture) as string,
+  alt: p.data.carrouselImageAlt || p.data.couvertureAlt || p.data.titre,
+  titre: p.data.carrouselTitre || p.data.titre,
+  label: p.data.type || p.data.genre || null,
+}));
 
 const titre = "Alexandre Berger — Réalisateur documentaire, fiction & film de marque";
 const description = "Alexandre Berger, réalisateur freelance en Île-de-France. Je fabrique des films — documentaire, fiction et film de marque, souvent dans des contextes hors du commun.";
@@ -20,7 +33,10 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 
 <Layout title={titre} description={description} currentPath="/">
   <p class="sr-only">Alexandre Berger, réalisateur freelance en Île-de-France — documentaire, fiction, film de marque</p>
+
   <Signature />
+
+  <CarrouselHome items={itemsCarrousel} />
 
   <TitreSwitch actif="commandes" />
 

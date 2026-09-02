@@ -6,6 +6,8 @@ genre: Clip
 role: Réalisateur
 duree: 4min43
 couverture: /uploads/BlackHole_Clip_1.jpg
+carrousel: true
+ordreCarrousel: 3
 image1: /uploads/BlackHole_Clip_1.jpg
 image2: /uploads/BlackHole_Clip_2.jpg
 image3: /uploads/BlackHole_Clip_3.jpg

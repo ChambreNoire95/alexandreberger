@@ -3,6 +3,7 @@ export const prerender = true;
 import Layout from "../layouts/Layout.astro";
 import Signature from "../components/Signature.astro";
 import TitreSwitch from "../components/TitreSwitch.astro";
+import CarrouselHome from "../components/CarrouselHome.astro";
 import { getCollection } from "astro:content";
 
 const projets = (await getCollection("projets", ({ data }) => data.categorie === "creations")).sort(
@@ -10,6 +11,21 @@ const projets = (await getCollection("projets", ({ data }) => data.categorie ===
   // renseignée passent en dernier plutôt que de perturber le classement.
   (a, b) => (b.data.annee ?? -Infinity) - (a.data.annee ?? -Infinity)
 );
+
+// Même carrousel que la home (tous projets confondus) : il reste identique
+// d'une page à l'autre pour préserver l'effet "one page" au switch
+// Commandes/Créations.
+const projetsCarrousel = (await getCollection(
+  "projets",
+  ({ data }) => !!data.carrousel && !!(data.carrouselImage || data.couverture)
+)).sort((a, b) => (a.data.ordreCarrousel ?? Infinity) - (b.data.ordreCarrousel ?? Infinity));
+const itemsCarrousel = projetsCarrousel.map((p) => ({
+  href: `/projets/${p.id}`,
+  src: (p.data.carrouselImage || p.data.couverture) as string,
+  alt: p.data.carrouselImageAlt || p.data.couvertureAlt || p.data.titre,
+  titre: p.data.carrouselTitre || p.data.titre,
+  label: p.data.type || p.data.genre || null,
+}));
 
 const titre = "Créations — Alexandre Berger, réalisateur";
 const description = "Créations personnelles d'Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.";
@@ -34,6 +50,8 @@ function genreDisponible(genre: string) {
 
 <Layout title={titre} description={description} currentPath="/creations">
   <Signature />
+
+  <CarrouselHome items={itemsCarrousel} />
 
   <TitreSwitch actif="creations" />
 

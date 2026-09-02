@@ -6,5 +6,7 @@ client: Le Bon Marché Rive Gauche
 type: Making-of
 date: 2018-04-08
 couverture: /uploads/Mosaert_Fabrique.jpg
+carrousel: true
+ordreCarrousel: 2
 ---
 Stromae crée une usine fantastique au coeur du Grand magasin.
