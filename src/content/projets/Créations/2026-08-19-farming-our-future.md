@@ -4,5 +4,5 @@ categorie: creations
 annee: 2019
 genre: Documentaire
 role: Réalisateur
-duree: "12"
+duree: 12min
 ---
