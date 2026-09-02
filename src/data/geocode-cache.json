@@ -42,5 +42,13 @@
   "ile de france": {
     "lat": 48.6443057,
     "lng": 2.7537863
+  },
+  "johannesburg": {
+    "lat": -26.205,
+    "lng": 28.049722
+  },
+  "aix-en-provence": {
+    "lat": 43.5298424,
+    "lng": 5.4474738
   }
 }
