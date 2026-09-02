@@ -65,7 +65,10 @@ function genreDisponible(genre: string) {
         { src: p.data.image2, alt: p.data.image2Alt },
         { src: p.data.image3, alt: p.data.image3Alt },
       ].filter((img) => !!img.src);
-      const meta = [p.data.annee, p.data.genre, p.data.duree].filter((v) => !!v).join(" · ");
+      const annee = p.data.annee
+        ? (p.data.anneeFin && p.data.anneeFin !== p.data.annee ? `${p.data.annee}/${p.data.anneeFin}` : String(p.data.annee))
+        : null;
+      const meta = [annee, p.data.genre, p.data.duree].filter((v) => !!v).join(" · ");
       const cachePardefaut = roleParDefaut !== null && p.data.role !== roleParDefaut;
       return (
         <li class="creation" data-count={images.length} data-type={p.data.genre || ""} data-role={p.data.role || ""} hidden={cachePardefaut || undefined}>

@@ -28,6 +28,12 @@ const galerie = [
   { src: projet.data.image3, alt: projet.data.image3Alt },
 ].filter((img) => !!img.src);
 
+const anneeAffichee = projet.data.annee
+  ? (projet.data.anneeFin && projet.data.anneeFin !== projet.data.annee
+      ? `${projet.data.annee}/${projet.data.anneeFin}`
+      : String(projet.data.annee))
+  : null;
+
 const roleLabel = projet.data.role ? "Rôle" : "Client";
 const roleValeur = projet.data.role && projet.data.client
   ? `${projet.data.role} pour ${projet.data.client}`
@@ -72,8 +78,8 @@ function urlEmbed(url: string) {
         {projet.data.date && (
           <div><dt>Date</dt><dd>{projet.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long" })}</dd></div>
         )}
-        {!projet.data.date && projet.data.annee && (
-          <div><dt>Année</dt><dd>{projet.data.annee}</dd></div>
+        {!projet.data.date && anneeAffichee && (
+          <div><dt>Année</dt><dd>{anneeAffichee}</dd></div>
         )}
         {projet.data.genre && (
           <div><dt>Genre</dt><dd>{projet.data.genre}</dd></div>

@@ -39,7 +39,8 @@ content:
     fields:
       - { name: titre, label: Accroche, type: string, required: true }
       - { name: categorie, type: string, hidden: true, default: creations }
-      - { name: annee, label: Année, type: number, options: { min: 1980, max: 2100 }, description: "Détermine aussi l'ordre d'affichage sur la page Créations (plus récente en premier)." }
+      - { name: annee, label: "Année (début)", type: number, options: { min: 1980, max: 2100 }, description: "Détermine aussi l'ordre d'affichage sur la page Créations (plus récente en premier)." }
+      - { name: anneeFin, label: "Année de fin (optionnel)", type: number, options: { min: 1980, max: 2100 }, description: "À renseigner uniquement si le projet s'est déroulé sur plusieurs années : affiche par exemple 2020/2021." }
       - { name: genre, label: Genre, type: select, options: { values: ["Fiction", "Documentaire", "Clip", "Expérimental"] }, description: "Affiché à côté de l'année. Utilisé pour le filtre par catégorie sur la page Créations." }
       - { name: role, label: "Rôle", type: select, options: { values: ["Réalisateur", "Producteur"] }, description: "Utilisé pour le second filtre (par rôle) sur la page Créations." }
       - { name: duree, label: Durée, type: string, description: "Ex. 12 min, 1h30. Affichée à côté de l'année." }
