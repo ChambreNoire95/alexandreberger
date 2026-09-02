@@ -10,9 +10,53 @@ const description = "Alexandre Berger, réalisateur freelance en Île-de-France 
   <h1 class="titre-page">À propos</h1>
   <div class="contenu">
     <p>Réalisateur basé en Île-de-France, je navigue entre documentaire, film de marque et récit institutionnel, du brief à la livraison : écriture, production, réalisation, montage. Ce travail m'a amené à tourner en France, en Europe, en Afrique australe et au Japon, seul ou au sein d'équipes de production plus importantes.</p>
+
+    <h2 class="sous-titre">Récompenses et Sélections</h2>
+    <ul class="prix">
+      <li>
+        <p class="prix-titre">Grand Prix Stratégies de l'innovation Média 2023</p>
+        <p class="prix-detail">Meilleur dispositif de Communication, Meilleur événement, Opération Spéciale, Influence — Or</p>
+        <p class="prix-film">StudyCase Parallèles pour Disney+</p>
+      </li>
+      <li>
+        <p class="prix-titre">Festival Caméras des Champs 2019</p>
+        <p class="prix-detail">3ème Prix du Jury & Prix des Beaux Villages Lorrains</p>
+        <p class="prix-film">Le Pays Aux Pieds d'Argile</p>
+      </li>
+      <li>
+        <p class="prix-titre">48h Film Project Paris 2017</p>
+        <p class="prix-detail">Prix du 2ème Meilleur Film</p>
+        <p class="prix-film">Organe Anonyme</p>
+      </li>
+      <li>
+        <p class="prix-titre">Challenge Sony / Le Repaire 2013</p>
+        <p class="prix-detail">Lauréat</p>
+        <p class="prix-film">Club</p>
+      </li>
+      <li>
+        <p class="prix-titre">Mobile Film Festival 2013</p>
+        <p class="prix-detail">Finaliste</p>
+        <p class="prix-film">Contre La Montre</p>
+      </li>
+      <li>
+        <p class="prix-titre">Nikon Film Festival 2011</p>
+        <p class="prix-detail">Finaliste</p>
+        <p class="prix-film">Le Choix</p>
+      </li>
+    </ul>
   </div>
 </Layout>
 
 <style>
   .contenu { text-align:left; width:100%; max-width:640px; margin-top:0; font-weight:300; font-size:1.1rem; color:rgba(255,255,255,.72); }
+  .sous-titre {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:.75rem; letter-spacing:.15em; text-transform:uppercase;
+    color:rgba(255,255,255,.45); font-weight:400;
+    margin:3rem 0 1.25rem;
+  }
+  .prix { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1.25rem; }
+  .prix-titre { font-weight:700; font-size:1rem; color:#fff; margin:0 0 .3rem; }
+  .prix-detail { font-weight:300; font-size:.9rem; line-height:1.5; color:rgba(255,255,255,.6); margin:0; }
+  .prix-film { font-weight:300; font-style:italic; font-size:.85rem; color:rgba(255,255,255,.45); margin:.3rem 0 0; }
 </style>
