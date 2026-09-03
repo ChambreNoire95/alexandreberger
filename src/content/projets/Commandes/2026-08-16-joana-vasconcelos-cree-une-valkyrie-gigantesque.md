@@ -6,6 +6,7 @@ client: Le Bon Marché Rive Gauche
 type: Making-of
 date: 2019-01-10
 carrousel: true
+ordreCarrousel: 1
 carrouselTitre: LA VALKYRIE DE JOANA VASCONCELOS
 carrouselImage: /uploads/JOANA.jpg
 lieu: Lisbonne
