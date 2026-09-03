@@ -7,7 +7,7 @@ type: Making-of
 date: 2018-04-08
 couverture: /uploads/Mosaert_Fabrique.jpg
 carrousel: true
-ordreCarrousel: 2
+ordreCarrousel: 3
 carrouselTitre: L'USINE FANTASTIQUE DE STROMAE
 carrouselImage: /uploads/MOSAERT.jpg
 ---
