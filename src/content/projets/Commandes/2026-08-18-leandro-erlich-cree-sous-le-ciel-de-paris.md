@@ -5,5 +5,8 @@ role: Producteur / Réalisateur / Monteur
 client: Le Bon Marché Rive Gauche
 type: Making-of
 date: 2018-01-10
+couverture: /uploads/LEANDRO.avif
+carrousel: true
+carrouselTitre: LE CIEL DE LEANDRO ERLICH
 lieu: Ile de France
 ---
