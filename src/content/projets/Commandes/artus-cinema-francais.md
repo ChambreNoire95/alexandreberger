@@ -8,7 +8,7 @@ date: 2024-06-01
 couverture: /uploads/UPTE_visuel_site.jpg
 carrousel: true
 ordreCarrousel: 1
-carrouselTitre: EN PLUS
+carrouselTitre: UN P'TIT TRUC EN PLUS
 carrouselImage: /uploads/UPTE_visuel_site_3.jpg
 image1: /uploads/UPTE_visuel_site_2.jpg
 image2: /uploads/UPTE_visuel_site_6.jpg
