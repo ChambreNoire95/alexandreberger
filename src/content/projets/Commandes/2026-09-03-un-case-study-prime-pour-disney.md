@@ -6,6 +6,6 @@ client: DISNEY+
 type: Brand Content
 date: 2023-03-01
 couverture: /uploads/PARALLELES.jpg
-carrousel: true
+carrousel: false
 carrouselTitre: UN BOT POUR PARALLÈLES
 ---
