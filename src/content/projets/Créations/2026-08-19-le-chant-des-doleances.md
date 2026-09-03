@@ -5,7 +5,7 @@ annee: 2026
 genre: Clip
 role: Réalisateur
 duree: 6min31
-carrousel: true
+carrousel: false
 ordreCarrousel: 8
 carrouselImage: /uploads/Doleances_Clip_1.jpg
 image1: /uploads/Doleances_Clip_1.jpg
