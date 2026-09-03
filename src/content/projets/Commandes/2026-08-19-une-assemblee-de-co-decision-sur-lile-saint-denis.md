@@ -6,6 +6,7 @@ client: Les Cahiers Pour Décider et Agir
 type: Documentaire
 date: 2026-03-01
 couverture: /uploads/REGLES_DU_JEU.jpg
+couvertureAlt: Un moment d'exercice lors d'une assemblée de co-décision sur l'Île-Saint-Denis
 carrousel: false
 video: https://youtu.be/tV1Fd-UJdqU?si=gTCNzgqx-DDJ-EhD
 lieu: Ile de France
