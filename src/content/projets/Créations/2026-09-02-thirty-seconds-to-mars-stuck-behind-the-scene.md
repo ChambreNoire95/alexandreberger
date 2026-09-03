@@ -7,5 +7,5 @@ role: Réalisateur
 duree: 11 min
 couverture: /uploads/JARED.jpg
 carrousel: true
-carrouselImageAlt: STUCK
+carrouselTitre: STUCK
 ---
