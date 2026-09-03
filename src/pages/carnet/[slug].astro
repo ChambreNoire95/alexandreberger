@@ -16,9 +16,23 @@ const { Content } = await render(entree);
 
 const titre = `${entree.data.titre} — Carnet, Alexandre Berger`;
 const description = entree.data.extrait ?? `${entree.data.titre}. Notes de tournage et réflexions d'Alexandre Berger, réalisateur freelance en Île-de-France.`;
+
+const urlAbsolue = new URL(Astro.url.pathname, Astro.site).toString();
+const imageAbsolue = entree.data.couverture ? new URL(entree.data.couverture, Astro.site).toString() : undefined;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: entree.data.titre,
+  description,
+  url: urlAbsolue,
+  ...(imageAbsolue && { image: imageAbsolue }),
+  datePublished: entree.data.date.toISOString(),
+  author: { "@type": "Person", name: "Alexandre Berger" },
+};
 ---
 
-<Layout title={titre} description={description} currentPath="/carnet">
+<Layout title={titre} description={description} currentPath="/carnet" jsonLd={jsonLd}>
   <article class="entree">
     {entree.data.couverture && (
       <img class="couverture" src={entree.data.couverture} alt={entree.data.couvertureAlt || entree.data.titre} />

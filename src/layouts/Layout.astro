@@ -6,9 +6,23 @@ interface Props {
   title: string;
   description: string;
   currentPath: string;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-const { title, description, currentPath } = Astro.props;
+const { title, description, currentPath, jsonLd } = Astro.props;
+
+// Fiche d'identité affichée sur toutes les pages (données structurées
+// schema.org), en plus du JSON-LD spécifique à chaque contenu passé via
+// la prop jsonLd.
+const personneJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Alexandre Berger",
+  jobTitle: "Réalisateur",
+  description: "Réalisateur freelance basé en Île-de-France : documentaire, fiction et film de marque.",
+  url: Astro.site?.toString(),
+};
+const blocsJsonLd = [personneJsonLd, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [])];
 
 const clients = [
   "Bon Marché Rive Gauche", "Petit Bateau", "Univers Sel", "Synology", "Université Paris Nanterre",
@@ -82,6 +96,9 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/correctifs-safari.css" />
+    {blocsJsonLd.map((bloc) => (
+      <script type="application/ld+json" set:html={JSON.stringify(bloc)} />
+    ))}
     <ClientRouter />
   </head>
   <body>

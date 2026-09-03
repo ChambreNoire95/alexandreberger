@@ -23,9 +23,22 @@ const description = bloc.data.accroche ?? `${bloc.data.titre}. Un projet d'Alexa
 const lienDecouvrir = bloc.data.lien && !/^[a-z][a-z0-9+.-]*:/i.test(bloc.data.lien)
   ? `https://${bloc.data.lien}`
   : bloc.data.lien;
+
+const urlAbsolue = new URL(Astro.url.pathname, Astro.site).toString();
+const imageAbsolue = bloc.data.couverture ? new URL(bloc.data.couverture, Astro.site).toString() : undefined;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  name: bloc.data.titre,
+  description,
+  url: urlAbsolue,
+  ...(imageAbsolue && { image: imageAbsolue }),
+  creator: { "@type": "Person", name: "Alexandre Berger" },
+};
 ---
 
-<Layout title={titre} description={description} currentPath="/projets-satellites">
+<Layout title={titre} description={description} currentPath="/projets-satellites" jsonLd={jsonLd}>
   <h1 class="titre-page">{bloc.data.titre}</h1>
 
   {lienDecouvrir && (

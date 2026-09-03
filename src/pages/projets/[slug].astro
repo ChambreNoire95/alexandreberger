@@ -63,9 +63,32 @@ function urlEmbed(url: string) {
     return url;
   }
 }
+
+const urlAbsolue = new URL(Astro.url.pathname, Astro.site).toString();
+const imageAbsolue = projet.data.couverture ? new URL(projet.data.couverture, Astro.site).toString() : undefined;
+const dateIso = projet.data.date ? projet.data.date.toISOString() : undefined;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": projet.data.video ? "VideoObject" : "CreativeWork",
+  name: projet.data.titre,
+  description: projet.data.description || description,
+  url: urlAbsolue,
+  ...(imageAbsolue && { image: imageAbsolue, thumbnailUrl: imageAbsolue }),
+  ...(projet.data.video && { embedUrl: urlEmbed(projet.data.video) }),
+  ...(dateIso && { datePublished: dateIso, uploadDate: dateIso }),
+  ...(!dateIso && projet.data.annee && { datePublished: String(projet.data.annee) }),
+  ...((projet.data.genre || projet.data.type) && { genre: projet.data.genre || projet.data.type }),
+  creator: {
+    "@type": "Person",
+    name: "Alexandre Berger",
+    ...(projet.data.role && { jobTitle: projet.data.role }),
+  },
+  ...(projet.data.client && { sponsor: { "@type": "Organization", name: projet.data.client } }),
+};
 ---
 
-<Layout title={titre} description={description} currentPath={currentPath}>
+<Layout title={titre} description={description} currentPath={currentPath} jsonLd={jsonLd}>
   <article class="projet">
     <a class="lien-retour" href={currentPath}>← {labelRetour}</a>
     {projet.data.couverture && (
