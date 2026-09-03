@@ -4,7 +4,7 @@ import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
-  const blocs = await getCollection("projetsParalleles");
+  const blocs = await getCollection("projetsSatellites");
   return blocs.map((b) => ({
     params: { slug: b.id },
     props: { bloc: b },
@@ -25,7 +25,7 @@ const lienDecouvrir = bloc.data.lien && !/^[a-z][a-z0-9+.-]*:/i.test(bloc.data.l
   : bloc.data.lien;
 ---
 
-<Layout title={titre} description={description} currentPath="/projets-paralleles">
+<Layout title={titre} description={description} currentPath="/projets-satellites">
   <h1 class="titre-page">{bloc.data.titre}</h1>
 
   {lienDecouvrir && (

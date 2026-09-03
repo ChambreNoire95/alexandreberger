@@ -79,10 +79,10 @@ content:
       - { name: brouillon, label: Brouillon, type: boolean, default: false }
       - { name: body, label: Article, type: rich-text }
 
-  - name: projets-paralleles
+  - name: projets-satellites
     label: "Projets Satellites"
     type: collection
-    path: src/content/projets-paralleles
+    path: src/content/projets-satellites
     view:
       fields: [titre, ordre]
     fields:

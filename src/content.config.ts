@@ -66,8 +66,8 @@ const carnet = defineCollection({
 // Les blocs de la page sommaire "Projets Satellites" : chacun mène à sa
 // propre page fille (même principe que le Carnet). Nouveau bloc = nouvelle
 // entrée dans le CMS, sans toucher au code.
-const projetsParalleles = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/projets-paralleles" }),
+const projetsSatellites = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/projets-satellites" }),
   schema: () =>
     z.object({
       titre: z.string(),
@@ -79,4 +79,4 @@ const projetsParalleles = defineCollection({
     }),
 });
 
-export const collections = { projets, carnet, projetsParalleles };
+export const collections = { projets, carnet, projetsSatellites };
