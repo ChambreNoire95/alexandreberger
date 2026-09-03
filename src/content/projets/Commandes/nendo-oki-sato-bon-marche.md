@@ -7,6 +7,7 @@ type: Making-of
 date: 2020-01-10
 couverture: /uploads/Oki-Sato.jpg
 carrousel: true
+ordreCarrousel: 6
 carrouselTitre: OKI SATO HORS NORMES
 lieu: Tokyo
 ---
