@@ -9,11 +9,62 @@ const description = "Mentions légales du site d'Alexandre Berger, réalisateur 
 <Layout title={titre} description={description} currentPath="/mentions-legales">
   <div class="contenu">
     <h1>Mentions légales</h1>
-    <p>À rédiger.</p>
+
+    <h2 class="sous-titre">Éditeur du site</h2>
+    <p>
+      Le site alexandreberger.com est édité par Alexandre Berger, entreprise individuelle.<br />
+      SIRET : 751 024 621 00060<br />
+      Adresse : 4 Boulevard Vercingétorix, 95100 Argenteuil<br />
+      Contact : <a href="mailto:contact@alexandreberger.com">contact@alexandreberger.com</a>
+    </p>
+
+    <h2 class="sous-titre">Directeur de la publication</h2>
+    <p>Alexandre Berger.</p>
+
+    <h2 class="sous-titre">Hébergement</h2>
+    <p>
+      Le site est hébergé par Vercel Inc.<br />
+      340 S Lemon Ave #4133, Walnut, CA 91789, États-Unis
+    </p>
+
+    <h2 class="sous-titre">Propriété intellectuelle</h2>
+    <p>
+      L'ensemble des contenus présents sur ce site (textes, photographies, vidéos, identité visuelle) est
+      la propriété d'Alexandre Berger, sauf mention contraire. Toute reproduction ou représentation, totale
+      ou partielle, sans autorisation préalable est interdite.
+    </p>
+
+    <h2 class="sous-titre">Données personnelles</h2>
+    <p>
+      Les informations transmises via le formulaire Booking (nom, prénom, entreprise, email, téléphone et
+      détails de la demande) sont utilisées uniquement pour traiter votre demande de prestation et vous
+      répondre. Elles ne sont ni cédées ni utilisées à des fins commerciales par des tiers.
+    </p>
+    <p>
+      Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos
+      données, que vous pouvez exercer en écrivant à {" "}
+      <a href="mailto:contact@alexandreberger.com">contact@alexandreberger.com</a>.
+    </p>
+
+    <h2 class="sous-titre">Cookies et navigation</h2>
+    <p>
+      Ce site ne dépose pas de cookie de mesure d'audience ni de traceur publicitaire. La page "Autour du
+      monde" affiche une carte dont les fonds sont fournis par OpenStreetMap ; leur affichage peut entraîner
+      des requêtes vers ce service tiers.
+    </p>
   </div>
 </Layout>
 
 <style>
   .contenu { text-align:left; width:100%; max-width:640px; margin-top:3.5rem; font-weight:300; font-size:1.1rem; color:rgba(255,255,255,.72); }
   .contenu h1 { font-weight:300; font-size:clamp(1.6rem, 3vw, 2.4rem); margin:0 0 1.25rem; color:#fff; }
+  .contenu p { margin:0 0 1.5rem; font-size:1rem; line-height:1.7; }
+  .contenu a { color:#fff; }
+  .sous-titre {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:.75rem; letter-spacing:.15em; text-transform:uppercase;
+    color:rgba(255,255,255,.45); font-weight:400;
+    margin:2.5rem 0 1rem;
+  }
+  .sous-titre:first-of-type { margin-top:2.5rem; }
 </style>
