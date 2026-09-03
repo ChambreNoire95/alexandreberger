@@ -5,7 +5,7 @@ role: Producteur / Réalisateur
 client: Univers Sel
 type: Documentaire
 date: 2019-05-16
-carrousel: true
+carrousel: false
 ordreCarrousel: 5
 carrouselTitre: Guinée-Bissau
 carrouselImage: /uploads/Capture_Bissau_1.jpg
