@@ -63,7 +63,7 @@ const carnet = defineCollection({
     }),
 });
 
-// Les blocs de la page sommaire "Projets Parallèles" : chacun mène à sa
+// Les blocs de la page sommaire "Projets Satellites" : chacun mène à sa
 // propre page fille (même principe que le Carnet). Nouveau bloc = nouvelle
 // entrée dans le CMS, sans toucher au code.
 const projetsParalleles = defineCollection({

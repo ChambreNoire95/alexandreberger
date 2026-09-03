@@ -7,12 +7,12 @@ const blocs = (await getCollection("projetsParalleles")).sort(
   (a, b) => (a.data.ordre ?? Infinity) - (b.data.ordre ?? Infinity)
 );
 
-const titre = "Projets Parallèles — Alexandre Berger, réalisateur";
-const description = "Projets parallèles d'Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.";
+const titre = "Projets Satellites — Alexandre Berger, réalisateur";
+const description = "Projets satellites d'Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.";
 ---
 
 <Layout title={titre} description={description} currentPath="/projets-paralleles">
-  <h1 class="titre-page">Projets Parallèles</h1>
+  <h1 class="titre-page">Projets Satellites</h1>
 
   <ul class="blocs">
     {blocs.map((b) => (

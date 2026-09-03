@@ -80,14 +80,14 @@ content:
       - { name: body, label: Article, type: rich-text }
 
   - name: projets-paralleles
-    label: "Projets Parallèles"
+    label: "Projets Satellites"
     type: collection
     path: src/content/projets-paralleles
     view:
       fields: [titre, ordre]
     fields:
       - { name: titre, label: Titre, type: string, required: true }
-      - { name: accroche, label: "Accroche", type: text, description: "Résumé court affiché sur le bloc, dans la page Projets Parallèles." }
+      - { name: accroche, label: "Accroche", type: text, description: "Résumé court affiché sur le bloc, dans la page Projets Satellites." }
       - { name: couverture, label: Couverture, type: image }
       - { name: couvertureAlt, label: "Texte alternatif (couverture)", type: string, description: "Décrit l'image pour le SEO et l'accessibilité. Si vide, le titre du bloc est utilisé à la place." }
       - { name: ordre, label: "Ordre d'affichage", type: number, description: "Les blocs les plus petits s'affichent en premier. Optionnel." }
