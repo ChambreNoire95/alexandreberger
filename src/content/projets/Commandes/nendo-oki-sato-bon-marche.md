@@ -5,7 +5,7 @@ role: Producteur / Réalisateur / Monteur
 client: Le Bon Marché Rive Gauche
 type: Making-of
 date: 2020-01-10
-couverture: /uploads/Oki-Sato.jpg
+couverture: /uploads/Oki_Sato_Portrait.png
 carrousel: true
 ordreCarrousel: 6
 carrouselTitre: OKI SATO HORS NORMES
