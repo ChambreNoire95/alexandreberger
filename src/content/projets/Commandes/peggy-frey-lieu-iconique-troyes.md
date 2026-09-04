@@ -5,6 +5,8 @@ role: Réalisateur / Monteur
 client: Petit Bateau
 type: Brand Content
 date: 2024-05-16
+carrousel: true
+carrouselImage: /uploads/Peggy_Frey_Style.png
 lieu: Troyes
 ---
 À rédiger.
