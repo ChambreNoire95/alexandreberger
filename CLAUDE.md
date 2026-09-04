@@ -14,7 +14,7 @@ pour son HTML rendu au build, meilleur pour Google qu'une SPA.\
 \
 ## Direction artistique (= template \'e0 d\'e9cliner sur les autres sites)\
 - Home fa\'e7on "g\'e9n\'e9rique de film" : fond quasi-noir #0b0b0b, texte blanc, tout centr\'e9.\
-- Police Inter (via Google Fonts pour l'instant ; \'e0 auto-h\'e9berger plus tard pour la perf/SEO).\
+- Police Inter, auto-h\'e9berg\'e9e (public/fonts/) pour la perf/SEO.\
 - Signature : plusieurs phrases qui alternent toutes les 5 s en fondu, Inter bold blanc.\
 - Onglets + bouton "En savoir +" : typo monospace, capitales, letter-spacing,\
   bouton bord\'e9 qui s'inverse (fond blanc / texte noir) au survol.\
@@ -36,5 +36,4 @@ pour son HTML rendu au build, meilleur pour Google qu'une SPA.\
   "r\'e9alisateur", "documentaire, fiction, film de marque", "\'cele-de-France", "r\'e9alisateur freelance".\
 \
 ## \'c0 faire\
-- Cr\'e9er les pages /creations, /autour-du-monde, /a-propos et /projets/[slug] (aujourd'hui en 404).\
-- Plus tard : auto-h\'e9berger Inter, d\'e9ployer sur Vercel, page de vente s\'e9par\'e9e.}
+- Page de vente s\'e9par\'e9e (non commenc\'e9e).}
