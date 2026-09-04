@@ -149,7 +149,7 @@ const jsonLd = {
     transition:color 140ms ease;
   }
   .lien-retour:hover { color:#fff; }
-  .couverture { width:100%; height:auto; border-radius:2px; margin-bottom:2rem; }
+  :global(.couverture) { width:100%; height:auto; border-radius:2px; margin-bottom:2rem; }
   .projet h1 { font-weight:300; font-size:clamp(1.6rem, 3vw, 2.4rem); margin:0 0 1.25rem; color:#fff; }
   .meta { display:flex; flex-wrap:wrap; gap:1.5rem; margin:0 0 2rem; }
   .meta > div { display:flex; flex-direction:column; gap:.2rem; }
@@ -163,5 +163,5 @@ const jsonLd = {
   .galerie { display:grid; grid-template-columns:repeat(3, 1fr); gap:.5rem; margin-top:2.5rem; }
   .galerie[data-count="1"] { grid-template-columns:1fr; max-width:28.6rem; }
   .galerie[data-count="2"] { grid-template-columns:repeat(2, 1fr); }
-  .galerie img { width:100%; height:100%; aspect-ratio:4/3; object-fit:cover; display:block; border-radius:2px; }
+  .galerie :global(img) { width:100%; height:100%; aspect-ratio:4/3; object-fit:cover; display:block; border-radius:2px; }
 </style>
