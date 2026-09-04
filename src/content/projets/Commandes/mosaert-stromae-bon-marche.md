@@ -9,6 +9,6 @@ couverture: /uploads/Mosaert_Fabrique.jpg
 carrousel: true
 ordreCarrousel: 3
 carrouselTitre: L'USINE FANTASTIQUE DE STROMAE
-carrouselImage: /uploads/Stromae_Portrait.png
+carrouselImage: /uploads/Stromae_Portrait_Style.png
 ---
 Stromae crée une usine fantastique au coeur du Grand magasin.
