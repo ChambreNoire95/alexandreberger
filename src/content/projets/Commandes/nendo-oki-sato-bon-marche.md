@@ -6,7 +6,7 @@ client: Le Bon Marché Rive Gauche
 type: Making-of
 date: 2020-01-10
 carrousel: true
-ordreCarrousel: 6
+ordreCarrousel: 8
 carrouselTitre: OKI SATO HORS NORMES
 carrouselImage: /uploads/Oki_Sato_Portrait_Style.png
 lieu: Tokyo
