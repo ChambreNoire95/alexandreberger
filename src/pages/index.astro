@@ -87,9 +87,9 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   }
   .accroche-titre {
     font-weight:700; font-size:clamp(1.26rem, 2.88vw, 1.8rem); line-height:1.2;
-    color:rgba(255,255,255,.6); white-space:nowrap; transition:color 140ms ease;
+    color:#fff; white-space:nowrap; transition:color 140ms ease;
   }
-  .accroches a:hover .accroche-titre { color:#fff; }
+  .accroches a:hover .accroche-titre { color:rgba(255,255,255,.6); }
   @media (max-width: 700px) {
     .accroche-titre { white-space:normal; max-width:40ch; text-align:center; }
   }
