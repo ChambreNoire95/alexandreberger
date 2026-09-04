@@ -8,5 +8,5 @@ duree: 11 min
 carrousel: true
 ordreCarrousel: 5
 carrouselTitre: JARED LETO IS STUCK À PARIS
-carrouselImage: /uploads/Jared_Leto_Portrait.png
+carrouselImage: /uploads/Jared_Leto_Portrait_style.png
 ---
