@@ -93,7 +93,12 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" href="/favicon.ico" />
     <link rel="preload" href="/fonts/Inter-normal.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="/correctifs-safari.css" />
+    {/* set:html évite le pipeline CSS d'Astro/Vite, qui supprime le préfixe
+       -webkit- de text-size-adjust — or c'est le seul qui fonctionne
+       réellement sur Safari iOS (sans lui, Safari grossit certains textes
+       au passage en paysage). Inlinée ici (au lieu d'un fichier séparé)
+       pour retirer un maillon de la chaîne de requêtes critique. */}
+    <style set:html="html{-webkit-text-size-adjust:100%;text-size-adjust:100%}" />
     {blocsJsonLd.map((bloc) => (
       <script type="application/ld+json" set:html={JSON.stringify(bloc)} />
     ))}

@@ -1,8 +1,0 @@
-/* Fichier servi tel quel (non minifié par le build Astro/Vite), car le
-   minifieur supprime le préfixe -webkit- de text-size-adjust — or c'est
-   le SEUL qui fonctionne réellement sur Safari iOS. Sans lui, Safari
-   grossit automatiquement certains textes au passage en paysage. */
-html {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
