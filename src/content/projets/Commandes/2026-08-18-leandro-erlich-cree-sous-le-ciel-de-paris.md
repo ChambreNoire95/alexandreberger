@@ -9,6 +9,5 @@ couverture: /uploads/Leandro_Erlich_Portrait.png
 carrousel: true
 ordreCarrousel: 2
 carrouselTitre: SOUS LE CIEL DE LEANDRO ERLICH
-carrouselImage: /uploads/LEANDRO_ERLICH.png
 lieu: Ile de France
 ---

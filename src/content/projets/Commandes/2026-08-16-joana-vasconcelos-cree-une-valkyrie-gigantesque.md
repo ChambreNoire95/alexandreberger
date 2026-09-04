@@ -8,6 +8,6 @@ date: 2019-01-10
 carrousel: true
 ordreCarrousel: 1
 carrouselTitre: LA VALKYRIE DE JOANA VASCONCELOS
-carrouselImage: /uploads/JOANA.jpg
+carrouselImage: /uploads/Joana_Vasconcelos_portrait.png
 lieu: Lisbonne
 ---
