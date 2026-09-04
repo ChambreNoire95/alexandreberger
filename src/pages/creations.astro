@@ -25,7 +25,6 @@ const itemsCarrousel = projetsCarrousel.map((p) => ({
   src: (p.data.carrouselImage || p.data.couverture) as string,
   alt: p.data.carrouselImageAlt || p.data.couvertureAlt || p.data.titre,
   titre: p.data.carrouselTitre || p.data.titre,
-  label: p.data.type || p.data.genre || null,
 }));
 
 const titre = "Créations — Alexandre Berger, réalisateur";
