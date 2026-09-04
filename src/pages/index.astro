@@ -117,6 +117,13 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       items.forEach((li) => {
         li.hidden = type !== 'all' && li.dataset.type !== type;
       });
+
+      // Masquer/afficher des accroches déplace le contenu sous le point de
+      // défilement actuel : le navigateur compense à sa façon (scroll
+      // anchoring), de façon incohérente selon les éléments cachés. On fixe
+      // systématiquement la barre de filtres en haut de l'écran pour un
+      // comportement prévisible au lieu d'un saut aléatoire.
+      nav.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }
 

@@ -197,6 +197,13 @@ function genreDisponible(genre: string) {
         li.hidden = !(okGenre && okRole);
       });
       majPremierVisible();
+
+      // Masquer/afficher des créations déplace le contenu sous le point de
+      // défilement actuel : le navigateur compense à sa façon (scroll
+      // anchoring), de façon incohérente selon les éléments cachés. On fixe
+      // systématiquement la barre de filtres en haut de l'écran pour un
+      // comportement prévisible au lieu d'un saut aléatoire.
+      (navGenre ?? navRole)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     // Grise les boutons de genre sans aucun projet pour le rôle actuel. Si
