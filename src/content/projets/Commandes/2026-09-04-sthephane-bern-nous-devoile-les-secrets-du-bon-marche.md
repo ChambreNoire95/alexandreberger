@@ -1,5 +1,5 @@
 ---
-titre: Sthéphane Bern nous dévoile les secrets du Bon Marché
+titre: Stéphane Bern nous dévoile les secrets du Bon Marché
 categorie: commandes
 role: producteur / Réalisateur
 client: Le Bon Marché Rive Gauche
