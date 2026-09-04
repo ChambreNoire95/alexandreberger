@@ -9,7 +9,6 @@ couverture: /uploads/UPTE_visuel_site.jpg
 carrousel: true
 ordreCarrousel: 4
 carrouselTitre: ARTUS ET SON P'TIT TRUC EN +
-carrouselImage: /uploads/Artus_cinema_portrait_style.png
 image1: /uploads/UPTE_visuel_site_2.jpg
 image2: /uploads/UPTE_visuel_site_6.jpg
 image3: /uploads/UPTE_visuel_site_3.jpg
