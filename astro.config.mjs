@@ -16,4 +16,8 @@ export default defineConfig({
   // traiter le formulaire de contact.
   output: 'server',
   adapter: vercel(),
+  // Inline les petites feuilles de style (< 4 Ko) directement dans le HTML
+  // au lieu d'un <link> séparé : une requête bloquante de moins dans la
+  // chaîne critique (signalé par Lighthouse).
+  build: { inlineStylesheets: 'auto' },
 });

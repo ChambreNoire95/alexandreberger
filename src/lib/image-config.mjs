@@ -4,7 +4,10 @@
 
 // Calibrées sur des sources uploadées en 960x1280 (pas de palier au-delà,
 // volontairement, pour ne jamais générer de fichier plus lourd qu'utile).
-export const LARGEURS_OPTIMISEES = [480, 960];
+// Le palier 640 comble l'écart pour les cartes ~265-300px affichées en
+// Retina (2x) : sans lui le navigateur saute directement à 960, bien plus
+// lourd que nécessaire.
+export const LARGEURS_OPTIMISEES = [480, 640, 960];
 export const DOSSIER_OPTIMISE = "_optimise";
 export const EXTENSIONS_OPTIMISABLES = new Set([".jpg", ".jpeg", ".png"]);
 
