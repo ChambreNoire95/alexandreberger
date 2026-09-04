@@ -2,6 +2,7 @@
 export const prerender = true;
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import OptimizedImage from "../../components/OptimizedImage.astro";
 
 export async function getStaticPaths() {
   const entrees = await getCollection("carnet", ({ data }) => !data.brouillon);
@@ -35,7 +36,7 @@ const jsonLd = {
 <Layout title={titre} description={description} currentPath="/carnet" jsonLd={jsonLd}>
   <article class="entree">
     {entree.data.couverture && (
-      <img class="couverture" src={entree.data.couverture} alt={entree.data.couvertureAlt || entree.data.titre} />
+      <OptimizedImage class="couverture" src={entree.data.couverture} alt={entree.data.couvertureAlt || entree.data.titre} loading="eager" sizes="(min-width: 801px) 700px, 100vw" />
     )}
     <p class="date">{entree.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}</p>
     <h1>{entree.data.titre}</h1>

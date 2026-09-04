@@ -1,0 +1,37 @@
+---
+// Remplace <img> pour les visuels venant du CMS : sert du WebP/AVIF
+// redimensionné (généré par scripts/optimize-images.mjs) via <picture>,
+// avec repli automatique sur l'image d'origine si aucune variante
+// n'a été générée pour elle (rien ne casse si le script n'a pas tourné).
+import { existsSync } from "node:fs";
+import path from "node:path";
+import { LARGEURS_OPTIMISEES, cheminOptimise, extensionOptimisable } from "../lib/image-config.mjs";
+
+interface Props {
+  src: string;
+  alt: string;
+  class?: string;
+  loading?: "eager" | "lazy";
+  sizes?: string;
+}
+
+const { src, alt, class: className, loading = "lazy", sizes = "100vw" } = Astro.props;
+
+const disponibles = extensionOptimisable(src)
+  ? LARGEURS_OPTIMISEES.filter((largeur) => existsSync(path.join("public", cheminOptimise(src, largeur, "webp"))))
+  : [];
+
+function srcset(format: "webp" | "avif") {
+  return disponibles.map((largeur) => `${cheminOptimise(src, largeur, format)} ${largeur}w`).join(", ");
+}
+---
+
+{disponibles.length > 0 ? (
+  <picture>
+    <source type="image/avif" srcset={srcset("avif")} sizes={sizes} />
+    <source type="image/webp" srcset={srcset("webp")} sizes={sizes} />
+    <img src={src} alt={alt} class={className} loading={loading} />
+  </picture>
+) : (
+  <img src={src} alt={alt} class={className} loading={loading} />
+)}

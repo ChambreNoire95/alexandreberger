@@ -1,6 +1,7 @@
 ---
 export const prerender = true;
 import Layout from "../../layouts/Layout.astro";
+import OptimizedImage from "../../components/OptimizedImage.astro";
 import { getCollection } from "astro:content";
 
 const blocs = (await getCollection("projetsSatellites")).sort(
@@ -18,7 +19,9 @@ const description = "Projets satellites d'Alexandre Berger, réalisateur freelan
     {blocs.map((b) => (
       <li>
         <a href={`/projets-satellites/${b.id}`} class="bloc">
-          {b.data.couverture && <img src={b.data.couverture} alt={b.data.couvertureAlt || b.data.titre} />}
+          {b.data.couverture && (
+            <OptimizedImage src={b.data.couverture} alt={b.data.couvertureAlt || b.data.titre} sizes="(min-width: 801px) 300px, 100vw" />
+          )}
           <span class="bloc-titre">{b.data.titre}</span>
           {b.data.accroche && <span class="bloc-accroche">{b.data.accroche}</span>}
         </a>

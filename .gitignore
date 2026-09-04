@@ -1,6 +1,9 @@
 # build output
 dist/
 .vercel/
+
+# images optimisées (générées au build, voir scripts/optimize-images.mjs)
+public/uploads/_optimise/
 # generated types
 .astro/
 

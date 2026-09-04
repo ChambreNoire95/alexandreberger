@@ -2,6 +2,7 @@
 export const prerender = true;
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import OptimizedImage from "../../components/OptimizedImage.astro";
 
 export async function getStaticPaths() {
   const projets = await getCollection("projets");
@@ -92,7 +93,7 @@ const jsonLd = {
   <article class="projet">
     <a class="lien-retour" href={currentPath}>← {labelRetour}</a>
     {projet.data.couverture && (
-      <img class="couverture" src={projet.data.couverture} alt={projet.data.couvertureAlt || projet.data.titre} />
+      <OptimizedImage class="couverture" src={projet.data.couverture} alt={projet.data.couvertureAlt || projet.data.titre} loading="eager" sizes="(min-width: 801px) 910px, 100vw" />
     )}
     <h1>{projet.data.titre}</h1>
     {(roleValeur || projet.data.date || projet.data.annee || projet.data.genre || projet.data.duree) && (
@@ -130,7 +131,9 @@ const jsonLd = {
     </div>
     {galerie.length > 0 && (
       <div class="galerie" data-count={galerie.length}>
-        {galerie.map((img) => <img src={img.src} alt={img.alt || projet.data.titre} />)}
+        {galerie.map((img) => (
+          <OptimizedImage src={img.src} alt={img.alt || projet.data.titre} sizes="(min-width: 801px) 300px, 33vw" />
+        ))}
       </div>
     )}
   </article>

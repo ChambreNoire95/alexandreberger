@@ -4,6 +4,7 @@ import Layout from "../layouts/Layout.astro";
 import Signature from "../components/Signature.astro";
 import TitreSwitch from "../components/TitreSwitch.astro";
 import CarrouselHome from "../components/CarrouselHome.astro";
+import OptimizedImage from "../components/OptimizedImage.astro";
 import { getCollection } from "astro:content";
 
 const projets = (await getCollection("projets", ({ data }) => data.categorie === "creations")).sort(
@@ -92,7 +93,9 @@ function genreDisponible(genre: string) {
         <li class="creation" data-count={images.length} data-type={p.data.genre || ""} data-role={p.data.role || ""} hidden={cachePardefaut || undefined}>
           {images.length > 0 && (
             <div class="creation-images">
-              {images.map((img) => <img src={img.src} alt={img.alt || p.data.titre} />)}
+              {images.map((img) => (
+                <OptimizedImage src={img.src} alt={img.alt || p.data.titre} sizes="(max-width: 800px) 33vw, 300px" />
+              ))}
             </div>
           )}
           <div class="creation-texte">

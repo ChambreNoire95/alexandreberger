@@ -1,4 +1,6 @@
 ---
+import OptimizedImage from "./OptimizedImage.astro";
+
 interface Item {
   href: string;
   src: string;
@@ -20,7 +22,7 @@ const { items } = Astro.props;
       {items.map((item) => (
         <li>
           <a href={item.href}>
-            <img src={item.src} alt={item.alt} loading="eager" />
+            <OptimizedImage src={item.src} alt={item.alt} loading="eager" sizes="(min-width: 801px) 265px, 62vw" />
             <div class="carrousel-degrade"></div>
             <div class="carrousel-texte">
               <span class="carrousel-titre">{item.titre}</span>
