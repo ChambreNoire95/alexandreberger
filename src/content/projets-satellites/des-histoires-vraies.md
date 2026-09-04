@@ -40,5 +40,3 @@ Rien n'est joué : aucun dialogue écrit, aucune scène rejouée pour la caméra
 La première conversation est gratuite. Elle sert à répondre à trois questions : y a-t-il une histoire, y a-t-il une occasion, y a-t-il un film à faire. Il arrive que la réponse soit non — je le dis.
 
 Pour un anniversaire ou une transmission, il faut engager le projet dix-huit mois avant la date. On ne rattrape pas une saison manquée.
-
-**[Écrivez-moi]** · Le site dédié, [deshistoiresvraies.fr](http://deshistoiresvraies.fr), ouvre à l'automne.
