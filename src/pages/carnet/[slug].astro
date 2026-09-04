@@ -36,7 +36,7 @@ const jsonLd = {
 <Layout title={titre} description={description} currentPath="/carnet" jsonLd={jsonLd}>
   <article class="entree">
     {entree.data.couverture && (
-      <OptimizedImage class="couverture" src={entree.data.couverture} alt={entree.data.couvertureAlt || entree.data.titre} loading="eager" sizes="(min-width: 801px) 700px, 100vw" />
+      <OptimizedImage class="couverture" src={entree.data.couverture} alt={entree.data.couvertureAlt || entree.data.titre} loading="eager" fetchpriority="high" sizes="(min-width: 801px) 700px, 100vw" />
     )}
     <p class="date">{entree.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}</p>
     <h1>{entree.data.titre}</h1>

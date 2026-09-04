@@ -19,10 +19,16 @@ const { items } = Astro.props;
 {items.length > 0 && (
   <div class="carrousel-wrap">
     <ul class="carrousel" id="carrousel-home">
-      {items.map((item) => (
+      {items.map((item, index) => (
         <li>
           <a href={item.href}>
-            <OptimizedImage src={item.src} alt={item.alt} loading="eager" sizes="(min-width: 801px) 265px, 62vw" />
+            <OptimizedImage
+              src={item.src}
+              alt={item.alt}
+              loading="eager"
+              fetchpriority={index === 0 ? "high" : "auto"}
+              sizes="(min-width: 801px) 265px, 62vw"
+            />
             <div class="carrousel-degrade"></div>
             <div class="carrousel-texte">
               <span class="carrousel-titre">{item.titre}</span>

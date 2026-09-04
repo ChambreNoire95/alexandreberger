@@ -93,7 +93,7 @@ const jsonLd = {
   <article class="projet">
     <a class="lien-retour" href={currentPath}>← {labelRetour}</a>
     {projet.data.couverture && (
-      <OptimizedImage class="couverture" src={projet.data.couverture} alt={projet.data.couvertureAlt || projet.data.titre} loading="eager" sizes="(min-width: 801px) 910px, 100vw" />
+      <OptimizedImage class="couverture" src={projet.data.couverture} alt={projet.data.couvertureAlt || projet.data.titre} loading="eager" fetchpriority="high" sizes="(min-width: 801px) 910px, 100vw" />
     )}
     <h1>{projet.data.titre}</h1>
     {(roleValeur || projet.data.date || projet.data.annee || projet.data.genre || projet.data.duree) && (

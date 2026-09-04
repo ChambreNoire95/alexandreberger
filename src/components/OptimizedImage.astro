@@ -12,10 +12,11 @@ interface Props {
   alt: string;
   class?: string;
   loading?: "eager" | "lazy";
+  fetchpriority?: "high" | "low" | "auto";
   sizes?: string;
 }
 
-const { src, alt, class: className, loading = "lazy", sizes = "100vw" } = Astro.props;
+const { src, alt, class: className, loading = "lazy", fetchpriority = "auto", sizes = "100vw" } = Astro.props;
 
 const disponibles = extensionOptimisable(src)
   ? LARGEURS_OPTIMISEES.filter((largeur) => existsSync(path.join("public", cheminOptimise(src, largeur, "webp"))))
@@ -30,7 +31,7 @@ function srcset(format: "webp" | "avif") {
   <picture>
     <source type="image/avif" srcset={srcset("avif")} sizes={sizes} />
     <source type="image/webp" srcset={srcset("webp")} sizes={sizes} />
-    <img src={src} alt={alt} class={className} loading={loading} />
+    <img src={src} alt={alt} class={className} loading={loading} fetchpriority={fetchpriority} />
   </picture>
 ) : (
   <img src={src} alt={alt} class={className} loading={loading} />
