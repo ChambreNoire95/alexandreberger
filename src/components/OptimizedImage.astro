@@ -3,9 +3,9 @@
 // redimensionné (généré par scripts/optimize-images.mjs) via <picture>,
 // avec repli automatique sur l'image d'origine si aucune variante
 // n'a été générée pour elle (rien ne casse si le script n'a pas tourné).
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { LARGEURS_OPTIMISEES, cheminOptimise, extensionOptimisable } from "../lib/image-config.mjs";
+import { LARGEURS_OPTIMISEES, cheminOptimise, cheminManifest, nomFichier, extensionOptimisable } from "../lib/image-config.mjs";
 
 interface Props {
   src: string;
@@ -22,6 +22,13 @@ const disponibles = extensionOptimisable(src)
   ? LARGEURS_OPTIMISEES.filter((largeur) => existsSync(path.join("public", cheminOptimise(src, largeur, "webp"))))
   : [];
 
+// Dimensions réelles de la source (width/height HTML), pour que le navigateur
+// réserve le bon espace avant chargement même sans aspect-ratio en CSS.
+const cheminManifestSrc = path.join("public", cheminManifest(src));
+const dimensions = existsSync(cheminManifestSrc)
+  ? JSON.parse(readFileSync(cheminManifestSrc, "utf-8"))[nomFichier(src)]
+  : undefined;
+
 function srcset(format: "webp" | "avif") {
   return disponibles.map((largeur) => `${cheminOptimise(src, largeur, format)} ${largeur}w`).join(", ");
 }
@@ -31,8 +38,8 @@ function srcset(format: "webp" | "avif") {
   <picture>
     <source type="image/avif" srcset={srcset("avif")} sizes={sizes} />
     <source type="image/webp" srcset={srcset("webp")} sizes={sizes} />
-    <img src={src} alt={alt} class={className} loading={loading} fetchpriority={fetchpriority} />
+    <img src={src} alt={alt} class={className} loading={loading} fetchpriority={fetchpriority} width={dimensions?.width} height={dimensions?.height} />
   </picture>
 ) : (
-  <img src={src} alt={alt} class={className} loading={loading} />
+  <img src={src} alt={alt} class={className} loading={loading} width={dimensions?.width} height={dimensions?.height} />
 )}

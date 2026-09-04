@@ -2,7 +2,7 @@
 // redimensionnées (public/uploads/_optimise/) consommées par
 // src/components/OptimizedImage.astro. Tourne avant chaque build/dev (voir
 // package.json), retraite uniquement les fichiers nouveaux ou modifiés.
-import { readdir, mkdir, stat } from "node:fs/promises";
+import { readdir, mkdir, stat, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
@@ -21,11 +21,17 @@ async function main() {
   );
 
   let generes = 0;
+  /** Dimensions réelles des sources, pour que <OptimizedImage> puisse poser
+      width/height sur chaque <img> (évite le décalage de mise en page, CLS). */
+  const manifest = {};
+
   for (const fichier of fichiers) {
     const cheminSource = path.join(DOSSIER_SOURCE, fichier.name);
     const nom = path.parse(fichier.name).name;
     const { mtimeMs } = await stat(cheminSource);
-    const { width } = await sharp(cheminSource).metadata();
+    const { width, height } = await sharp(cheminSource).metadata();
+
+    if (width && height) manifest[fichier.name] = { width, height };
 
     for (const largeur of LARGEURS_OPTIMISEES) {
       if (width && largeur > width) continue;
@@ -41,6 +47,8 @@ async function main() {
       }
     }
   }
+
+  await writeFile(path.join(DOSSIER_SORTIE, "manifest.json"), JSON.stringify(manifest));
 
   console.log(`[optimize-images] ${generes} fichier(s) généré(s) (${fichiers.length} image(s) source scannée(s)).`);
 }

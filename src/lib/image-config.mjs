@@ -21,3 +21,14 @@ export function extensionOptimisable(srcPublic) {
   const correspondance = srcPublic.match(/\.[^.]+$/);
   return !!correspondance && EXTENSIONS_OPTIMISABLES.has(correspondance[0].toLowerCase());
 }
+
+/** Chemin du manifest (dimensions réelles des sources) pour le dossier d'une image donnée. */
+export function cheminManifest(srcPublic) {
+  const dernierSlash = srcPublic.lastIndexOf("/");
+  const dossier = srcPublic.slice(0, dernierSlash);
+  return `${dossier}/${DOSSIER_OPTIMISE}/manifest.json`;
+}
+
+export function nomFichier(srcPublic) {
+  return srcPublic.slice(srcPublic.lastIndexOf("/") + 1);
+}
