@@ -2,7 +2,9 @@
 // et le composant d'affichage (src/components/OptimizedImage.astro), pour ne
 // jamais désynchroniser les tailles générées et les tailles attendues.
 
-export const LARGEURS_OPTIMISEES = [480, 960, 1600];
+// Calibrées sur des sources uploadées en 960x1280 (pas de palier au-delà,
+// volontairement, pour ne jamais générer de fichier plus lourd qu'utile).
+export const LARGEURS_OPTIMISEES = [480, 960];
 export const DOSSIER_OPTIMISE = "_optimise";
 export const EXTENSIONS_OPTIMISABLES = new Set([".jpg", ".jpeg", ".png"]);
 
