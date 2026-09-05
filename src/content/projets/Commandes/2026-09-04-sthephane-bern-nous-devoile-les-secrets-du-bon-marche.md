@@ -8,6 +8,7 @@ date: 2020-04-01
 carrousel: true
 ordreCarrousel: 10
 carrouselTitre: Les Secrets de Stéphane Bern
+carrouselImage: /uploads/Stephane_Bern_Portrait_Style.png
 video: https://www.youtube.com/watch?v=7FtX8Yi3GQI
 lieu: Ile de France
 ---
