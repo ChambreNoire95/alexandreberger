@@ -105,6 +105,57 @@ const { items } = Astro.props;
     const track = document.getElementById('carrousel-home');
     if (!wrap || !track) return;
 
+    const original = Array.from(track.children) as HTMLLIElement[];
+    if (original.length === 0) return;
+
+    // Défilement infini : on clone le jeu de visuels avant et après le
+    // segment réel ([clones][réel][clones]), on démarre au milieu, puis on
+    // repositionne le scroll sans transition dès qu'on entre dans une zone
+    // clonée (indiscernable, puisque c'est une copie identique) — donne
+    // l'illusion d'une boucle sans fin, au clic comme au glissement tactile.
+    if (!track.dataset.boucleInfinie) {
+      track.dataset.boucleInfinie = 'true';
+
+      const cloner = (li: HTMLLIElement) => {
+        const clone = li.cloneNode(true) as HTMLLIElement;
+        clone.setAttribute('aria-hidden', 'true');
+        clone.querySelectorAll('a').forEach((a) => a.setAttribute('tabindex', '-1'));
+        return clone;
+      };
+
+      [...original].reverse().forEach((li) => track.prepend(cloner(li)));
+      original.forEach((li) => track.append(cloner(li)));
+
+      const largeurSegment = track.scrollWidth / 3;
+
+      // scroll-behavior:smooth (CSS) s'applique à toute écriture de
+      // scrollLeft, pas seulement aux scrollBy/scrollTo volontaires : sans
+      // le désactiver le temps du saut, le repositionnement devient une
+      // grande animation visible au lieu d'un saut instantané imperceptible.
+      function sauter(delta: number) {
+        track!.dataset.repositionnement = 'true';
+        track!.style.scrollBehavior = 'auto';
+        track!.scrollLeft += delta;
+        requestAnimationFrame(() => {
+          track!.style.scrollBehavior = '';
+          delete track!.dataset.repositionnement;
+        });
+      }
+
+      track.style.scrollBehavior = 'auto';
+      track.scrollLeft = largeurSegment;
+      requestAnimationFrame(() => { track.style.scrollBehavior = ''; });
+
+      track.addEventListener('scroll', () => {
+        if (track.dataset.repositionnement) return;
+        if (track.scrollLeft <= 1) {
+          sauter(largeurSegment);
+        } else if (track.scrollLeft >= largeurSegment * 2 - 1) {
+          sauter(-largeurSegment);
+        }
+      });
+    }
+
     const item = track.querySelector('li');
     const pas = item ? item.getBoundingClientRect().width + 10 : 300;
 
