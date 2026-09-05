@@ -10,5 +10,6 @@ carrousel: true
 ordreCarrousel: 3
 carrouselTitre: L'USINE FANTASTIQUE DE STROMAE
 carrouselImage: /uploads/Stromae_Portrait_Style.png
+lieu: Paris
 ---
 Stromae crée une usine fantastique au coeur du Grand magasin.
