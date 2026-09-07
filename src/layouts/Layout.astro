@@ -37,38 +37,6 @@ const clients = [
   "Le Syndicat du Cru Minervois", "LVMH", "Total Energies",
 ].sort((a, b) => a.localeCompare(b, "fr"));
 
-// Vise ~10 clients par ligne, mais répartit le total à l'exact plutôt que de
-// couper en blocs fixes de 10 : évite une ligne clairsemée en bout de bloc
-// et donne un ensemble de lignes visuellement plus équilibré.
-const CIBLE_PAR_LIGNE = 10;
-function repartirEnLignes(items: string[]): string[][] {
-  const nbLignes = Math.max(1, Math.round(items.length / CIBLE_PAR_LIGNE));
-  const tailleBase = Math.floor(items.length / nbLignes);
-  const enPlus = items.length % nbLignes;
-  const lignes: string[][] = [];
-  let curseur = 0;
-  for (let i = 0; i < nbLignes; i++) {
-    const taille = tailleBase + (i < enPlus ? 1 : 0);
-    lignes.push(items.slice(curseur, curseur + taille));
-    curseur += taille;
-  }
-  return lignes;
-}
-
-// Noms qui doivent toujours commencer une nouvelle ligne. On découpe la liste
-// en segments à ces points-là, puis on rééquilibre chaque segment séparément
-// (plutôt que de forcer le saut et laisser le déséquilibre se répercuter
-// jusqu'à la fin de la liste).
-const SAUTS_DE_LIGNE_FORCES = new Set(["Palinal"]);
-const segments: string[][] = [[]];
-for (const client of clients) {
-  if (SAUTS_DE_LIGNE_FORCES.has(client) && segments[segments.length - 1].length > 0) {
-    segments.push([]);
-  }
-  segments[segments.length - 1].push(client);
-}
-const lignesClients = segments.flatMap(repartirEnLignes);
-
 const presentation = "Réalisateur freelance basé en Île-de-France, je raconte des histoires en documentaire, fiction et film de marque — de la commande institutionnelle aux projets tournés aux quatre coins du monde.";
 
 const entreesCarnet = await getCollection("carnet", ({ data }) => !data.brouillon);
@@ -196,11 +164,11 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     {currentPath !== "/creations" && (
       <footer transition:persist>
         <p class="refs-titre">Ils m'ont fait confiance pour fabriquer leurs films</p>
-        <div class="refs-desktop">
-          {lignesClients.map((ligne) => (
-            <p class="refs">{ligne.join(" · ")}</p>
+        <ul class="refs refs-desktop">
+          {clients.map((client) => (
+            <li class="refs-item">{client}</li>
           ))}
-        </div>
+        </ul>
         <p class="refs refs-mobile">{clients.join(" · ")}</p>
       </footer>
     )}
@@ -333,7 +301,12 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   footer { border-top:1px solid rgba(255,255,255,.14); padding-top:3rem; margin-top:3rem; }
   .refs-titre { font-size:.7rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); margin:0 0 1.25rem; }
   .refs { font-size:.9rem; font-weight:300; line-height:1.8; color:rgba(255,255,255,.65); margin:0; }
-  .refs + .refs { margin-top:.4rem; }
+  .refs-desktop {
+    display:flex; flex-wrap:wrap; justify-content:center;
+    list-style:none; padding:0; max-width:900px; margin:0 auto;
+  }
+  .refs-item::after { content:"·"; margin:0 .55em; color:rgba(255,255,255,.3); }
+  .refs-item:last-child::after { content:none; }
   .refs-mobile { display:none; }
 
   .bandeau {
