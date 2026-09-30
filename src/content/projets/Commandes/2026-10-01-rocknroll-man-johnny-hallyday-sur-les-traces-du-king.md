@@ -1,5 +1,6 @@
 ---
 titre: "Rock'n'roll man : Johnny Hallyday sur les traces du King"
+slug: johnny-hallyday-coulisses-destination-vegas
 categorie: commandes
 enChantier: true
 role: Monteur
