@@ -12,3 +12,4 @@ carrouselTitre: SOUS LE CIEL DE LEANDRO ERLICH
 carrouselImage: /uploads/Leandro_Erlich_Portrait_Style.png
 lieu: Ile de France
 ---
+Inspirée d'une chanson d'Édith Piaf, l'installation « Sous le Ciel » de l'artiste argentin Leandro Erlich célèbre le ciel de Paris et sa luminosité changeante. Dans les vitrines du Bon Marché Rive Gauche, des nuages semblent flotter, tandis que la verrière centrale et l'escalator emblématique du magasin sont transformés en un espace où rêve et réalité se confondent.

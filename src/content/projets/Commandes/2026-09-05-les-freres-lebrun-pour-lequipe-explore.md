@@ -9,3 +9,4 @@ carrousel: true
 carrouselTitre: Les Frères Lebrun au sommet
 carrouselImage: /uploads/Freres_lebrun_portrait_Style.png
 ---
+Formés à Montpellier, Alexis et Félix Lebrun se sont imposés en quelques années comme des prodiges du tennis de table mondial, devenant les nouveaux visages du ping-pong français sur la scène internationale.
