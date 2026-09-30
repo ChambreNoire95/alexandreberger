@@ -21,6 +21,7 @@ content:
       fields: [titre, client, date, enChantier]
     fields:
       - { name: titre, label: Accroche, type: string, required: true }
+      - { name: slug, label: "Slug (URL de la fiche, avancé)", type: string, description: "⚠️ Change l'adresse publique de la fiche (/projets/<slug>) : ne remplir que si tu veux vraiment changer l'URL, ça casse les liens déjà partagés/indexés. Laisse vide pour garder l'identifiant actuel (basé sur le nom de fichier). Lettres minuscules, chiffres et tirets uniquement." }
       - { name: categorie, type: string, hidden: true, default: commandes }
       - { name: enChantier, label: "Page en chantier", type: boolean, default: false, description: "Si activé, une note rouge italique s'affiche sur la fiche projet pour prévenir que la page est en cours de refonte. Désactiver une fois la page terminée." }
       - { name: role, label: "Rôle", type: string, description: "Ex. Réalisateur / Monteur — affiché avec le client (\"Rôle pour Client\") sous l'accroche sur la page Commandes, et dans les métadonnées de la fiche projet." }
@@ -53,6 +54,7 @@ content:
       fields: [titre, annee, enChantier]
     fields:
       - { name: titre, label: Accroche, type: string, required: true }
+      - { name: slug, label: "Slug (URL de la fiche, avancé)", type: string, description: "⚠️ Change l'adresse publique de la fiche (/projets/<slug>) : ne remplir que si tu veux vraiment changer l'URL, ça casse les liens déjà partagés/indexés. Laisse vide pour garder l'identifiant actuel (basé sur le nom de fichier). Lettres minuscules, chiffres et tirets uniquement." }
       - { name: categorie, type: string, hidden: true, default: creations }
       - { name: enChantier, label: "Page en chantier", type: boolean, default: false, description: "Si activé, une note rouge italique s'affiche sur la fiche projet pour prévenir que la page est en cours de refonte. Désactiver une fois la page terminée." }
       - { name: annee, label: "Année (début)", type: number, options: { min: 1980, max: 2100 }, description: "Détermine aussi l'ordre d'affichage sur la page Créations (plus récente en premier)." }

@@ -9,8 +9,11 @@ const projets = defineCollection({
     // Par défaut, Astro préfixe l'id avec le sous-dossier (ex. "commandes/mon-projet"),
     // ce qui changerait l'URL publique du projet. Les dossiers Commandes/Créations créés
     // dans Pages CMS ne servent qu'à ranger les fichiers : on ignore le dossier et on ne
-    // garde que le nom de fichier, pour ne jamais toucher aux slugs déjà indexés.
-    generateId: ({ entry }) => basename(entry, extname(entry)),
+    // garde que le nom de fichier par défaut. Le champ "slug" (optionnel, éditable
+    // depuis Pages CMS) prend le dessus quand il est rempli, pour permettre de changer
+    // l'URL publique d'un projet à la demande — attention, ça casse les liens déjà
+    // partagés/indexés avec l'ancienne URL.
+    generateId: ({ entry, data }) => (data.slug as string | undefined) || basename(entry, extname(entry)),
   }),
   // Pas de helper image() ici : Pages CMS écrit des chemins publics (/uploads/...)
   // dans le frontmatter, et le pipeline d'assets d'Astro tente de les résoudre comme
@@ -20,6 +23,7 @@ const projets = defineCollection({
   schema: () =>
     z.object({
       titre: z.string(),
+      slug: z.string().optional(),
       categorie: z.enum(["commandes", "creations"]),
       client: z.string().optional(),
       role: z.string().optional(),
