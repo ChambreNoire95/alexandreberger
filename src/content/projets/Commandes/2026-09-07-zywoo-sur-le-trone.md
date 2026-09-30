@@ -1,5 +1,5 @@
 ---
-titre: Zywoo sur le trône de la Team Vitality
+titre: Zywoo, le Roi du Game
 categorie: commandes
 enChantier: false
 role: Réalisateur
