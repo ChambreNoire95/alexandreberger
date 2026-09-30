@@ -12,7 +12,6 @@ content:
         label: "Projets affichés dans le carrousel (home + Créations), dans l'ordre"
         type: string
         list: true
-        description: "Glisse pour changer l'ordre d'affichage, de gauche à droite. Chaque ligne est le slug du projet : le nom de fichier sans \".md\" (visible dans l'URL de la fiche, /projets/<slug>). Un projet coché \"Afficher dans le carrousel\" mais absent de cette liste s'affiche en dernier."
 
   - name: projets-commandes
     label: "Projets — Commandes"
