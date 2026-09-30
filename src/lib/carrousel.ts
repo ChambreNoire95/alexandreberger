@@ -8,12 +8,15 @@ import carrouselOrdre from "../content/settings/carrousel.json";
 // ceux qui y figurent, trié par son ancien champ ordreCarrousel en secours.
 const positionDansOrdre = new Map(carrouselOrdre.ordre.map((slug, index) => [slug, index]));
 
-// La liste référence les projets par leur nom de fichier (stable), pas par
-// p.id (qui devient le champ "slug" personnalisé quand il est rempli, voir
-// content.config.ts) : ça évite de devoir mettre à jour cette liste chaque
-// fois qu'on change l'URL d'un projet.
-function clefStable(p: { id: string; filePath?: string }) {
-  return p.filePath ? basename(p.filePath, extname(p.filePath)) : p.id;
+// Un projet peut être identifié dans la liste par son nom de fichier
+// d'origine (stable, ne change jamais) OU par son champ "slug" personnalisé
+// (l'URL actuelle, voir content.config.ts) : les deux fonctionnent, pour ne
+// pas obliger à deviner lequel des deux la liste attend.
+function position(p: { id: string; filePath?: string; data: { ordreCarrousel?: number } }) {
+  const nomFichier = p.filePath ? basename(p.filePath, extname(p.filePath)) : undefined;
+  const parFichier = nomFichier ? positionDansOrdre.get(nomFichier) : undefined;
+  const parSlug = positionDansOrdre.get(p.id);
+  return parFichier ?? parSlug ?? 10000 + (p.data.ordreCarrousel ?? Infinity);
 }
 
 export async function getItemsCarrousel() {
@@ -22,11 +25,7 @@ export async function getItemsCarrousel() {
     ({ data }) => !!data.carrousel && !!(data.carrouselImage || data.couverture)
   );
 
-  projets.sort((a, b) => {
-    const posA = positionDansOrdre.get(clefStable(a)) ?? 10000 + (a.data.ordreCarrousel ?? Infinity);
-    const posB = positionDansOrdre.get(clefStable(b)) ?? 10000 + (b.data.ordreCarrousel ?? Infinity);
-    return posA - posB;
-  });
+  projets.sort((a, b) => position(a) - position(b));
 
   return projets.map((p) => ({
     href: `/projets/${p.id}`,
