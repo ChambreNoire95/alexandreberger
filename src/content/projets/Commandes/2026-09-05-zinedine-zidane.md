@@ -1,6 +1,8 @@
 ---
-titre: Zinedine Zidane
+titre: Zinedine Zidane et le Ballon d'Or
+slug: zinedine-zidane-ballon-or-benzema
 categorie: commandes
+enChantier: false
 role: Réalisateur
 client: L'Equipe / Sapari Productions
 type: Documentaire
