@@ -3,6 +3,17 @@ media:
   output: /uploads
 
 content:
+  - name: carrousel-ordre
+    label: "Ordre du carrousel"
+    type: file
+    path: src/content/settings/carrousel.json
+    fields:
+      - name: ordre
+        label: "Projets affichés dans le carrousel (home + Créations), dans l'ordre"
+        type: string
+        list: true
+        description: "Glisse pour changer l'ordre d'affichage, de gauche à droite. Chaque ligne est le slug du projet : le nom de fichier sans \".md\" (visible dans l'URL de la fiche, /projets/<slug>). Un projet coché \"Afficher dans le carrousel\" mais absent de cette liste s'affiche en dernier."
+
   - name: projets-commandes
     label: "Projets — Commandes"
     type: collection
@@ -19,8 +30,7 @@ content:
       - { name: date, label: Date, type: date, options: { format: "yyyy-MM-dd" }, description: "Détermine aussi l'ordre d'affichage sur la home (plus récente en premier)." }
       - { name: couverture, label: Couverture, type: image }
       - { name: couvertureAlt, label: "Texte alternatif (couverture)", type: string, description: "Décrit l'image pour le SEO et l'accessibilité. Si vide, le titre du projet est utilisé à la place." }
-      - { name: carrousel, label: "Afficher dans le carrousel (home)", type: boolean, default: false, description: "Ajoute ce projet au carrousel photo en haut de la page d'accueil." }
-      - { name: ordreCarrousel, label: "Ordre dans le carrousel", type: number, description: "Optionnel : les nombres les plus petits apparaissent en premier. Sans valeur, l'ordre suit la date." }
+      - { name: carrousel, label: "Afficher dans le carrousel (home)", type: boolean, default: false, description: "Ajoute ce projet au carrousel photo en haut de la page d'accueil. L'ordre se règle dans \"Ordre du carrousel\" (menu de gauche), pas ici." }
       - { name: carrouselTitre, label: "Titre pour le carrousel (optionnel)", type: string, description: "Remplace l'accroche affichée sur la carte du carrousel — utile pour un titre plus court et percutant. Si vide, l'accroche du projet est utilisée." }
       - { name: carrouselImage, label: "Visuel du carrousel (optionnel)", type: image, description: "Image dédiée au carrousel de la home, au format portrait. Si vide, la couverture est utilisée." }
       - { name: carrouselImageAlt, label: "Texte alternatif (visuel carrousel)", type: string }
@@ -53,8 +63,7 @@ content:
       - { name: duree, label: Durée, type: string, description: "Ex. 12 min, 1h30. Affichée à côté de l'année." }
       - { name: couverture, label: Couverture, type: image }
       - { name: couvertureAlt, label: "Texte alternatif (couverture)", type: string, description: "Décrit l'image pour le SEO et l'accessibilité. Si vide, le titre du projet est utilisé à la place." }
-      - { name: carrousel, label: "Afficher dans le carrousel (home)", type: boolean, default: false, description: "Ajoute ce projet au carrousel photo en haut de la page d'accueil." }
-      - { name: ordreCarrousel, label: "Ordre dans le carrousel", type: number, description: "Optionnel : les nombres les plus petits apparaissent en premier. Sans valeur, l'ordre suit l'année." }
+      - { name: carrousel, label: "Afficher dans le carrousel (home)", type: boolean, default: false, description: "Ajoute ce projet au carrousel photo en haut de la page d'accueil. L'ordre se règle dans \"Ordre du carrousel\" (menu de gauche), pas ici." }
       - { name: carrouselTitre, label: "Titre pour le carrousel (optionnel)", type: string, description: "Remplace l'accroche affichée sur la carte du carrousel — utile pour un titre plus court et percutant. Si vide, l'accroche du projet est utilisée." }
       - { name: carrouselImage, label: "Visuel du carrousel (optionnel)", type: image, description: "Image dédiée au carrousel de la home, au format portrait. Si vide, la couverture est utilisée." }
       - { name: carrouselImageAlt, label: "Texte alternatif (visuel carrousel)", type: string }
