@@ -5,14 +5,39 @@ import Layout from "../../layouts/Layout.astro";
 import OptimizedImage from "../../components/OptimizedImage.astro";
 
 export async function getStaticPaths() {
-  const projets = await getCollection("projets");
-  return projets.map((p) => ({
-    params: { slug: p.id },
-    props: { projet: p },
-  }));
+  const tousLesProjets = await getCollection("projets");
+
+  // Même ordre que sur les pages de liste (Commandes : date desc, Créations :
+  // année desc), pour que "le projet suivant" corresponde à ce que le
+  // visiteur aurait cliqué juste après sur la liste. Boucle au dernier.
+  const commandes = tousLesProjets
+    .filter((p) => p.data.categorie === "commandes")
+    .sort((a, b) => (b.data.date?.valueOf() ?? -Infinity) - (a.data.date?.valueOf() ?? -Infinity));
+  const creations = tousLesProjets
+    .filter((p) => p.data.categorie === "creations")
+    .sort((a, b) => (b.data.annee ?? -Infinity) - (a.data.annee ?? -Infinity));
+
+  // Jusqu'à 3 suggestions après le projet courant (boucle sur la liste),
+  // pour laisser le choix au visiteur plutôt qu'un seul "projet suivant" imposé.
+  function suivantsDe(liste: typeof tousLesProjets, index: number, count: number) {
+    const resultats: typeof tousLesProjets = [];
+    for (let i = 1; i <= Math.min(count, liste.length - 1); i++) {
+      resultats.push(liste[(index + i) % liste.length]);
+    }
+    return resultats;
+  }
+
+  return tousLesProjets.map((p) => {
+    const liste = p.data.categorie === "commandes" ? commandes : creations;
+    const index = liste.findIndex((x) => x.id === p.id);
+    return {
+      params: { slug: p.id },
+      props: { projet: p, suivants: suivantsDe(liste, index, 3) },
+    };
+  });
 }
 
-const { projet } = Astro.props;
+const { projet, suivants } = Astro.props;
 const { Content } = await render(projet);
 
 const currentPath =
@@ -136,6 +161,14 @@ const jsonLd = {
         ))}
       </div>
     )}
+    {suivants.length > 0 && (
+      <div class="liens-suivants">
+        <span class="lien-suivant-intro">Découvrez d'autres réalisations</span>
+        {suivants.map((s) => (
+          <a class="lien-suivant-titre" href={`/projets/${s.id}`}>{s.data.titre} →</a>
+        ))}
+      </div>
+    )}
   </article>
 </Layout>
 
@@ -164,4 +197,18 @@ const jsonLd = {
   .galerie[data-count="1"] { grid-template-columns:1fr; max-width:28.6rem; }
   .galerie[data-count="2"] { grid-template-columns:repeat(2, 1fr); }
   .galerie :global(img) { width:100%; height:100%; aspect-ratio:4/3; object-fit:cover; display:block; border-radius:2px; }
+  .liens-suivants {
+    display:flex; flex-direction:column; gap:.75rem;
+    margin-top:3.5rem; padding-top:2rem; border-top:1px solid rgba(255,255,255,.14);
+  }
+  .lien-suivant-intro {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
+    color:rgba(255,255,255,.45); margin-bottom:.25rem;
+  }
+  .lien-suivant-titre {
+    font-weight:700; font-size:clamp(1.3rem, 2.6vw, 1.7rem); line-height:1.2;
+    color:rgba(255,255,255,.7); text-decoration:none; transition:color 140ms ease;
+  }
+  .lien-suivant-titre:hover { color:#fff; }
 </style>
