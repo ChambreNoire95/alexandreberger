@@ -1,6 +1,7 @@
 ---
-titre: Zywoo sur le trône
+titre: Zywoo sur le trône de la Team Vitality
 categorie: commandes
+enChantier: false
 role: Réalisateur
 client: Team Vitality
 type: Brand Content
