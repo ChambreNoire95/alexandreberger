@@ -3,7 +3,7 @@ titre: Philippe Etchebest en Minervois
 categorie: commandes
 role: Producteur / Réalisateur
 client: Le Syndicat du Cru Minervois
-type: Brand Content
+type: Documentaire
 date: 2015-06-04
 carrousel: true
 ordreCarrousel: 10

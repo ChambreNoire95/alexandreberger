@@ -5,7 +5,7 @@ categorie: commandes
 enChantier: false
 role: Réalisateur
 client: Le Bon Marché Rive Gauche
-type: Brand Content
+type: Making-of
 date: 2022-02-26
 carrousel: true
 carrouselTitre: Le Mignonisme de Philippe Katerine

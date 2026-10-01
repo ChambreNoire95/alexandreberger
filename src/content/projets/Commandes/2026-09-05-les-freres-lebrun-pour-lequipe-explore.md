@@ -3,7 +3,7 @@ titre: Les Frères Lebrun pour L'équipe Explore
 categorie: commandes
 role: Réalisateur
 client: L'Équipe
-type: Brand Content
+type: Documentaire
 date: 2024-04-01
 carrousel: true
 carrouselTitre: Les Frères Lebrun au sommet

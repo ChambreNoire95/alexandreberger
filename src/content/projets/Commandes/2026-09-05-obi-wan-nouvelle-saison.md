@@ -5,7 +5,7 @@ categorie: commandes
 enChantier: false
 role: Réalisateur
 client: Disney+
-type: Brand Content
+type: Activation
 date: 2022-05-27
 carrousel: true
 carrouselTitre: Henry Tran, Deujna et la Force
