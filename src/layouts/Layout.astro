@@ -179,7 +179,14 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       <slot />
     </main>
 
-    {(Astro.url.pathname === "/" || Astro.url.pathname === "/creations") && (
+    {(() => {
+      // En génération statique, Astro produit l'URL avec un slash final pour
+      // les pages en mode "directory" (ex. "/creations/"), contrairement au
+      // serveur de dev qui sert "/creations" sans slash — on normalise avant
+      // de comparer pour que le bouton s'affiche dans les deux cas.
+      const chemin = Astro.url.pathname.replace(/\/$/, "") || "/";
+      return chemin === "/" || chemin === "/creations";
+    })() && (
       <button type="button" id="retour-haut" class="retour-haut" aria-label="Remonter en haut de page">
         <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
           <path fill="currentColor" d="M12 5l-7 7h4v7h6v-7h4z" />
