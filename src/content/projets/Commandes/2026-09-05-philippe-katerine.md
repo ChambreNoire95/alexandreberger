@@ -1,6 +1,8 @@
 ---
-titre: Philippe Katerine
+titre: Le Mignonisme selon Philippe Katerine
+slug: philippe-katerine-exposition-mignonisme
 categorie: commandes
+enChantier: true
 role: Réalisateur
 client: Le Bon Marché Rive Gauche
 type: Brand Content
