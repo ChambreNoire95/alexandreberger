@@ -3,7 +3,7 @@ titre: Peggy Frey visite un lieu iconique à Troyes
 categorie: commandes
 role: Réalisateur / Monteur
 client: Petit Bateau
-type: Brand Content
+type: Activation / Aftermovie
 date: 2024-05-16
 carrousel: true
 ordreCarrousel: 6
