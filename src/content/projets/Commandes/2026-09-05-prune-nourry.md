@@ -1,6 +1,8 @@
 ---
-titre: Prune Nourry
+titre: L'Amazone Erogène de Prune Nourry
+slug: prune-nourry-exposition-paris
 categorie: commandes
+enChantier: false
 role: Réalisateur
 client: Le Bon Marché Rive Gauche
 type: Brand Content
