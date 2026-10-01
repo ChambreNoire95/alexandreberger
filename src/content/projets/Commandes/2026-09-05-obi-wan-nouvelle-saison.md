@@ -1,6 +1,8 @@
 ---
-titre: Obi-Wan Nouvelle saison
+titre: Un duel au sommet pour la nouvelle saison d'Obi-Wan
+slug: obi-wan-annonce-nouvelle-saison
 categorie: commandes
+enChantier: false
 role: Réalisateur
 client: Disney+
 type: Brand Content
