@@ -1,7 +1,7 @@
 ---
 titre: Zywoo, le Roi du Game
 categorie: commandes
-enChantier: true
+enChantier: false
 role: Réalisateur
 client: Team Vitality
 type: Brand Content
@@ -10,4 +10,4 @@ carrousel: true
 carrouselTitre: Zywoo sur le trône de la Team Vitality
 carrouselImage: /uploads/Zywoo_Portrait_Style_2.png
 ---
-Mathieu « ZywOo » Herbaut s'est imposé comme l'un des meilleurs joueurs de Counter-Strike au monde, plusieurs fois classé numéro 1 mondial sous les couleurs de Team Vitality.
+Pour « The King Remains », événement organisé par Team Vitality le 12 mars 2024 sur l'esplanade du Trocadéro, j'ai réalisé l'aftermovie officiel. Face à la Tour Eiffel, Mathieu « ZywOo » Herbaut y annonce la prolongation de son contrat jusqu'en 2026, installé sur un trône d'armes doré devant la communauté de fans de Counter-Strike rassemblée pour l'occasion. Le film restitue l'effervescence du public parisien et la dimension spectaculaire de cette annonce esportive en plein cœur de Paris.
