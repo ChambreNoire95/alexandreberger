@@ -4,6 +4,12 @@ categorie: creations
 annee: 2023
 genre: Expérimental
 role: Réalisateur
+image1: /uploads/SpotlightsNordiques_2023_1.jpg
+image1Alt: Blond and Blond and Blond en studio pour le tournage de "Sous les Spotlights des Nørdiques"
+image2: /uploads/SpotlightsNordiques_2023_2.jpg
+image2Alt: Membre de Blond and Blond and Blond en enregistrement vocal, tournage de "Sous les Spotlights des Nørdiques"
+image3: /uploads/SpotlightsNordiques_2023_3.jpg
+image3Alt: Plan en noir et blanc d'une scène de "Sous les Spotlights des Nørdiques", Blond and Blond and Blond
 description: "Pour Blond and Blond and Blond, trio franco-suédois qui réinvente la chanson française avec un humour absurde et décalé, j'ai co-créé et monté « Sous les Spotlights des Nørdiques », réalisé par Iván González : le pilote d'une émission totalement barrée, avec la participation du chanteur Oldelaf."
 ---
 Pour Blond and Blond and Blond, trio franco-suédois qui réinvente la chanson française avec un humour absurde et décalé, j'ai co-créé et monté « Sous les Spotlights des Nørdiques », réalisé par Iván González : le pilote d'une émission totalement barrée, avec la participation du chanteur Oldelaf.
