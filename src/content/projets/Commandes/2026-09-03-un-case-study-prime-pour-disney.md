@@ -3,7 +3,7 @@ titre: Un Case Study primé pour Disney+
 categorie: commandes
 role: Réalisateur
 client: DISNEY+
-type: Activation
+type: Activation / Aftermovie
 date: 2023-03-01
 couverture: /uploads/PARALLELES.jpg
 carrousel: false
