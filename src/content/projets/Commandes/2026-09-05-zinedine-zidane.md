@@ -1,5 +1,5 @@
 ---
-titre: Zinedine Zidane et le Ballon d'Or
+titre: "Le sacre du Ballon d'Or 2022 "
 slug: zinedine-zidane-ballon-or-benzema
 categorie: commandes
 enChantier: false
