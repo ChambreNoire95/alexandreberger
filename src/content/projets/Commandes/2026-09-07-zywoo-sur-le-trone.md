@@ -4,7 +4,7 @@ categorie: commandes
 enChantier: false
 role: Réalisateur
 client: Team Vitality
-type: Brand Content
+type: Aftermovie
 date: 2024-03-12
 couverture: /uploads/ZywooThrone_2024-03-12_1.jpg
 couvertureAlt: ZywOo, couronné de munitions, pose devant son trône d'armes
