@@ -6,7 +6,7 @@ enChantier: false
 role: Réalisateur
 client: Le Bon Marché Rive Gauche
 type: Brand Content
-date: 2026-09-05
+date: 2021-11-01
 carrousel: true
 carrouselTitre: Olivia Ruiz part en live
 carrouselImage: /uploads/Olivia_Ruiz_Portrait_Styles_2.png

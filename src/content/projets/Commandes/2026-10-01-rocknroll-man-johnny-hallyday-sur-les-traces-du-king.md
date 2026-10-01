@@ -6,7 +6,7 @@ enChantier: true
 role: Monteur
 client: Universal Music
 type: Documentaire
-date: 2026-09-22
+date: 2026-11-01
 carrousel: true
 carrouselTitre: Johnny Hallyday à Las Vegas
 carrouselImage: /uploads/Johnny_Hallyday_Portrait_Style.jpeg

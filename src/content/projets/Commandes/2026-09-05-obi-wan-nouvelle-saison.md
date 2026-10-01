@@ -6,7 +6,7 @@ enChantier: false
 role: Réalisateur
 client: Disney+
 type: Brand Content
-date: 2026-09-05
+date: 2022-05-27
 carrousel: true
 carrouselTitre: Henry Tran, Deujna et la Force
 carrouselImage: /uploads/Henry_Trand_Deujna_portrait_Style.png

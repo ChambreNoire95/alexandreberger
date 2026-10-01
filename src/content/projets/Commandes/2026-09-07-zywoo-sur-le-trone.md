@@ -5,7 +5,7 @@ enChantier: false
 role: Réalisateur
 client: Team Vitality
 type: Brand Content
-date: 2026-09-07
+date: 2024-03-12
 carrousel: true
 carrouselTitre: Zywoo sur le trône de la Team Vitality
 carrouselImage: /uploads/Zywoo_Portrait_Style_2.png
