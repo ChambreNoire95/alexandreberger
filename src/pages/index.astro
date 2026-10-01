@@ -7,7 +7,7 @@ import CarrouselHome from "../components/CarrouselHome.astro";
 import { getCollection } from "astro:content";
 import { getItemsCarrousel } from "../lib/carrousel";
 
-const projets = (await getCollection("projets", ({ data }) => data.categorie === "commandes")).sort(
+const projets = (await getCollection("projets", ({ data }) => data.categorie === "commandes" && !data.brouillon)).sort(
   // Plus récente en premier, plus ancienne en bas (comme sur Créations).
   (a, b) => (b.data.date?.valueOf() ?? -Infinity) - (a.data.date?.valueOf() ?? -Infinity)
 );

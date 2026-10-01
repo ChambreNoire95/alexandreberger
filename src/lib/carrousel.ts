@@ -22,7 +22,7 @@ function position(p: { id: string; filePath?: string; data: { ordreCarrousel?: n
 export async function getItemsCarrousel() {
   const projets = await getCollection(
     "projets",
-    ({ data }) => !!data.carrousel && !!(data.carrouselImage || data.couverture)
+    ({ data }) => !!data.carrousel && !data.brouillon && !!(data.carrouselImage || data.couverture)
   );
 
   projets.sort((a, b) => position(a) - position(b));

@@ -5,7 +5,7 @@ import Layout from "../../layouts/Layout.astro";
 import OptimizedImage from "../../components/OptimizedImage.astro";
 
 export async function getStaticPaths() {
-  const tousLesProjets = await getCollection("projets");
+  const tousLesProjets = await getCollection("projets", ({ data }) => !data.brouillon);
 
   // Même ordre que sur les pages de liste (Commandes : date desc, Créations :
   // année desc), pour que "le projet suivant" corresponde à ce que le

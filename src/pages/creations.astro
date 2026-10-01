@@ -8,7 +8,7 @@ import OptimizedImage from "../components/OptimizedImage.astro";
 import { getCollection } from "astro:content";
 import { getItemsCarrousel } from "../lib/carrousel";
 
-const projets = (await getCollection("projets", ({ data }) => data.categorie === "creations")).sort(
+const projets = (await getCollection("projets", ({ data }) => data.categorie === "creations" && !data.brouillon)).sort(
   // Plus récente en premier, plus ancienne en bas. Les créations sans année
   // renseignée passent en dernier plutôt que de perturber le classement.
   (a, b) => (b.data.annee ?? -Infinity) - (a.data.annee ?? -Infinity)
