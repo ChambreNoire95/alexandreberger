@@ -1,7 +1,7 @@
 ---
 titre: Un concert privé pendant le confinement
 categorie: commandes
-enChantier: true
+enChantier: false
 role: Réalisateur
 client: Le Bon Marché Rive Gauche
 type: Brand Content
