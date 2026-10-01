@@ -1,6 +1,8 @@
 ---
-titre: Olivia Ruiz
+titre: Olivia Ruiz et sa commode aux tiroirs de couleurs
+slug: olivia-ruiz-roman-entretien
 categorie: commandes
+enChantier: false
 role: Réalisateur
 client: Le Bon Marché Rive Gauche
 type: Brand Content
