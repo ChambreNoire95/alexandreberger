@@ -133,9 +133,9 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   <dialog class="rech" id="rech" aria-labelledby="rech-titre">
     <button type="button" class="rech-fermer" data-rech-fermer aria-label="Fermer">×</button>
     <h2 class="rech-titre" id="rech-titre">Quel est votre projet ?</h2>
-    <p class="rech-intro">Choisissez votre secteur d'activité, puis un ou plusieurs besoins : je vous montre les références les plus proches.</p>
-    <p class="rech-groupe">Secteur d'activité</p>
-    <div class="rech-pastilles" role="group" aria-label="Secteur d'activité">
+    <p class="rech-intro">Choisissez votre univers, puis un ou plusieurs besoins : je vous montre les références les plus proches.</p>
+    <p class="rech-groupe">Univers</p>
+    <div class="rech-pastilles" role="group" aria-label="Univers">
       {secteursRecherche.map((m) => <button type="button" data-groupe="secteur" data-pastille={m} aria-pressed="false">{m}</button>)}
     </div>
     <p class="rech-groupe">Vos besoins</p>
@@ -473,7 +473,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
         return;
       }
       etat.textContent = !besoins.size
-        ? `Secteur ${secteur} · ${retenus.length} référence${retenus.length > 1 ? 's' : ''}`
+        ? `Univers ${secteur} · ${retenus.length} référence${retenus.length > 1 ? 's' : ''}`
         : retenus[0].couverts === besoins.size
           ? 'Les références qui répondent à vos besoins'
           : 'Les références les plus proches de vos besoins';
