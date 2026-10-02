@@ -50,7 +50,7 @@ const fichesRecherche = projets.map((p) => ({
 const SECTEURS = ["Mode", "Musique", "Cinéma", "Art", "Culture", "Éducation", "Société", "Sport", "Solidarité", "Environnement"];
 // Seuls les secteurs réellement utilisés par au moins une fiche sont proposés.
 const secteursRecherche = SECTEURS.filter((s) => fichesRecherche.some((f) => f.se.includes(s)));
-const pastillesRecherche = ["Interviews", "Aftermovie", "Événement", "Documentaire", "Making-of", "Institutionnel", "Film de marque", "Sport"];
+const pastillesRecherche = ["Interviews", "Aftermovie", "Événementiel", "Documentaire", "Making-of", "Institutionnel", "Film de marque"];
 const indexAvecApercu = new Set(apercus.map((a) => a.index));
 
 const itemsCarrousel = await getItemsCarrousel();
@@ -159,7 +159,6 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
             <span class="rech-texte">
               <span class="rech-nom">{p.data.titre}</span>
               {p.data.client && <span class="rech-client">{p.data.client}</span>}
-              <span class="rech-tags"></span>
             </span>
             <span class="rech-go" aria-hidden="true">→</span>
           </a>
@@ -350,11 +349,10 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   .rech-vignette :global(img) { width:100%; height:100%; object-fit:cover; display:block; }
   .rech-texte { flex:1; min-width:0; display:flex; flex-direction:column; gap:.25rem; }
   .rech-nom { font-weight:700; font-size:.95rem; line-height:1.3; }
-  .rech-client, .rech-tags {
+  .rech-client {
     font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:.68rem; letter-spacing:.1em;
     text-transform:uppercase; color:rgba(255,255,255,.5);
   }
-  .rech-tags:not(:empty)::before { content:"Correspond à : "; }
   .rech-go { flex:none; font-size:1.3rem; line-height:1; transition:transform 140ms ease; }
   .rech-resultats a:hover .rech-go, .rech-resultats a:focus-visible .rech-go { transform:translateX(.3rem); }
   .rech-contact {
@@ -499,12 +497,6 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       retenus.forEach((r) => {
         const li = lis[r.index];
         li.hidden = false;
-        const tags = li.querySelector('.rech-tags');
-        if (tags) {
-          const etiquettes = texte ? r.tags : (fiches[r.index].se ?? []);
-          const tous = choix.secteur && texte ? [choix.secteur, ...etiquettes.filter((t) => t !== choix.secteur)] : etiquettes;
-          tags.textContent = tous.join(' · ');
-        }
         liste.appendChild(li); // dans l'ordre du score
       });
     };
