@@ -13,8 +13,8 @@ SEO / référencement organique. C'est la raison du choix d'Astro (HTML statique
 ## Infrastructure
 
 - **Dépôt GitHub** : `ChambreNoire95/alexandreberger` (public), branche unique `main` (pas de branches fantômes, aucune PR/issue ouverte).
-- **Déploiement** : Vercel, auto-déployé à chaque push sur `main`. URL actuelle : **https://alexandreberger.vercel.app**
-  - ⚠️ Le domaine définitif (`alexandreberger.com` selon le nom du projet) n'est *pas encore branché*. Quand il le sera, il faut mettre à jour `site:` dans `astro.config.mjs` (sinon les URLs canoniques et le sitemap continueront de pointer vers le domaine `.vercel.app`).
+- **Déploiement** : Vercel, auto-déployé à chaque push sur `main`. URL de production : **https://www.alexandreberger.com** (domaine principal côté Vercel ; `alexandreberger.com` redirige vers lui, DNS chez IONOS — ne pas toucher aux enregistrements MX/SPF, les e-mails passent par IONOS).
+  - `site:` dans `astro.config.mjs` et la ligne `Sitemap:` de `public/robots.txt` pointent vers `https://www.alexandreberger.com`. Si le domaine principal change dans Vercel, modifier les deux.
 - **CMS** : [Pages CMS](https://pagescms.org), connecté au même repo GitHub, piloté par `.pages.yml` à la racine. Alexandre y édite le contenu directement ; chaque sauvegarde crée un commit "via Pages CMS" et redéploie automatiquement sur Vercel.
 - **Stack** : Astro 7 (sortie statique), pas de framework JS (Vue/React...), TypeScript dans les scripts inline, Leaflet pour la carte, `@astrojs/sitemap`.
 
@@ -97,7 +97,6 @@ Champs : `titre, date, extrait, couverture, brouillon`. Simple, symétrique CMS/
 
 **Reste à faire / décisions à prendre :**
 - **`og:image`** : pas d'image de partage social configurée (nécessite une image dédiée 1200×630, à fournir/valider par Alexandre — je n'en ai pas fabriqué).
-- **Domaine définitif** : mettre à jour `site` dans `astro.config.mjs` dès que `alexandreberger.com` est branché sur Vercel.
 - **Police Inter** : toujours chargée depuis Google Fonts, pas auto-hébergée (mentionné comme TODO dès le début du projet).
 - **Contenu À propos** : page encore vide ("À rédiger.") — les meta tags promettent du contenu ("parcours, démarche...") que la page ne délivre pas encore.
 - Le repo GitHub est **public** — pas un problème en soi, juste à avoir en tête (le `.pages.yml`, le code, tout est visible publiquement).
