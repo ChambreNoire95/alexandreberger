@@ -90,7 +90,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       {typesPresents.map((t) => (
         <button type="button" data-type={t} aria-pressed="false">{t}</button>
       ))}
-      <button type="button" class="filtre-recherche" data-recherche-ouvrir aria-haspopup="dialog">Trouvez les références adaptées à votre projet</button>
+      <button type="button" class="filtre-recherche" data-recherche-ouvrir aria-haspopup="dialog">Trouvez les références adaptées à vos besoins</button>
     </nav>
   )}
 
@@ -149,13 +149,13 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   <dialog class="rech" id="rech" aria-labelledby="rech-titre">
     <button type="button" class="rech-fermer" data-rech-fermer aria-label="Fermer">×</button>
     <h2 class="rech-titre" id="rech-titre">Trouvez les références adaptées à vos besoins</h2>
-    <p class="rech-intro">Choisissez votre univers, vos besoins, le format et le ton : je vous montre les références les plus proches.</p>
+    <p class="rech-intro">Choisissez vos critères : je vous montre les références les plus proches.</p>
     <p class="rech-groupe">Univers</p>
     <div class="rech-pastilles" role="group" aria-label="Univers">
       {secteursRecherche.map((m) => <button type="button" data-groupe="secteur" data-pastille={m} aria-pressed="false">{m}</button>)}
     </div>
-    <p class="rech-groupe">Vos besoins</p>
-    <div class="rech-pastilles" role="group" aria-label="Vos besoins">
+    <p class="rech-groupe">Vos critères</p>
+    <div class="rech-pastilles" role="group" aria-label="Vos critères">
       {besoinsRecherche.map((m) => <button type="button" data-groupe="besoin" data-pastille={m} aria-pressed="false">{m}</button>)}
     </div>
     <p class="rech-groupe">Format/Durée</p>
@@ -512,7 +512,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       const compte = tronque ? `${retenus.length}/${candidats.length}` : `${retenus.length}`;
       etat.textContent = !besoins.size
         ? `${secteur ? `Univers ${secteur} · ` : ''}${compte} référence${retenus.length > 1 ? 's' : ''}`
-        : `${retenus[0].couverts === besoins.size ? 'Les références qui répondent à vos besoins' : 'Les références les plus proches de vos besoins'}${tronque ? ` · ${compte}` : ''}`;
+        : `${retenus[0].couverts === besoins.size ? 'Les références qui répondent à vos critères' : 'Les références les plus proches de vos critères'}${tronque ? ` · ${compte}` : ''}`;
 
       retenus.forEach((r) => {
         const li = lis[r.index];
