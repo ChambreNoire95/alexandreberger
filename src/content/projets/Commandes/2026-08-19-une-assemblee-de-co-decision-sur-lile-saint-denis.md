@@ -1,13 +1,16 @@
 ---
 titre: Une Assemblée de co-décision sur l'Île-Saint-Denis
 categorie: commandes
+enChantier: false
+brouillon: false
 role: Réalisateur
+accroche: Plusieurs mois aux côtés d'habitants de l'Île-Saint-Denis qui
+  construisent des propositions que le Maire s'engage à valider.
 client: Les Cahiers Pour Décider et Agir
 type: Documentaire
-accroche: "Plusieurs mois aux côtés d'habitants de l'Île-Saint-Denis qui construisent des propositions que le Maire s'engage à valider."
-titreFilm: "Les Règles du jeu"
-duree: "22 min 32"
 date: 2026-03-01
+titreFilm: Les Règles du jeu
+duree: 22min
 couverture: /uploads/REGLES_DU_JEU.jpg
 couvertureAlt: Un moment d'exercice lors d'une assemblée de co-décision sur l'Île-Saint-Denis
 carrousel: false
