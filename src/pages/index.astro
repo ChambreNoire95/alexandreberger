@@ -71,6 +71,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   .filtres button[aria-pressed="true"] { background:#fff; color:#0b0b0b; border-color:#fff; }
   .accroches { list-style:none; margin:4.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:3.575rem; }
   .accroches.sans-filtres { margin-top:5.5rem; }
+  .accroches { overflow-anchor:none; }
   .accroches li[hidden] { display:none; }
   .accroches a {
     display:flex; flex-direction:column; align-items:center; gap:.6rem;
@@ -95,6 +96,8 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 </style>
 
 <script>
+  import { scrollerVersTitre } from "../lib/positionTitre";
+
   function setupFiltres() {
     const nav = document.getElementById('filtres');
     const items = document.querySelectorAll<HTMLLIElement>('#accroches li');
@@ -110,12 +113,9 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
         li.hidden = type !== 'all' && li.dataset.type !== type;
       });
 
-      // Masquer/afficher des accroches déplace le contenu sous le point de
-      // défilement actuel : le navigateur compense à sa façon (scroll
-      // anchoring), de façon incohérente selon les éléments cachés. On fixe
-      // systématiquement la barre de filtres en haut de l'écran pour un
-      // comportement prévisible au lieu d'un saut aléatoire.
-      nav.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Masquer/afficher des accroches change la hauteur de la page : on recale
+      // aussitôt, dans la même image, sur la position de référence (titre en haut).
+      scrollerVersTitre();
     });
   }
 

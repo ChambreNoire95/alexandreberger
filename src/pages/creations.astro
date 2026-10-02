@@ -133,6 +133,7 @@ function genreDisponible(genre: string) {
     width:100%; max-width:910px;
   }
   .creations.sans-filtres { margin-top:5.5rem; }
+  .creations { overflow-anchor:none; }
   .creations li[hidden] { display:none; }
   .creation {
     width:100%; display:flex; flex-direction:column; gap:1.1rem; text-align:left;
@@ -164,6 +165,8 @@ function genreDisponible(genre: string) {
 </style>
 
 <script>
+  import { scrollerVersTitre } from "../lib/positionTitre";
+
   function setupFiltres() {
     const navGenre = document.getElementById('filtres');
     const navRole = document.getElementById('filtres-role');
@@ -190,12 +193,9 @@ function genreDisponible(genre: string) {
       });
       majPremierVisible();
 
-      // Masquer/afficher des créations déplace le contenu sous le point de
-      // défilement actuel : le navigateur compense à sa façon (scroll
-      // anchoring), de façon incohérente selon les éléments cachés. On fixe
-      // systématiquement la barre de filtres en haut de l'écran pour un
-      // comportement prévisible au lieu d'un saut aléatoire.
-      (navGenre ?? navRole)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Masquer/afficher des créations change la hauteur de la page : on recale
+      // aussitôt, dans la même image, sur la position de référence (titre en haut).
+      scrollerVersTitre();
     }
 
     // Grise les boutons de genre sans aucun projet pour le rôle actuel. Si

@@ -111,6 +111,33 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       </div>
     </header>
     <script>
+      import { scrollerVersTitre } from "../lib/positionTitre";
+
+      // Clic sur « Films de commande » / « Créations » : la page suivante doit
+      // s'afficher directement calée sur le titre (comme après un filtre), sans
+      // repasser par le haut de page ni fondu. astro:after-swap a lieu après le
+      // remplacement du DOM et la remise à zéro du scroll par Astro, mais avant
+      // le premier affichage : le visiteur ne voit aucun saut.
+      let versTitre = false;
+      document.addEventListener("click", (event) => {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        versTitre = !!(event.target as HTMLElement).closest(".titre-switch a");
+      });
+      // La classe doit rester posée pendant toute l'animation de transition
+      // (créée après le swap) : on ne la retire qu'au début de la navigation suivante.
+      document.addEventListener("astro:before-preparation", () => {
+        document.documentElement.classList.remove("sans-fondu");
+      });
+      document.addEventListener("astro:before-swap", (event) => {
+        if (versTitre) event.newDocument.documentElement.classList.add("sans-fondu");
+      });
+      document.addEventListener("astro:after-swap", () => {
+        if (versTitre) scrollerVersTitre();
+      });
+      document.addEventListener("astro:page-load", () => {
+        versTitre = false;
+      });
+
       const toggle = document.getElementById("menu-toggle");
       const menu = document.getElementById("menu-secondaire");
 
@@ -232,6 +259,10 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
 </html>
 
 <style is:global>
+  html.sans-fondu::view-transition-group(root),
+  html.sans-fondu::view-transition-old(root),
+  html.sans-fondu::view-transition-new(root) { animation: none; }
+
   /* Inter auto-hébergée (public/fonts/) : deux fichiers de police variable
      couvrent toutes les graisses utilisées sur le site (300 à 800, plus
      l'italique 300 pour .prix-film), au lieu de charger Google Fonts. */
