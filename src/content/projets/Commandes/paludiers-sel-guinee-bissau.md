@@ -11,6 +11,7 @@ secteurs:
   - Solidarité
   - Environnement
   - Éducation
+  - Terroir / Gastronomie
 besoins:
   - Tournage à l'étranger
   - Interviews

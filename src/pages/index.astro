@@ -55,7 +55,7 @@ const fichesRecherche = elementsRecherche.map(({ p }) => ({
   fo: p.data.formats ?? [],
   to: p.data.tons ?? [],
 }));
-const SECTEURS = ["Mode", "Musique", "Série/Cinéma", "Art", "Culture", "Éducation", "Sciences", "Société", "Sport", "Solidarité", "Environnement"];
+const SECTEURS = ["Mode", "Musique", "Série/Cinéma", "Art", "Culture", "Terroir / Gastronomie", "Éducation", "Sciences", "Société", "Sport", "Solidarité", "Environnement"];
 const BESOINS = ["Interviews", "Mise en scène / Direction artistique", "Tournage à l'étranger", "Projet au long cours"];
 // Seules les valeurs réellement utilisées par au moins une fiche sont proposées.
 const secteursRecherche = SECTEURS.filter((x) => fichesRecherche.some((f) => f.se.includes(x)));
@@ -352,6 +352,8 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     border:1px solid rgba(255,255,255,.3); border-radius:2px; padding:.4rem .8rem;
   }
   .rech-pastilles button:hover { color:#fff; border-color:#fff; }
+  .rech-pastilles button:disabled { opacity:.3; cursor:not-allowed; border-style:dashed; }
+  .rech-pastilles button:disabled:hover { color:rgba(255,255,255,.7); border-color:rgba(255,255,255,.3); }
   .rech-pastilles button[aria-pressed="true"] { background:#fff; color:#0b0b0b; border-color:#fff; }
   .rech-etat { min-height:1.4em; margin:.9rem 0 .6rem; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.55); }
   .rech-resultats { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.7rem; }
@@ -502,12 +504,30 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     const formats = new Set<string>(); // plusieurs formats possibles : un film qui en a au moins un convient
     const tons = new Set<string>(); // idem pour le ton
 
+    // Une pastille est grisée si, avec les critères déjà choisis dans les AUTRES lignes, aucun film ne la porte :
+    // elle ne mènerait qu'à zéro résultat. Les pastilles déjà cochées restent toujours cliquables (pour les retirer).
+    const valeursDe = (f: FicheRecherche, g: string) => (g === 'secteur' ? f.se : g === 'besoin' ? f.be : g === 'format' ? f.fo : f.to);
+    const convient = (f: FicheRecherche, sauf: string) =>
+      (sauf === 'secteur' || !secteur || f.se.includes(secteur)) &&
+      (sauf === 'besoin' || !besoins.size || f.be.some((x) => besoins.has(x))) &&
+      (sauf === 'format' || !formats.size || f.fo.some((x) => formats.has(x))) &&
+      (sauf === 'ton' || !tons.size || f.to.some((x) => tons.has(x)));
+    const majDisponibilites = () => {
+      pastilles.forEach((b) => {
+        const g = b.dataset.groupe ?? '';
+        const v = b.dataset.pastille ?? '';
+        const cochee = b.getAttribute('aria-pressed') === 'true';
+        b.disabled = !cochee && !fiches.some((f) => convient(f, g) && valeursDe(f, g).includes(v));
+      });
+    };
+
     const lancer = () => {
       pastilles.forEach((b) => {
         const v = b.dataset.pastille ?? '';
         const actif = b.dataset.groupe === 'secteur' ? secteur === v : b.dataset.groupe === 'besoin' ? besoins.has(v) : b.dataset.groupe === 'format' ? formats.has(v) : tons.has(v);
         b.setAttribute('aria-pressed', String(actif));
       });
+      majDisponibilites();
       lis.forEach((li) => { li.hidden = true; });
       if (!secteur && !besoins.size && !formats.size && !tons.size) {
         etat.textContent = '';

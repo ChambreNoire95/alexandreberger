@@ -8,6 +8,7 @@ accroche: "Le chef Philippe Etchebest s'invite le temps d'un épisode du road-mo
 titreFilm: "Mon Minervois, 30 ans d'aventures"
 secteurs:
   - Culture
+  - Terroir / Gastronomie
 besoins:
   - Mise en scène / Direction artistique
 formats:
