@@ -3,7 +3,7 @@ titre: Une démarche responsable au cœur de cette école d'ingénieurs
 categorie: commandes
 role: Réalisateur / Monteur
 client: Polytech montpellier
-type: Brand Content
+type: Institutionnel
 date: 2022-08-18
 video: https://www.youtube.com/watch?v=UjvviZ_MjFE
 couverture: /uploads/PolytechMontpellierDDRS_2022-08-18_1.jpg

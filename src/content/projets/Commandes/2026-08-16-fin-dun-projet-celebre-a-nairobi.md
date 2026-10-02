@@ -3,7 +3,7 @@ titre: Un programme d'échange scientifique entre Europe et Afrique
 categorie: commandes
 role: Réalisateur / Monteur
 client: Agropolis Fondation
-type: Brand Content
+type: Institutionnel
 date: 2024-10-01
 couverture: /uploads/OnePlanetFellowship_2024-10-01_1.jpg
 couvertureAlt: Banderole du programme One Planet Fellowship, tournage du documentaire pour Agropolis Fondation
