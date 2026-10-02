@@ -3,13 +3,12 @@ titre: Peggy Frey visite un lieu iconique à Troyes
 categorie: commandes
 enChantier: false
 brouillon: false
+horsRecherche: false
 role: Réalisateur / Monteur
 accroche: Peggy Frey pousse les portes de l'usine historique Petit Bateau à
   Troyes et découvre la fabrication de ses pièces iconiques.
 secteurs:
   - Mode
-besoins:
-  - Mise en scène / Direction artistique
 formats:
   - Court
   - Réseaux sociaux
