@@ -3,6 +3,14 @@ titre: The Lost Worlds
 categorie: creations
 annee: 2024
 genre: Expérimental
+secteurs:
+  - Art
+  - Culture
+besoins:
+  - Direction artistique
+formats:
+  - Série
+  - Réseaux sociaux
 role: Réalisateur
 duree: Série
 image1: /uploads/TheLostWorlds_2024_1.jpg

@@ -3,6 +3,14 @@ titre: Tant qu'il y aura le monde
 categorie: creations
 annee: 2025
 genre: Fiction
+secteurs:
+  - Société
+  - Série/Cinéma
+besoins:
+  - Mise en scène
+  - Projet au long cours
+formats:
+  - Court
 role: Réalisateur
 duree: 2min20
 description: Fin 2025, j'ai voulu rendre hommage aux pompiers du Val d'Oise à travers une fiction inspirée du réel, construite à partir d'images tournées au fil des mois sur le terrain. Un geste pour mettre en lumière la beauté de l'engagement de ces femmes et de ces hommes qui risquent chaque jour leur vie pour porter secours à la population. Réalisé dans le cadre du Nikon Film Festival.

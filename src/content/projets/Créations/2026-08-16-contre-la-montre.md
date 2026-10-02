@@ -3,6 +3,12 @@ titre: Contre La Montre
 categorie: creations
 annee: 2013
 genre: Fiction
+secteurs:
+  - Série/Cinéma
+besoins:
+  - Mise en scène
+formats:
+  - Court
 role: Réalisateur
 duree: 1min
 description: Contre La Montre a pris part au Mobile Film Festival. Tournée

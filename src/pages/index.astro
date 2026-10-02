@@ -16,6 +16,16 @@ const projets = (await getCollection("projets", ({ data }) => data.categorie ===
   (a, b) => (b.data.date?.valueOf() ?? -Infinity) - (a.data.date?.valueOf() ?? -Infinity)
 );
 
+// Créations : ne servent qu'à la recherche de références (pas à la liste ni aux aperçus).
+const creations = (await getCollection("projets", ({ data }) => data.categorie === "creations" && !data.brouillon)).sort(
+  (a, b) => (b.data.annee ?? -Infinity) - (a.data.annee ?? -Infinity)
+);
+// Commandes d'abord : à critères égaux, elles passent devant les Créations dans les résultats.
+const elementsRecherche = [
+  ...projets.map((p) => ({ p, creation: false })),
+  ...creations.map((p) => ({ p, creation: true })),
+];
+
 // Panneau d'aperçu (écran large + souris) : un aperçu par projet ayant une image.
 // Durée : les unités (min, h, s…) sont enveloppées pour être affichées plus petites.
 const echapper = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -38,7 +48,7 @@ const apercus = projets
     duree: p.data.duree?.trim() || undefined,
   }));
 // « Trouvez les références adaptées à votre projet » : secteurs et besoins (champs CMS à choix).
-const fichesRecherche = projets.map((p) => ({
+const fichesRecherche = elementsRecherche.map(({ p }) => ({
   se: p.data.secteurs ?? [],
   be: p.data.besoins ?? [],
   fo: p.data.formats ?? [],
@@ -151,15 +161,18 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     </div>
     <p class="rech-etat" id="rech-etat" aria-live="polite"></p>
     <ul class="rech-resultats" id="rech-resultats">
-      {projets.map((p, index) => (
+      {elementsRecherche.map(({ p, creation }, index) => (
         <li data-index={index} hidden>
           <a href={`/projets/${p.id}`}>
             <span class="rech-vignette">
               {(p.data.couverture || p.data.image1) && <OptimizedImage src={(p.data.couverture || p.data.image1) as string} alt="" sizes="140px" />}
             </span>
             <span class="rech-texte">
+              {creation && <span class="rech-etiquette">Création</span>}
               <span class="rech-nom">{p.data.titre}</span>
-              {p.data.client && <span class="rech-client">{p.data.client}</span>}
+              {creation
+                ? (p.data.genre || p.data.annee) && <span class="rech-client">{[p.data.genre, p.data.annee].filter(Boolean).join(" · ")}</span>
+                : p.data.client && <span class="rech-client">{p.data.client}</span>}
             </span>
             <span class="rech-go" aria-hidden="true">→</span>
           </a>
@@ -347,6 +360,11 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   .rech-client {
     font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:.68rem; letter-spacing:.1em;
     text-transform:uppercase; color:rgba(255,255,255,.5);
+  }
+  .rech-etiquette {
+    align-self:flex-start; padding:.1rem .4rem; border:1px solid rgba(255,255,255,.6); border-radius:2px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:.62rem; letter-spacing:.14em;
+    text-transform:uppercase; color:#fff;
   }
   .rech-go { flex:none; font-size:1.3rem; line-height:1; transition:transform 140ms ease; }
   .rech-resultats a:hover .rech-go, .rech-resultats a:focus-visible .rech-go { transform:translateX(.3rem); }

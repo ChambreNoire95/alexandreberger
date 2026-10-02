@@ -3,6 +3,13 @@ titre: Sous les Spotlights des Nørdiques
 categorie: creations
 annee: 2023
 genre: Expérimental
+secteurs:
+  - Musique
+besoins:
+  - Mise en scène
+  - Direction artistique
+formats:
+  - Série
 role: Réalisateur
 image1: /uploads/SpotlightsNordiques_2023_1.jpg
 image1Alt: Blønd and Blönd and Blónd en studio pour le tournage de "Sous les Spotlights des Nørdiques"

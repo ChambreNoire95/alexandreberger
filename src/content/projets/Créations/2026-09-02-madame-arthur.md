@@ -4,6 +4,16 @@ categorie: creations
 annee: 2020
 anneeFin: 2022
 genre: Clip
+secteurs:
+  - Musique
+  - Culture
+besoins:
+  - Projet au long cours
+  - Direction artistique
+  - Mise en scène
+formats:
+  - Série
+  - Réseaux sociaux
 role: Réalisateur
 duree: Série
 carrousel: true

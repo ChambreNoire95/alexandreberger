@@ -3,6 +3,14 @@ titre: Black Hole
 categorie: creations
 annee: 2016
 genre: Clip
+secteurs:
+  - Musique
+  - Art
+besoins:
+  - Mise en scène
+  - Direction artistique
+formats:
+  - Court
 role: Réalisateur
 duree: 4min43
 couverture: /uploads/BlackHole_Clip_1.jpg

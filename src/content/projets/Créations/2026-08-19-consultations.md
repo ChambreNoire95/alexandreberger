@@ -3,6 +3,12 @@ titre: Consultations
 categorie: creations
 annee: 2016
 genre: Fiction
+secteurs:
+  - Série/Cinéma
+besoins:
+  - Mise en scène
+formats:
+  - Série
 role: Producteur
 realisateur: David Rinaldi
 image1: /uploads/Consultations_2016_1.jpg

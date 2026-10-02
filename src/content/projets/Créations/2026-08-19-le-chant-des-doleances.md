@@ -3,6 +3,13 @@ titre: Le Chant des Doléances
 categorie: creations
 annee: 2026
 genre: Clip
+secteurs:
+  - Musique
+  - Société
+besoins:
+  - Mise en scène
+formats:
+  - Court
 role: Réalisateur
 duree: 6min31
 carrousel: false

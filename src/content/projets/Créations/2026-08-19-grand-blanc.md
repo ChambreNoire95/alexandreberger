@@ -3,6 +3,12 @@ titre: Grand Blanc
 categorie: creations
 annee: 2016
 genre: Fiction
+secteurs:
+  - Série/Cinéma
+besoins:
+  - Mise en scène
+formats:
+  - Court
 role: Réalisateur
 duree: 11min23
 carrousel: false

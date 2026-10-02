@@ -3,6 +3,15 @@ titre: Farming our future
 categorie: creations
 annee: 2019
 genre: Documentaire
+secteurs:
+  - Solidarité
+  - Éducation
+  - Environnement
+besoins:
+  - Interviews
+  - Tournage à l'étranger
+formats:
+  - Court
 role: Réalisateur
 duree: 12min
 image1: /uploads/FarmingOurFuture_2019_1.jpg

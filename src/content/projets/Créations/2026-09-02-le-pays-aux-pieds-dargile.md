@@ -5,6 +5,14 @@ enChantier: false
 brouillon: false
 annee: 2018
 genre: Documentaire
+secteurs:
+  - Société
+  - Environnement
+besoins:
+  - Interviews
+  - Projet au long cours
+formats:
+  - Long
 role: Producteur
 realisateur: NICOLAS PLOUMPIDIS
 duree: 52min
