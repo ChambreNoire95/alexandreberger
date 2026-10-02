@@ -3,15 +3,16 @@ titre: Stromae fait battre le cœur du Bon Marché
 categorie: commandes
 enChantier: false
 brouillon: false
+horsRecherche: false
 role: Producteur / Réalisateur / Monteur
 accroche: De la séance photo à la soirée d'inauguration, l'« Usine Fantastique »
   de Stromae et Mosaert racontée étape par étape.
 secteurs:
   - Musique
-  - Culture
+  - Mode
 besoins:
-  - Mise en scène / Direction artistique
   - Projet au long cours
+  - Interviews
 formats:
   - Court
 client: Le Bon Marché Rive Gauche
