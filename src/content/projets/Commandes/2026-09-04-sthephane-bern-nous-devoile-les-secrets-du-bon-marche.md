@@ -9,7 +9,7 @@ accroche: Stéphane Bern raconte Aristide et Marguerite Boucicaut, fondateurs du
 client: Le Bon Marché Rive Gauche
 type: Documentaire
 date: 2020-04-01
-titreFilm: LES SECRETS DU BON MARCHÉ
+titreFilm: "SECRETS D'HISTOIRE : LE BON MARCHÉ"
 couverture: /uploads/StephaneBernBonMarche_2020-04-01_1.jpg
 couvertureAlt: Escalator emblématique du Bon Marché Rive Gauche sous la
   verrière, toujours en activité depuis 1852
