@@ -1,14 +1,18 @@
 ---
 titre: Artus a marqué le cinéma français à jamais
 categorie: commandes
+enChantier: false
+brouillon: false
 role: Réalisateur
+accroche: Plusieurs semaines dans le Vercors sur le tournage d'« Un p'tit truc
+  en plus », au plus près des « pensionnaires ».
 client: Cine Nomine / Pan Distribution
 type: Making-of
-accroche: "Plusieurs semaines dans le Vercors sur le tournage d'« Un p'tit truc en plus », au plus près des « pensionnaires »."
 date: 2024-06-01
+titreFilm: EN PLUS
+duree: 30min
 couverture: /uploads/UPTE_visuel_site.jpg
 carrousel: true
-ordreCarrousel: 4
 carrouselTitre: ARTUS ET SON P'TIT TRUC EN +
 carrouselImage: /uploads/Artus_cinema_portrait_style_4.png
 image1: /uploads/UPTE_visuel_site_2.jpg
