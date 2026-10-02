@@ -4,15 +4,14 @@ slug: philippe-katerine-exposition-mignonisme
 categorie: commandes
 enChantier: false
 brouillon: false
+horsRecherche: false
 role: Réalisateur
 accroche: "Au Bon Marché, Philippe Katerine installe le mignonisme : sculptures,
   dessins et un immense personnage rose, Monsieur Rose."
 secteurs:
   - Art
-  - Musique
-  - Culture
 besoins:
-  - Mise en scène / Direction artistique
+  - Interviews
 formats:
   - Court
 tons:
