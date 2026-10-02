@@ -9,7 +9,7 @@ accroche: "Une série documentaire en trois volets sur le One Planet Fellowship 
 secteurs:
   - Éducation
   - Environnement
-  - Science
+  - Sciences
 besoins:
   - Interviews
   - Tournage à l'étranger
