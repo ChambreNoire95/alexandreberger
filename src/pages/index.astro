@@ -37,20 +37,16 @@ const apercus = projets
     titreFilm: p.data.titreFilm?.trim() || undefined,
     duree: p.data.duree?.trim() || undefined,
   }));
-// « Trouver une référence » : données de recherche (même ordre que `projets`).
+// « Trouvez les références adaptées à votre projet » : secteurs et besoins (champs CMS à choix).
 const fichesRecherche = projets.map((p) => ({
-  k: p.data.motsCles ?? "",
-  ty: p.data.type ?? "",
-  ti: `${p.data.titre} ${p.data.titreFilm ?? ""}`,
-  cl: `${p.data.client ?? ""} ${p.data.role ?? ""}`,
-  ac: p.data.accroche ?? "",
-  co: (p.body ?? "").replace(/[#*_>\[\]()`]/g, " ").slice(0, 300),
   se: p.data.secteurs ?? [],
+  be: p.data.besoins ?? [],
 }));
 const SECTEURS = ["Mode", "Musique", "Cinéma", "Art", "Culture", "Éducation", "Société", "Sport", "Solidarité", "Environnement"];
-// Seuls les secteurs réellement utilisés par au moins une fiche sont proposés.
-const secteursRecherche = SECTEURS.filter((s) => fichesRecherche.some((f) => f.se.includes(s)));
-const pastillesRecherche = ["Interviews", "Aftermovie", "Événementiel", "Documentaire", "Making-of", "Institutionnel", "Film de marque"];
+const BESOINS = ["Interviews", "Mise en scène", "Tournage à l'étranger", "Projet au long cours", "Direction artistique"];
+// Seules les valeurs réellement utilisées par au moins une fiche sont proposées.
+const secteursRecherche = SECTEURS.filter((x) => fichesRecherche.some((f) => f.se.includes(x)));
+const besoinsRecherche = BESOINS.filter((x) => fichesRecherche.some((f) => f.be.includes(x)));
 const indexAvecApercu = new Set(apercus.map((a) => a.index));
 
 const itemsCarrousel = await getItemsCarrousel();
@@ -137,14 +133,14 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   <dialog class="rech" id="rech" aria-labelledby="rech-titre">
     <button type="button" class="rech-fermer" data-rech-fermer aria-label="Fermer">×</button>
     <h2 class="rech-titre" id="rech-titre">Quel est votre projet ?</h2>
-    <p class="rech-intro">Choisissez un type de film et un secteur d'activité : je vous montre les références les plus proches.</p>
-    <p class="rech-groupe">Type de film</p>
-    <div class="rech-pastilles" role="group" aria-label="Type de film">
-      {pastillesRecherche.map((m) => <button type="button" data-groupe="besoin" data-pastille={m} aria-pressed="false">{m}</button>)}
-    </div>
+    <p class="rech-intro">Choisissez votre secteur d'activité, puis un ou plusieurs besoins : je vous montre les références les plus proches.</p>
     <p class="rech-groupe">Secteur d'activité</p>
     <div class="rech-pastilles" role="group" aria-label="Secteur d'activité">
       {secteursRecherche.map((m) => <button type="button" data-groupe="secteur" data-pastille={m} aria-pressed="false">{m}</button>)}
+    </div>
+    <p class="rech-groupe">Vos besoins</p>
+    <div class="rech-pastilles" role="group" aria-label="Vos besoins">
+      {besoinsRecherche.map((m) => <button type="button" data-groupe="besoin" data-pastille={m} aria-pressed="false">{m}</button>)}
     </div>
     <p class="rech-etat" id="rech-etat" aria-live="polite"></p>
     <ul class="rech-resultats" id="rech-resultats">
@@ -383,8 +379,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 
 <script>
   import { scrollerVersTitre } from "../lib/positionTitre";
-  import { classer, SEUIL, type Fiche } from "../lib/recherche";
-
+  
   function setupFiltres() {
     const nav = document.getElementById('filtres');
     const items = document.querySelectorAll<HTMLLIElement>('#accroches li');
@@ -442,7 +437,9 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     parDefaut();
   }
 
-  function setupRecherche(fiches: Fiche[]) {
+  interface FicheRecherche { se: string[]; be: string[]; }
+
+  function setupRecherche(fiches: FicheRecherche[]) {
     const dialogue = document.getElementById('rech') as HTMLDialogElement | null;
     const liste = document.getElementById('rech-resultats');
     const etat = document.getElementById('rech-etat');
@@ -450,58 +447,55 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     const lis = [...liste.querySelectorAll<HTMLLIElement>('li')];
     const pastilles = [...dialogue.querySelectorAll<HTMLButtonElement>('[data-pastille]')];
 
-    // Une pastille au plus par ligne (type de film / secteur) : on les croise.
-    const choix = { besoin: '', secteur: '' };
+    // Un seul secteur ; plusieurs besoins possibles (les films qui en couvrent le plus remontent en premier).
+    let secteur = '';
+    const besoins = new Set<string>();
 
     const lancer = () => {
-      const texte = choix.besoin;
       pastilles.forEach((b) => {
-        const g = b.dataset.groupe as 'besoin' | 'secteur';
-        b.setAttribute('aria-pressed', String(choix[g] === b.dataset.pastille));
+        const actif = b.dataset.groupe === 'secteur' ? secteur === b.dataset.pastille : besoins.has(b.dataset.pastille ?? '');
+        b.setAttribute('aria-pressed', String(actif));
       });
       lis.forEach((li) => { li.hidden = true; });
-      if (!texte && !choix.secteur) {
+      if (!secteur && !besoins.size) {
         etat.textContent = '';
         return;
       }
 
-      type Candidat = { index: number; score: number; tags: string[] };
-      let candidats: Candidat[] = texte
-        ? classer(texte, fiches).filter((r) => r.score >= SEUIL)
-        : fiches.map((_, index) => ({ index, score: 0, tags: [] }));
-      if (choix.secteur) candidats = candidats.filter((r) => fiches[r.index].se?.includes(choix.secteur));
+      const candidats = fiches
+        .map((f, index) => ({ index, couverts: f.be.filter((x) => besoins.has(x)).length }))
+        .filter((r) => (!secteur || fiches[r.index].se.includes(secteur)) && (!besoins.size || r.couverts > 0))
+        .sort((a, b) => b.couverts - a.couverts || a.index - b.index); // à égalité : le plus récent d'abord
 
-      const retenus = candidats.slice(0, texte ? 3 : 6);
+      const retenus = candidats.slice(0, 6);
       if (!retenus.length) {
-        etat.textContent = choix.secteur && texte
-          ? "Rien qui croise ces critères pour l'instant. Essayez un autre secteur, ou parlons de votre projet."
-          : "Rien de très proche pour l'instant. Parlons de votre projet, on trouvera.";
+        etat.textContent = "Rien qui croise ces critères pour l'instant. Essayez d'autres critères, ou parlons de votre projet.";
         return;
       }
-      etat.textContent = choix.secteur && texte
-        ? 'Les références qui croisent vos critères'
-        : texte
-          ? (retenus.length > 1 ? 'Les références les plus proches' : 'La référence la plus proche')
-          : `Secteur ${choix.secteur} · ${retenus.length} référence${retenus.length > 1 ? 's' : ''}`;
+      etat.textContent = !besoins.size
+        ? `Secteur ${secteur} · ${retenus.length} référence${retenus.length > 1 ? 's' : ''}`
+        : retenus[0].couverts === besoins.size
+          ? 'Les références qui répondent à vos besoins'
+          : 'Les références les plus proches de vos besoins';
 
       retenus.forEach((r) => {
         const li = lis[r.index];
         li.hidden = false;
-        liste.appendChild(li); // dans l'ordre du score
+        liste.appendChild(li); // dans l'ordre du classement
       });
     };
 
     document.querySelectorAll('[data-recherche-ouvrir]').forEach((b) =>
-      b.addEventListener('click', () => {
-        dialogue.showModal();
-      })
+      b.addEventListener('click', () => dialogue.showModal())
     );
     dialogue.querySelector('[data-rech-fermer]')?.addEventListener('click', () => dialogue.close());
     dialogue.addEventListener('click', (e) => { if (e.target === dialogue) dialogue.close(); });
     pastilles.forEach((b) =>
       b.addEventListener('click', () => {
-        const g = b.dataset.groupe as 'besoin' | 'secteur';
-        choix[g] = choix[g] === b.dataset.pastille ? '' : (b.dataset.pastille ?? '');
+        const valeur = b.dataset.pastille ?? '';
+        if (b.dataset.groupe === 'secteur') secteur = secteur === valeur ? '' : valeur;
+        else if (besoins.has(valeur)) besoins.delete(valeur);
+        else besoins.add(valeur);
         lancer();
       })
     );
@@ -541,6 +535,6 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   document.addEventListener('astro:page-load', setupDemo);
   document.addEventListener('astro:page-load', () => {
     const brut = document.getElementById('rech-data')?.textContent;
-    if (brut) setupRecherche(JSON.parse(brut) as Fiche[]);
+    if (brut) setupRecherche(JSON.parse(brut) as FicheRecherche[]);
   });
 </script>

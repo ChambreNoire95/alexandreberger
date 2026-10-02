@@ -6,9 +6,10 @@ brouillon: false
 role: Réalisateur / Monteur
 accroche: Peggy Frey pousse les portes de l'usine historique Petit Bateau à
   Troyes et découvre la fabrication de ses pièces iconiques.
-motsCles: "activation, aftermovie, influenceuse, mode, entreprise, visite d'usine, savoir-faire, made in France, film de marque, réseaux sociaux, industrie"
 secteurs:
   - Mode
+besoins:
+  - Mise en scène
 client: Petit Bateau
 type: Activation / Aftermovie
 date: 2024-05-16

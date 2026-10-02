@@ -6,10 +6,12 @@ brouillon: false
 role: Producteur / Réalisateur / Monteur
 accroche: "Des gouttes de pluie cinétiques qui se changent en champ de
   marguerites : « Ame Nochi Hana », l'installation de nendo."
-motsCles: "making-of, design, exposition, artiste, installation, Japon, tournage à l'étranger, événement, retail"
 secteurs:
   - Art
   - Culture
+besoins:
+  - Direction artistique
+  - Tournage à l'étranger
 client: Le Bon Marché Rive Gauche
 type: Making-of
 date: 2020-01-10

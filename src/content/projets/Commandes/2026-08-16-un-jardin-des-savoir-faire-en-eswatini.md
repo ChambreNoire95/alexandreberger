@@ -6,10 +6,11 @@ brouillon: false
 role: Réalisateur / Monteur
 accroche: "Un hectare d'agroforesterie, de formation et d'artisanat en Eswatini
   : le Jardin des Savoir-Faire de Dessine l'Espoir."
-motsCles: "ONG, association, humanitaire, institutionnel, Afrique, tournage à l'étranger, drone, développement durable, formation, artisanat"
 secteurs:
   - Solidarité
   - Environnement
+besoins:
+  - Tournage à l'étranger
 client: Dessine l'Espoir
 type: Institutionnel
 date: 2023-08-16

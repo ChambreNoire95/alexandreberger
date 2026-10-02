@@ -7,9 +7,10 @@ brouillon: false
 role: Monteur
 accroche: "Destination Vegas : 5 000 fans français invités par Johnny Hallyday à
   un concert unique à l'Aladdin Theatre."
-motsCles: "documentaire, musique, concert, fans, voyage, interviews, montage, événement, personnalité"
 secteurs:
   - Musique
+besoins:
+  - Interviews
 client: Universal Music France
 type: Documentaire
 date: 2026-09-01

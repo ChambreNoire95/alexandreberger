@@ -6,10 +6,11 @@ brouillon: false
 role: Réalisateur / Monteur
 accroche: Engagée dans le développement durable depuis 2010, Polytech
   Montpellier forme ses ingénieurs à leur responsabilité sociétale.
-motsCles: "institutionnel, école, formation, étudiants, développement durable, RSE, interviews, témoignages"
 secteurs:
   - Éducation
   - Environnement
+besoins:
+  - Interviews
 client: Polytech montpellier
 type: Institutionnel
 date: 2022-08-18

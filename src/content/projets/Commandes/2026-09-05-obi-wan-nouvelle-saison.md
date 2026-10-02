@@ -7,9 +7,10 @@ brouillon: false
 role: Réalisateur
 accroche: Henry Tran et Deujna sont initiés au sabre laser, puis s'affrontent
   dans un duel filmé pour la sortie de la saison d'Obi-Wan Kenobi.
-motsCles: "activation, aftermovie, influenceurs, créateurs de contenu, divertissement, lancement, série, événement, film de marque"
 secteurs:
   - Cinéma
+besoins:
+  - Mise en scène
 client: Disney+
 type: Activation / Aftermovie
 date: 2022-05-27

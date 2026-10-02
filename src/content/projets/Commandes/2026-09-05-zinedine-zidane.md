@@ -7,9 +7,10 @@ brouillon: false
 role: Cadreur
 accroche: "Documentaire de Mathieu Spadaro pour L'Équipe Explore : je cadre les
   interviews de Zidane, Courtois et Hegerberg."
-motsCles: "documentaire, sport, football, interviews, média, portrait, cadrage, renfort de tournage"
 secteurs:
   - Sport
+besoins:
+  - Interviews
 client: L'Équipe / Sapari Productions
 type: Documentaire
 date: 2022-10-17

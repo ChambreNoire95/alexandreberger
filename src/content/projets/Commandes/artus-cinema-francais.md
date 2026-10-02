@@ -6,9 +6,10 @@ brouillon: false
 role: Réalisateur
 accroche: Plusieurs semaines dans le Vercors sur le tournage d'« Un p'tit truc
   en plus », au plus près des « pensionnaires ».
-motsCles: "making-of, cinéma, tournage, long métrage, coulisses, comédie, immersion, portrait d'équipe"
 secteurs:
   - Cinéma
+besoins:
+  - Projet au long cours
 client: Cine Nomine / Pan Distribution
 type: Making-of
 date: 2024-06-01
