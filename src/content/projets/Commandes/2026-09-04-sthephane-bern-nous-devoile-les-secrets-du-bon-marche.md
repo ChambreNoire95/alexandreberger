@@ -3,6 +3,7 @@ titre: Stéphane Bern nous dévoile les secrets du Bon Marché
 categorie: commandes
 enChantier: false
 brouillon: false
+horsRecherche: false
 role: producteur / Réalisateur
 accroche: Stéphane Bern raconte Aristide et Marguerite Boucicaut, fondateurs du
   premier grand magasin du monde toujours en activité.
@@ -11,6 +12,8 @@ secteurs:
 besoins:
   - Interviews
   - Mise en scène / Direction artistique
+formats:
+  - Série
 tons:
   - Informatif
 client: Le Bon Marché Rive Gauche
