@@ -7,6 +7,8 @@ role: Réalisateur
 accroche: "Un bot interactif prolonge l'univers de « Parallèles » : un
   dispositif distingué par le Grand Prix Stratégies de l'Innovation Média 2023."
 motsCles: "activation, aftermovie, case study, série, plateforme, interactif, digital, campagne, innovation, film de marque"
+secteurs:
+  - Cinéma
 client: DISNEY+
 type: Activation / Aftermovie
 date: 2023-03-01

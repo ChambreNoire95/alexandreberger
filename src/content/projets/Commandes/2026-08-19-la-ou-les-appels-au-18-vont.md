@@ -7,6 +7,8 @@ role: Réalisateur / Monteur
 accroche: "Le CODIS du Val d'Oise fête ses 20 ans : retour sur son histoire et
   sur l'arrivée du futur système NexSIS."
 motsCles: "institutionnel, documentaire, pompiers, secours, service public, interviews, témoignages, anniversaire, histoire"
+secteurs:
+  - Société
 client: POMPIERS 95
 type: Documentaire
 date: 2025-05-20

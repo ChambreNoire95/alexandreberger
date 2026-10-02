@@ -7,6 +7,9 @@ role: Producteur / Réalisateur / Monteur
 accroche: De la séance photo à la soirée d'inauguration, l'« Usine Fantastique »
   de Stromae et Mosaert racontée étape par étape.
 motsCles: "making-of, musique, artiste, exposition, événement, retail, grand magasin, direction artistique, danse, mode, culture"
+secteurs:
+  - Musique
+  - Culture
 client: Le Bon Marché Rive Gauche
 type: Making-of
 date: 2018-04-08

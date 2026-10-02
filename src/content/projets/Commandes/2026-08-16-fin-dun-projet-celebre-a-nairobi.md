@@ -7,6 +7,9 @@ role: Réalisateur / Monteur
 accroche: "Une série documentaire en trois volets sur le One Planet Fellowship :
   des chercheurs africains et leurs mentors européens."
 motsCles: "série documentaire, recherche scientifique, fondation, ONG, Afrique, international, tournage à l'étranger, institutionnel, interviews, témoignages"
+secteurs:
+  - Éducation
+  - Environnement
 client: Agropolis Fondation
 type: Institutionnel
 date: 2024-10-01

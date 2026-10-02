@@ -7,6 +7,9 @@ role: Producteur / Réalisateur
 accroche: Des paludiers de Guérande transmettent la saliculture solaire aux
   producteurs de sel de Kapatres, en Guinée-Bissau.
 motsCles: "documentaire, ONG, association, savoir-faire, transmission, international, Afrique, artisanat, environnement, tournage à l'étranger"
+secteurs:
+  - Solidarité
+  - Environnement
 client: Univers Sel
 type: Documentaire
 date: 2019-05-16

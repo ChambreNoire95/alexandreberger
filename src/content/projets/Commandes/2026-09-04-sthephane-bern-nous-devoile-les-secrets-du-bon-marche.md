@@ -7,6 +7,8 @@ role: producteur / Réalisateur
 accroche: Stéphane Bern raconte Aristide et Marguerite Boucicaut, fondateurs du
   premier grand magasin du monde toujours en activité.
 motsCles: "documentaire, histoire, patrimoine, personnalité, interviews, film de marque, retail, grand magasin"
+secteurs:
+  - Culture
 client: Le Bon Marché Rive Gauche
 type: Documentaire
 date: 2020-04-01

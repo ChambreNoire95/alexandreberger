@@ -16,6 +16,8 @@ export interface Fiche {
   ac: string;
   /** Début du texte */
   co: string;
+  /** Secteurs d'activité (champ CMS à choix) — filtre exact, hors score */
+  se?: string[];
 }
 
 export interface Resultat {

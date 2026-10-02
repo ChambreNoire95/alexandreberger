@@ -31,6 +31,7 @@ const projets = defineCollection({
       accroche: z.string().optional(),
       titreFilm: z.string().optional(),
       motsCles: z.string().optional(),
+      secteurs: z.array(z.string()).optional(),
       type: z.string().optional(),
       date: z.coerce.date().optional(),
       annee: z.number().optional(),

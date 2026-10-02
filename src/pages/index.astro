@@ -45,7 +45,11 @@ const fichesRecherche = projets.map((p) => ({
   cl: `${p.data.client ?? ""} ${p.data.role ?? ""}`,
   ac: p.data.accroche ?? "",
   co: (p.body ?? "").replace(/[#*_>\[\]()`]/g, " ").slice(0, 300),
+  se: p.data.secteurs ?? [],
 }));
+const SECTEURS = ["Mode", "Musique", "Cinéma", "Art", "Culture", "Éducation", "Société", "Sport", "Solidarité", "Environnement"];
+// Seuls les secteurs réellement utilisés par au moins une fiche sont proposés.
+const secteursRecherche = SECTEURS.filter((s) => fichesRecherche.some((f) => f.se.includes(s)));
 const pastillesRecherche = ["Interviews", "Aftermovie", "Événement", "Documentaire", "Making-of", "Institutionnel", "Film de marque", "Sport"];
 const indexAvecApercu = new Set(apercus.map((a) => a.index));
 
@@ -134,9 +138,15 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     <button type="button" class="rech-fermer" data-rech-fermer aria-label="Fermer">×</button>
     <h2 class="rech-titre" id="rech-titre">Quel est votre projet ?</h2>
     <p class="rech-intro">Décrivez-le en quelques mots, ou choisissez un thème : je vous montre les références les plus proches.</p>
-    <div class="rech-pastilles">
-      {pastillesRecherche.map((m) => <button type="button" data-pastille={m} aria-pressed="false">{m}</button>)}
+    <p class="rech-groupe">Type de film</p>
+    <div class="rech-pastilles" role="group" aria-label="Type de film">
+      {pastillesRecherche.map((m) => <button type="button" data-groupe="besoin" data-pastille={m} aria-pressed="false">{m}</button>)}
     </div>
+    <p class="rech-groupe">Secteur d'activité</p>
+    <div class="rech-pastilles" role="group" aria-label="Secteur d'activité">
+      {secteursRecherche.map((m) => <button type="button" data-groupe="secteur" data-pastille={m} aria-pressed="false">{m}</button>)}
+    </div>
+    <p class="rech-groupe">Ou décrivez-le avec vos mots</p>
     <input type="text" class="rech-champ" id="rech-champ" placeholder="Ex. : je voudrais filmer des interviews de mes équipes" autocomplete="off" aria-label="Décrivez votre projet" />
     <p class="rech-etat" id="rech-etat" aria-live="polite"></p>
     <ul class="rech-resultats" id="rech-resultats">
@@ -309,6 +319,10 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   .rech-fermer:hover { color:rgba(255,255,255,.6); }
   .rech-titre { margin:0 2rem .5rem 0; font-size:1.15rem; font-weight:700; text-transform:uppercase; line-height:1.3; }
   .rech-intro { margin:0 0 1.2rem; font-weight:300; font-size:.95rem; line-height:1.6; color:rgba(255,255,255,.8); }
+  .rech-groupe {
+    margin:0 0 .5rem; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:.68rem;
+    letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.5);
+  }
   .rech-pastilles { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1rem; }
   .rech-pastilles button {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
@@ -447,25 +461,50 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     const lis = [...liste.querySelectorAll<HTMLLIElement>('li')];
     const pastilles = [...dialogue.querySelectorAll<HTMLButtonElement>('[data-pastille]')];
 
+    // Une pastille au plus par ligne (type de film / secteur) : on les croise.
+    const choix = { besoin: '', secteur: '' };
+
     const lancer = () => {
-      const requete = champ.value.trim();
-      pastilles.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.pastille === requete)));
+      const saisie = champ.value.trim();
+      const texte = [choix.besoin, saisie].filter(Boolean).join(' ');
+      pastilles.forEach((b) => {
+        const g = b.dataset.groupe as 'besoin' | 'secteur';
+        b.setAttribute('aria-pressed', String(choix[g] === b.dataset.pastille));
+      });
       lis.forEach((li) => { li.hidden = true; });
-      if (!requete) {
+      if (!texte && !choix.secteur) {
         etat.textContent = '';
         return;
       }
-      const meilleurs = classer(requete, fiches).filter((r) => r.score >= SEUIL).slice(0, 3);
-      if (!meilleurs.length) {
-        etat.textContent = "Rien de très proche pour l'instant. Décrivez-moi votre projet, on trouvera.";
+
+      type Candidat = { index: number; score: number; tags: string[] };
+      let candidats: Candidat[] = texte
+        ? classer(texte, fiches).filter((r) => r.score >= SEUIL)
+        : fiches.map((_, index) => ({ index, score: 0, tags: [] }));
+      if (choix.secteur) candidats = candidats.filter((r) => fiches[r.index].se?.includes(choix.secteur));
+
+      const retenus = candidats.slice(0, texte ? 3 : 6);
+      if (!retenus.length) {
+        etat.textContent = choix.secteur && texte
+          ? "Rien qui croise ces critères pour l'instant. Essayez un autre secteur, ou décrivez-moi votre projet."
+          : "Rien de très proche pour l'instant. Décrivez-moi votre projet, on trouvera.";
         return;
       }
-      etat.textContent = meilleurs.length > 1 ? 'Les références les plus proches' : 'La référence la plus proche';
-      meilleurs.forEach((r) => {
+      etat.textContent = choix.secteur && texte
+        ? 'Les références qui croisent vos critères'
+        : texte
+          ? (retenus.length > 1 ? 'Les références les plus proches' : 'La référence la plus proche')
+          : `Secteur ${choix.secteur} · ${retenus.length} référence${retenus.length > 1 ? 's' : ''}`;
+
+      retenus.forEach((r) => {
         const li = lis[r.index];
         li.hidden = false;
         const tags = li.querySelector('.rech-tags');
-        if (tags) tags.textContent = r.tags.join(' · ');
+        if (tags) {
+          const etiquettes = texte ? r.tags : (fiches[r.index].se ?? []);
+          const tous = choix.secteur && texte ? [choix.secteur, ...etiquettes.filter((t) => t !== choix.secteur)] : etiquettes;
+          tags.textContent = tous.join(' · ');
+        }
         liste.appendChild(li); // dans l'ordre du score
       });
     };
@@ -480,7 +519,8 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     dialogue.addEventListener('click', (e) => { if (e.target === dialogue) dialogue.close(); });
     pastilles.forEach((b) =>
       b.addEventListener('click', () => {
-        champ.value = b.dataset.pastille ?? '';
+        const g = b.dataset.groupe as 'besoin' | 'secteur';
+        choix[g] = choix[g] === b.dataset.pastille ? '' : (b.dataset.pastille ?? '');
         lancer();
       })
     );

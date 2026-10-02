@@ -7,6 +7,8 @@ role: Réalisateur
 accroche: Alexis et Félix Lebrun racontent leur formation à Montpellier dans «
   Enfance d'un style », grand format de L'Équipe Explore.
 motsCles: "sport, portrait, documentaire, média, enfance, interviews, athlètes, tennis de table, reportage"
+secteurs:
+  - Sport
 client: L'Équipe
 type: Documentaire
 date: 2024-04-01
