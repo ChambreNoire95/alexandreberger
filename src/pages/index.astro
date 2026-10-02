@@ -476,7 +476,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
         .filter((r) => (!secteur || fiches[r.index].se.includes(secteur)) && (!besoins.size || r.couverts > 0) && (!formats.size || fiches[r.index].fo.some((x) => formats.has(x))))
         .sort((a, b) => b.couverts - a.couverts || a.index - b.index); // à égalité : le plus récent d'abord
 
-      const retenus = candidats.slice(0, 6);
+      const retenus = candidats.slice(0, 5);
       if (!retenus.length) {
         etat.textContent = "Rien qui croise ces critères pour l'instant. Essayez d'autres critères, ou parlons de votre projet.";
         return;
