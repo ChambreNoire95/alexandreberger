@@ -9,7 +9,7 @@ accroche: "Un hectare d'agroforesterie, de formation et d'artisanat en Eswatini
 client: Dessine l'Espoir
 type: Institutionnel
 date: 2023-08-16
-titreFilm: LE JARDIN DE SAVOIR-FAIRE
+titreFilm: LE JARDIN DES SAVOIR-FAIRE
 duree: 7min
 couverture: /uploads/JardinSavoirFaireEswatini_2023-08-16_1.jpg
 couvertureAlt: Vue aérienne du Jardin des Savoir-Faire de Dessine l'Espoir en Eswatini
