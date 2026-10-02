@@ -9,7 +9,7 @@ accroche: "L'aftermovie de « The King Remains » : ZywOo prolonge son contrat,
 secteurs:
   - Sport
 besoins:
-  - Mise en scène
+  - Mise en scène / Direction artistique
 formats:
   - Court
   - Réseaux sociaux

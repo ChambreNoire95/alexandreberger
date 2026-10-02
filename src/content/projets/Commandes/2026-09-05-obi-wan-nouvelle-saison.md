@@ -10,7 +10,7 @@ accroche: Henry Tran et Deujna sont initiés au sabre laser, puis s'affrontent
 secteurs:
   - Série/Cinéma
 besoins:
-  - Mise en scène
+  - Mise en scène / Direction artistique
 formats:
   - Court
   - Réseaux sociaux

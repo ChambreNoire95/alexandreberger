@@ -47,7 +47,7 @@ const apercus = projets
     titreFilm: p.data.titreFilm?.trim() || undefined,
     duree: p.data.duree?.trim() || undefined,
   }));
-// « Trouvez les références adaptées à votre projet » : secteurs et besoins (champs CMS à choix).
+// « Trouvez les références adaptées à vos besoins » : secteurs et besoins (champs CMS à choix).
 const fichesRecherche = elementsRecherche.map(({ p }) => ({
   se: p.data.secteurs ?? [],
   be: p.data.besoins ?? [],
@@ -55,7 +55,7 @@ const fichesRecherche = elementsRecherche.map(({ p }) => ({
   to: p.data.tons ?? [],
 }));
 const SECTEURS = ["Mode", "Musique", "Série/Cinéma", "Art", "Culture", "Éducation", "Société", "Sport", "Solidarité", "Environnement"];
-const BESOINS = ["Interviews", "Mise en scène", "Tournage à l'étranger", "Projet au long cours", "Direction artistique"];
+const BESOINS = ["Interviews", "Mise en scène / Direction artistique", "Tournage à l'étranger", "Projet au long cours"];
 // Seules les valeurs réellement utilisées par au moins une fiche sont proposées.
 const secteursRecherche = SECTEURS.filter((x) => fichesRecherche.some((f) => f.se.includes(x)));
 const FORMATS = ["Réseaux sociaux", "Court", "Long", "Série"];

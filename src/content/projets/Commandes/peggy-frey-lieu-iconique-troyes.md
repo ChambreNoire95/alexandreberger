@@ -9,7 +9,7 @@ accroche: Peggy Frey pousse les portes de l'usine historique Petit Bateau à
 secteurs:
   - Mode
 besoins:
-  - Mise en scène
+  - Mise en scène / Direction artistique
 formats:
   - Court
   - Réseaux sociaux

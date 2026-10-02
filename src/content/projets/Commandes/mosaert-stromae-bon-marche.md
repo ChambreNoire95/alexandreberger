@@ -10,7 +10,7 @@ secteurs:
   - Musique
   - Culture
 besoins:
-  - Direction artistique
+  - Mise en scène / Direction artistique
   - Projet au long cours
 formats:
   - Court

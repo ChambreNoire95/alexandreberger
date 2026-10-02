@@ -9,8 +9,7 @@ secteurs:
   - Culture
 besoins:
   - Projet au long cours
-  - Direction artistique
-  - Mise en scène
+  - Mise en scène / Direction artistique
 formats:
   - Série
   - Réseaux sociaux

@@ -10,7 +10,7 @@ secteurs:
   - Culture
 besoins:
   - Interviews
-  - Mise en scène
+  - Mise en scène / Direction artistique
 tons:
   - Informatif
 client: Le Bon Marché Rive Gauche

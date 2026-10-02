@@ -12,7 +12,7 @@ secteurs:
   - Musique
   - Culture
 besoins:
-  - Direction artistique
+  - Mise en scène / Direction artistique
 formats:
   - Court
 tons:

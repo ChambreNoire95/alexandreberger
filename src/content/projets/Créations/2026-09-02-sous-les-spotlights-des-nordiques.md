@@ -6,8 +6,7 @@ genre: Expérimental
 secteurs:
   - Musique
 besoins:
-  - Mise en scène
-  - Direction artistique
+  - Mise en scène / Direction artistique
 formats:
   - Série
 tons:

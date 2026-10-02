@@ -7,8 +7,7 @@ secteurs:
   - Musique
   - Art
 besoins:
-  - Mise en scène
-  - Direction artistique
+  - Mise en scène / Direction artistique
 formats:
   - Court
 tons:

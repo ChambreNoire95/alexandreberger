@@ -10,7 +10,7 @@ secteurs:
   - Art
   - Culture
 besoins:
-  - Direction artistique
+  - Mise en scène / Direction artistique
   - Tournage à l'étranger
 formats:
   - Court

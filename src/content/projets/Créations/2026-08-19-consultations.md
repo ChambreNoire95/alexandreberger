@@ -6,7 +6,7 @@ genre: Fiction
 secteurs:
   - Série/Cinéma
 besoins:
-  - Mise en scène
+  - Mise en scène / Direction artistique
 formats:
   - Série
 tons:

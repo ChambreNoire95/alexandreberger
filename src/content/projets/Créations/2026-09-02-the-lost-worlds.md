@@ -7,7 +7,7 @@ secteurs:
   - Art
   - Culture
 besoins:
-  - Direction artistique
+  - Mise en scène / Direction artistique
 formats:
   - Série
   - Réseaux sociaux

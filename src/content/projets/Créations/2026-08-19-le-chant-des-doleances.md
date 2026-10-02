@@ -7,7 +7,7 @@ secteurs:
   - Musique
   - Société
 besoins:
-  - Mise en scène
+  - Mise en scène / Direction artistique
 formats:
   - Court
 tons:

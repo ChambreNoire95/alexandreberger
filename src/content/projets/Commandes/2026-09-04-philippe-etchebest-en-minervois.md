@@ -9,7 +9,7 @@ titreFilm: "Mon Minervois, 30 ans d'aventures"
 secteurs:
   - Culture
 besoins:
-  - Mise en scène
+  - Mise en scène / Direction artistique
 formats:
   - Série
 date: 2015-06-04
