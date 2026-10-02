@@ -3,6 +3,7 @@ export const prerender = true;
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import OptimizedImage from "../../components/OptimizedImage.astro";
+import { descriptionDepuisTexte } from "../../lib/meta";
 
 export async function getStaticPaths() {
   const tousLesProjets = await getCollection("projets", ({ data }) => !data.brouillon);
@@ -45,9 +46,10 @@ const currentPath =
 const labelRetour = projet.data.categorie === "commandes" ? "Films de commande" : "Créations";
 
 const titre = `${projet.data.titre} — Alexandre Berger, réalisateur`;
-const description = projet.data.description
-  ? `${projet.data.titre}. ${projet.data.description}`
-  : `${projet.data.titre}. Un projet réalisé par Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.`;
+const extrait = descriptionDepuisTexte(projet.data.description) ?? descriptionDepuisTexte(projet.body);
+const description = extrait
+  ?? `${projet.data.titre}. Un projet réalisé par Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.`;
+const imagePartage = projet.data.couverture || projet.data.image1;
 
 const galerie = [
   { src: projet.data.image1, alt: projet.data.image1Alt },
@@ -114,7 +116,7 @@ const jsonLd = {
 };
 ---
 
-<Layout title={titre} description={description} currentPath={currentPath} jsonLd={jsonLd}>
+<Layout title={titre} description={description} currentPath={currentPath} jsonLd={jsonLd} image={imagePartage}>
   <article class="projet">
     <a class="lien-retour" href={currentPath}>← {labelRetour}</a>
     {projet.data.couverture && (
