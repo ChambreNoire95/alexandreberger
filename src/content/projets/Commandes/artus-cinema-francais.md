@@ -10,6 +10,9 @@ secteurs:
   - Série/Cinéma
 besoins:
   - Projet au long cours
+  - Interviews
+formats:
+  - Long
 tons:
   - Humour
 client: Cine Nomine / Pan Distribution
