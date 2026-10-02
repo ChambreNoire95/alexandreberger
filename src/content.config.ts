@@ -34,6 +34,7 @@ const projets = defineCollection({
       besoins: z.array(z.string()).optional(),
       formats: z.array(z.string()).optional(),
       tons: z.array(z.string()).optional(),
+      horsRecherche: z.boolean().optional().default(false),
       type: z.string().optional(),
       date: z.coerce.date().optional(),
       annee: z.number().optional(),

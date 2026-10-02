@@ -21,10 +21,11 @@ const creations = (await getCollection("projets", ({ data }) => data.categorie =
   (a, b) => (b.data.annee ?? -Infinity) - (a.data.annee ?? -Infinity)
 );
 // Commandes d'abord : à critères égaux, elles passent devant les Créations dans les résultats.
+// Les fiches cochées « Ne pas faire remonter dans les références » (horsRecherche) en sont exclues.
 const elementsRecherche = [
   ...projets.map((p) => ({ p, creation: false })),
   ...creations.map((p) => ({ p, creation: true })),
-];
+].filter(({ p }) => !p.data.horsRecherche);
 
 // Panneau d'aperçu (écran large + souris) : un aperçu par projet ayant une image.
 // Durée : les unités (min, h, s…) sont enveloppées pour être affichées plus petites.
