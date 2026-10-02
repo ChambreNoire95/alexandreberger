@@ -3,14 +3,14 @@ titre: Joana Vasconcelos crée une valkyrie gigantesque
 categorie: commandes
 enChantier: false
 brouillon: false
+horsRecherche: false
 role: Producteur / Réalisateur / Monteur
 accroche: Simone, valkyrie monumentale de 30,5 mètres, enveloppe les escalators
   du Bon Marché en hommage à Simone de Beauvoir et Simone Weil.
 secteurs:
   - Art
-  - Culture
 besoins:
-  - Mise en scène / Direction artistique
+  - Tournage à l'étranger
 formats:
   - Court
 client: Le Bon Marché Rive Gauche
