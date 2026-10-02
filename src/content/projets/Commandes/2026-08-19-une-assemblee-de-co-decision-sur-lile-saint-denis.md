@@ -9,7 +9,6 @@ accroche: Plusieurs mois aux côtés d'habitants de l'Île-Saint-Denis qui
 secteurs:
   - Société
 besoins:
-  - Interviews
   - Projet au long cours
 formats:
   - Long
