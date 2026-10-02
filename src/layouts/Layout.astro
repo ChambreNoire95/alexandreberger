@@ -281,7 +281,8 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     src: url('/fonts/Inter-italic.woff2') format('woff2');
   }
 
-  :root { --fond-debut:#050912; --fond-fin:#0b0b0b; }
+  /* Fond noir pur (l'ancien dégradé était #050912 → #0b0b0b : il suffit de redonner deux valeurs différentes pour le retrouver). */
+  :root { --fond-debut:#000; --fond-fin:#000; }
   * { box-sizing:border-box; }
   html, body { margin:0; padding:0; }
   body {
