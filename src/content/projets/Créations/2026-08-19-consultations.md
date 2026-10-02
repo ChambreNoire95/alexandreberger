@@ -4,6 +4,7 @@ categorie: creations
 annee: 2016
 genre: Fiction
 role: Producteur
+realisateur: David Rinaldi
 image1: /uploads/Consultations_2016_1.jpg
 image1Alt: Médecin loufoque en consultation, pilote de la série "Consultations"
 image2: /uploads/Consultations_2016_2.jpg
