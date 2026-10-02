@@ -521,8 +521,9 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       });
     };
 
-    // « Parlons de votre projet » : on emporte la sélection (références affichées + critères) vers le formulaire Booking.
-    dialogue.querySelector('.rech-contact')?.addEventListener('click', () => {
+    // La sélection (références affichées + critères) est mémorisée à chaque changement : le formulaire Booking
+    // la reprend, que le prospect y aille par « Parlons de votre projet » ou par le menu.
+    const memoriser = () => {
       try {
         const references = lis
           .filter((li) => !li.hidden)
@@ -543,7 +544,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       } catch {
         /* stockage indisponible : le formulaire s'affichera simplement sans références */
       }
-    });
+    };
 
     document.querySelectorAll('[data-recherche-ouvrir]').forEach((b) =>
       b.addEventListener('click', () => dialogue.showModal())
@@ -560,6 +561,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
           else ensemble.add(valeur);
         }
         lancer();
+        memoriser();
       })
     );
   }
