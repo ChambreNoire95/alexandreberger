@@ -137,7 +137,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   <dialog class="rech" id="rech" aria-labelledby="rech-titre">
     <button type="button" class="rech-fermer" data-rech-fermer aria-label="Fermer">×</button>
     <h2 class="rech-titre" id="rech-titre">Quel est votre projet ?</h2>
-    <p class="rech-intro">Décrivez-le en quelques mots, ou choisissez un thème : je vous montre les références les plus proches.</p>
+    <p class="rech-intro">Choisissez un type de film et un secteur d'activité : je vous montre les références les plus proches.</p>
     <p class="rech-groupe">Type de film</p>
     <div class="rech-pastilles" role="group" aria-label="Type de film">
       {pastillesRecherche.map((m) => <button type="button" data-groupe="besoin" data-pastille={m} aria-pressed="false">{m}</button>)}
@@ -146,8 +146,6 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     <div class="rech-pastilles" role="group" aria-label="Secteur d'activité">
       {secteursRecherche.map((m) => <button type="button" data-groupe="secteur" data-pastille={m} aria-pressed="false">{m}</button>)}
     </div>
-    <p class="rech-groupe">Ou décrivez-le avec vos mots</p>
-    <input type="text" class="rech-champ" id="rech-champ" placeholder="Ex. : je voudrais filmer des interviews de mes équipes" autocomplete="off" aria-label="Décrivez votre projet" />
     <p class="rech-etat" id="rech-etat" aria-live="polite"></p>
     <ul class="rech-resultats" id="rech-resultats">
       {projets.map((p, index) => (
@@ -331,12 +329,6 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   }
   .rech-pastilles button:hover { color:#fff; border-color:#fff; }
   .rech-pastilles button[aria-pressed="true"] { background:#fff; color:#0b0b0b; border-color:#fff; }
-  .rech-champ {
-    box-sizing:border-box; width:100%; padding:.8rem .9rem; font:inherit; font-size:.95rem; color:#fff;
-    background:#111; border:1px solid rgba(255,255,255,.35); border-radius:2px;
-  }
-  .rech-champ::placeholder { color:rgba(255,255,255,.4); }
-  .rech-champ:focus { outline:none; border-color:#fff; }
   .rech-etat { min-height:1.4em; margin:.9rem 0 .6rem; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.55); }
   .rech-resultats { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.7rem; }
   .rech-resultats li[hidden] { display:none; }
@@ -452,10 +444,9 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 
   function setupRecherche(fiches: Fiche[]) {
     const dialogue = document.getElementById('rech') as HTMLDialogElement | null;
-    const champ = document.getElementById('rech-champ') as HTMLInputElement | null;
     const liste = document.getElementById('rech-resultats');
     const etat = document.getElementById('rech-etat');
-    if (!dialogue || !champ || !liste || !etat) return;
+    if (!dialogue || !liste || !etat) return;
     const lis = [...liste.querySelectorAll<HTMLLIElement>('li')];
     const pastilles = [...dialogue.querySelectorAll<HTMLButtonElement>('[data-pastille]')];
 
@@ -463,8 +454,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     const choix = { besoin: '', secteur: '' };
 
     const lancer = () => {
-      const saisie = champ.value.trim();
-      const texte = [choix.besoin, saisie].filter(Boolean).join(' ');
+      const texte = choix.besoin;
       pastilles.forEach((b) => {
         const g = b.dataset.groupe as 'besoin' | 'secteur';
         b.setAttribute('aria-pressed', String(choix[g] === b.dataset.pastille));
@@ -484,8 +474,8 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       const retenus = candidats.slice(0, texte ? 3 : 6);
       if (!retenus.length) {
         etat.textContent = choix.secteur && texte
-          ? "Rien qui croise ces critères pour l'instant. Essayez un autre secteur, ou décrivez-moi votre projet."
-          : "Rien de très proche pour l'instant. Décrivez-moi votre projet, on trouvera.";
+          ? "Rien qui croise ces critères pour l'instant. Essayez un autre secteur, ou parlons de votre projet."
+          : "Rien de très proche pour l'instant. Parlons de votre projet, on trouvera.";
         return;
       }
       etat.textContent = choix.secteur && texte
@@ -504,7 +494,6 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     document.querySelectorAll('[data-recherche-ouvrir]').forEach((b) =>
       b.addEventListener('click', () => {
         dialogue.showModal();
-        champ.focus();
       })
     );
     dialogue.querySelector('[data-rech-fermer]')?.addEventListener('click', () => dialogue.close());
@@ -516,11 +505,6 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
         lancer();
       })
     );
-    let minuteur: number | undefined;
-    champ.addEventListener('input', () => {
-      clearTimeout(minuteur);
-      minuteur = window.setTimeout(lancer, 120);
-    });
   }
 
   function setupDemo() {
