@@ -3,12 +3,14 @@ titre: Des Guérandais fabriquent du sel en Guinée-Bissau
 categorie: commandes
 enChantier: false
 brouillon: false
+horsRecherche: false
 role: Producteur / Réalisateur
 accroche: Des paludiers de Guérande transmettent la saliculture solaire aux
   producteurs de sel de Kapatres, en Guinée-Bissau.
 secteurs:
   - Solidarité
   - Environnement
+  - Éducation
 besoins:
   - Tournage à l'étranger
   - Interviews
