@@ -7,6 +7,7 @@ brouillon: false
 role: Réalisateur
 accroche: "Au Bon Marché, Philippe Katerine installe le mignonisme : sculptures,
   dessins et un immense personnage rose, Monsieur Rose."
+motsCles: "making-of, exposition, artiste, musique, culture, événement, retail, grand magasin, portrait"
 client: Le Bon Marché Rive Gauche
 type: Making-of
 date: 2022-02-26

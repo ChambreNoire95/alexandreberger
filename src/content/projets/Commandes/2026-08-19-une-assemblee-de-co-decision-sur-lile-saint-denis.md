@@ -6,6 +6,7 @@ brouillon: false
 role: Réalisateur
 accroche: Plusieurs mois aux côtés d'habitants de l'Île-Saint-Denis qui
   construisent des propositions que le Maire s'engage à valider.
+motsCles: "documentaire, association, démocratie participative, citoyens, collectivité, suivi long, immersion, interviews"
 client: Les Cahiers Pour Décider et Agir
 type: Documentaire
 date: 2026-03-01

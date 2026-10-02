@@ -6,6 +6,7 @@ brouillon: false
 role: Producteur / Réalisateur / Monteur
 accroche: "Des nuages flottent dans les vitrines et sous la verrière du Bon
   Marché : Leandro Erlich fait du ciel de Paris une installation."
+motsCles: "making-of, exposition, art contemporain, installation, artiste, événement, retail, grand magasin, culture"
 client: Le Bon Marché Rive Gauche
 type: Making-of
 date: 2018-01-10

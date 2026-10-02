@@ -37,6 +37,16 @@ const apercus = projets
     titreFilm: p.data.titreFilm?.trim() || undefined,
     duree: p.data.duree?.trim() || undefined,
   }));
+// « Trouver une référence » : données de recherche (même ordre que `projets`).
+const fichesRecherche = projets.map((p) => ({
+  k: p.data.motsCles ?? "",
+  ty: p.data.type ?? "",
+  ti: `${p.data.titre} ${p.data.titreFilm ?? ""}`,
+  cl: `${p.data.client ?? ""} ${p.data.role ?? ""}`,
+  ac: p.data.accroche ?? "",
+  co: (p.body ?? "").replace(/[#*_>\[\]()`]/g, " ").slice(0, 300),
+}));
+const pastillesRecherche = ["Interviews", "Aftermovie", "Événement", "Documentaire", "Making-of", "Institutionnel", "Film de marque", "Sport"];
 const indexAvecApercu = new Set(apercus.map((a) => a.index));
 
 const itemsCarrousel = await getItemsCarrousel();
@@ -64,6 +74,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       {typesPresents.map((t) => (
         <button type="button" data-type={t} aria-pressed="false">{t}</button>
       ))}
+      <button type="button" class="filtre-recherche" data-recherche-ouvrir aria-haspopup="dialog">Trouver une référence</button>
     </nav>
   )}
 
@@ -118,6 +129,36 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     </div>
   </aside>
   </div>
+
+  <dialog class="rech" id="rech" aria-labelledby="rech-titre">
+    <button type="button" class="rech-fermer" data-rech-fermer aria-label="Fermer">×</button>
+    <h2 class="rech-titre" id="rech-titre">Quel est votre projet ?</h2>
+    <p class="rech-intro">Décrivez-le en quelques mots, ou choisissez un thème : je vous montre les références les plus proches.</p>
+    <div class="rech-pastilles">
+      {pastillesRecherche.map((m) => <button type="button" data-pastille={m} aria-pressed="false">{m}</button>)}
+    </div>
+    <input type="text" class="rech-champ" id="rech-champ" placeholder="Ex. : je voudrais filmer des interviews de mes équipes" autocomplete="off" aria-label="Décrivez votre projet" />
+    <p class="rech-etat" id="rech-etat" aria-live="polite"></p>
+    <ul class="rech-resultats" id="rech-resultats">
+      {projets.map((p, index) => (
+        <li data-index={index} hidden>
+          <a href={`/projets/${p.id}`}>
+            <span class="rech-vignette">
+              {(p.data.couverture || p.data.image1) && <OptimizedImage src={(p.data.couverture || p.data.image1) as string} alt="" sizes="140px" />}
+            </span>
+            <span class="rech-texte">
+              <span class="rech-nom">{p.data.titre}</span>
+              {p.data.client && <span class="rech-client">{p.data.client}</span>}
+              <span class="rech-tags"></span>
+            </span>
+            <span class="rech-go" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <a class="rech-contact" href="/booking">Parlons de votre projet →</a>
+    <script is:inline type="application/json" id="rech-data" set:html={JSON.stringify(fichesRecherche).replace(/</g, "\\u003c")}></script>
+  </dialog>
 
   {demoUrl && (
     <dialog class="demo-popup" id="demo-popup" aria-label="Demoreel" data-src={demoUrl}>
@@ -244,6 +285,67 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     .apercu-demo-ouvrir:hover .apercu-demo-play { background:rgba(255,255,255,.18); transform:scale(1.06); }
   }
 
+  /* « Trouver une référence » : bouton dans la rangée de filtres + fenêtre de dialogue. */
+  .filtres .filtre-recherche { color:#fff; border-color:rgba(255,255,255,.8); }
+  .filtres .filtre-recherche:hover, .filtres .filtre-recherche:focus-visible { background:#fff; border-color:#fff; color:#0b0b0b; }
+
+  .rech {
+    box-sizing:border-box; width:min(92vw, 640px); max-height:88vh; overflow-y:auto;
+    padding:1.6rem; background:#0b0b0b; color:#fff; text-align:left;
+    border:1px solid rgba(255,255,255,.35); border-radius:2px;
+  }
+  .rech::backdrop { background:rgba(0,0,0,.85); }
+  .rech-fermer {
+    position:absolute; top:.6rem; right:.9rem; padding:0; font-size:1.8rem; line-height:1;
+    color:#fff; background:transparent; border:0; cursor:pointer;
+  }
+  .rech-fermer:hover { color:rgba(255,255,255,.6); }
+  .rech-titre { margin:0 2rem .5rem 0; font-size:1.15rem; font-weight:700; text-transform:uppercase; line-height:1.3; }
+  .rech-intro { margin:0 0 1.2rem; font-weight:300; font-size:.95rem; line-height:1.6; color:rgba(255,255,255,.8); }
+  .rech-pastilles { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1rem; }
+  .rech-pastilles button {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
+    color:rgba(255,255,255,.7); background:transparent; cursor:pointer;
+    border:1px solid rgba(255,255,255,.3); border-radius:2px; padding:.4rem .8rem;
+  }
+  .rech-pastilles button:hover { color:#fff; border-color:#fff; }
+  .rech-pastilles button[aria-pressed="true"] { background:#fff; color:#0b0b0b; border-color:#fff; }
+  .rech-champ {
+    box-sizing:border-box; width:100%; padding:.8rem .9rem; font:inherit; font-size:.95rem; color:#fff;
+    background:#111; border:1px solid rgba(255,255,255,.35); border-radius:2px;
+  }
+  .rech-champ::placeholder { color:rgba(255,255,255,.4); }
+  .rech-champ:focus { outline:none; border-color:#fff; }
+  .rech-etat { min-height:1.4em; margin:.9rem 0 .6rem; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.55); }
+  .rech-resultats { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.7rem; }
+  .rech-resultats li[hidden] { display:none; }
+  .rech-resultats a {
+    display:flex; align-items:center; gap:1rem; padding:10px; text-decoration:none; color:#fff;
+    border:1px solid rgba(255,255,255,.35); border-radius:2px; transition:border-color 140ms ease;
+  }
+  .rech-resultats a:hover, .rech-resultats a:focus-visible { border-color:#fff; }
+  .rech-vignette { flex:none; width:112px; aspect-ratio:16/9; overflow:hidden; background:#111; border-bottom:1px solid #fff; }
+  .rech-vignette :global(img) { width:100%; height:100%; object-fit:cover; display:block; }
+  .rech-texte { flex:1; min-width:0; display:flex; flex-direction:column; gap:.25rem; }
+  .rech-nom { font-weight:700; font-size:.95rem; line-height:1.3; }
+  .rech-client, .rech-tags {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:.68rem; letter-spacing:.1em;
+    text-transform:uppercase; color:rgba(255,255,255,.5);
+  }
+  .rech-tags:not(:empty)::before { content:"Correspond à : "; }
+  .rech-go { flex:none; font-size:1.3rem; line-height:1; transition:transform 140ms ease; }
+  .rech-resultats a:hover .rech-go, .rech-resultats a:focus-visible .rech-go { transform:translateX(.3rem); }
+  .rech-contact {
+    display:inline-block; margin-top:1.2rem; color:#fff; text-decoration:none; font-weight:700; font-size:.95rem;
+    border-bottom:1px solid rgba(255,255,255,.5); padding-bottom:.15rem;
+  }
+  .rech-contact:hover { border-bottom-color:#fff; }
+  @media (max-width: 520px) {
+    .rech { padding:1.1rem; }
+    .rech-vignette { width:84px; }
+  }
+
   /* Pop-up vidéo (ouverte depuis l'encart « bande démo »). */
   .demo-popup {
     padding:0; border:0; background:transparent; color:#fff;
@@ -264,12 +366,13 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   }
   .demo-fermer:hover { color:rgba(255,255,255,.6); }
   @media (prefers-reduced-motion: reduce) {
-    .apercu-item, .accroche-titre::before, .apercu-fleche, .demo-cadre :global(iframe) { transition:none !important; }
+    .apercu-item, .accroche-titre::before, .apercu-fleche, .demo-cadre :global(iframe), .rech-go { transition:none !important; }
   }
 </style>
 
 <script>
   import { scrollerVersTitre } from "../lib/positionTitre";
+  import { classer, SEUIL, type Fiche } from "../lib/recherche";
 
   function setupFiltres() {
     const nav = document.getElementById('filtres');
@@ -281,7 +384,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       if (!bouton) return;
       const type = bouton.dataset.type;
 
-      nav.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === bouton)));
+      nav.querySelectorAll('button[data-type]').forEach((b) => b.setAttribute('aria-pressed', String(b === bouton)));
       items.forEach((li) => {
         li.hidden = type !== 'all' && li.dataset.type !== type;
       });
@@ -328,6 +431,59 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     parDefaut();
   }
 
+  function setupRecherche(fiches: Fiche[]) {
+    const dialogue = document.getElementById('rech') as HTMLDialogElement | null;
+    const champ = document.getElementById('rech-champ') as HTMLInputElement | null;
+    const liste = document.getElementById('rech-resultats');
+    const etat = document.getElementById('rech-etat');
+    if (!dialogue || !champ || !liste || !etat) return;
+    const lis = [...liste.querySelectorAll<HTMLLIElement>('li')];
+    const pastilles = [...dialogue.querySelectorAll<HTMLButtonElement>('[data-pastille]')];
+
+    const lancer = () => {
+      const requete = champ.value.trim();
+      pastilles.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.pastille === requete)));
+      lis.forEach((li) => { li.hidden = true; });
+      if (!requete) {
+        etat.textContent = '';
+        return;
+      }
+      const meilleurs = classer(requete, fiches).filter((r) => r.score >= SEUIL).slice(0, 3);
+      if (!meilleurs.length) {
+        etat.textContent = "Rien de très proche pour l'instant. Décrivez-moi votre projet, on trouvera.";
+        return;
+      }
+      etat.textContent = meilleurs.length > 1 ? 'Les références les plus proches' : 'La référence la plus proche';
+      meilleurs.forEach((r) => {
+        const li = lis[r.index];
+        li.hidden = false;
+        const tags = li.querySelector('.rech-tags');
+        if (tags) tags.textContent = r.tags.join(' · ');
+        liste.appendChild(li); // dans l'ordre du score
+      });
+    };
+
+    document.querySelectorAll('[data-recherche-ouvrir]').forEach((b) =>
+      b.addEventListener('click', () => {
+        dialogue.showModal();
+        champ.focus();
+      })
+    );
+    dialogue.querySelector('[data-rech-fermer]')?.addEventListener('click', () => dialogue.close());
+    dialogue.addEventListener('click', (e) => { if (e.target === dialogue) dialogue.close(); });
+    pastilles.forEach((b) =>
+      b.addEventListener('click', () => {
+        champ.value = b.dataset.pastille ?? '';
+        lancer();
+      })
+    );
+    let minuteur: number | undefined;
+    champ.addEventListener('input', () => {
+      clearTimeout(minuteur);
+      minuteur = window.setTimeout(lancer, 120);
+    });
+  }
+
   function setupDemo() {
     const popup = document.getElementById('demo-popup') as HTMLDialogElement | null;
     if (!popup) return;
@@ -360,4 +516,8 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   document.addEventListener('astro:page-load', setupFiltres);
   document.addEventListener('astro:page-load', setupApercu);
   document.addEventListener('astro:page-load', setupDemo);
+  document.addEventListener('astro:page-load', () => {
+    const brut = document.getElementById('rech-data')?.textContent;
+    if (brut) setupRecherche(JSON.parse(brut) as Fiche[]);
+  });
 </script>

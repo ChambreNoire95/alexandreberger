@@ -6,6 +6,7 @@ brouillon: false
 role: Producteur / Réalisateur / Monteur
 accroche: Pour le 14 juillet 2025, la zone Antilles-Guyane forme le 18e
   Bataillon des sapeurs-pompiers de France et défile à Paris.
+motsCles: "documentaire, reportage, défilé, 14 juillet, pompiers, service public, événement, outre-mer, Paris"
 client: Le SDIS Guadeloupe
 type: Documentaire
 date: 2025-07-14
