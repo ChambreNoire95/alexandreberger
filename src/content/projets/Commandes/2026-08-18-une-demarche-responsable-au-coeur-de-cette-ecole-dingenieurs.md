@@ -3,14 +3,16 @@ titre: Une démarche responsable au cœur de cette école d'ingénieurs
 categorie: commandes
 enChantier: false
 brouillon: false
+horsRecherche: false
 role: Réalisateur / Monteur
 accroche: Engagée dans le développement durable depuis 2010, Polytech
   Montpellier forme ses ingénieurs à leur responsabilité sociétale.
 secteurs:
   - Éducation
   - Environnement
+  - Société
 besoins:
-  - Interviews
+  - Mise en scène / Direction artistique
 formats:
   - Court
 tons:
