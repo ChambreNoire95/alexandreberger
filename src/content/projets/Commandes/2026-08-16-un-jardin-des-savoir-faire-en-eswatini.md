@@ -3,6 +3,7 @@ titre: Un Jardin des Savoir-Faire en Eswatini
 categorie: commandes
 enChantier: false
 brouillon: false
+horsRecherche: false
 role: Réalisateur / Monteur
 accroche: "Un hectare d'agroforesterie, de formation et d'artisanat en Eswatini
   : le Jardin des Savoir-Faire de Dessine l'Espoir."
@@ -11,6 +12,7 @@ secteurs:
   - Environnement
 besoins:
   - Tournage à l'étranger
+  - Projet au long cours
 formats:
   - Court
 tons:
