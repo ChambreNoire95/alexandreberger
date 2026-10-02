@@ -247,7 +247,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     width:min(92vw, 1100px); max-width:none; max-height:none; overflow:visible;
   }
   .demo-popup::backdrop { background:rgba(0,0,0,.85); }
-  .demo-cadre { aspect-ratio:16/9; width:100%; background:#000; border-bottom:1px solid #fff; }
+  .demo-cadre { aspect-ratio:16/9; width:100%; background:#000; }
   /* L'iframe reste invisible (fond noir du cadre) jusqu'à son chargement :
      évite le flash blanc du document vide avant l'affichage du lecteur. */
   .demo-cadre :global(iframe) {
