@@ -1,11 +1,16 @@
 ---
 titre: Les Pompiers Ultramarins défilent pour le 14 juillet
 categorie: commandes
+enChantier: false
+brouillon: false
 role: Producteur / Réalisateur / Monteur
+accroche: Pour le 14 juillet 2025, la zone Antilles-Guyane forme le 18e
+  Bataillon des sapeurs-pompiers de France et défile à Paris.
 client: Le SDIS Guadeloupe
 type: Documentaire
-accroche: "Pour le 14 juillet 2025, la zone Antilles-Guyane forme le 18e Bataillon des sapeurs-pompiers de France et défile à Paris."
 date: 2025-07-14
+titreFilm: Krazé Sa
+duree: 42min
 couverture: /uploads/18BSPF.jpg
 carrousel: false
 carrouselTitre: POMPIERS DU BOUT DU MONDE
