@@ -219,7 +219,8 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     text-decoration:none;
   }
   .accroche-titre {
-    font-weight:700; font-size:clamp(1.008rem, 2.304vw, 1.44rem); line-height:1.2;
+    font-weight:700; font-size:clamp(1.109rem, 2.534vw, 1.584rem); line-height:1.2; /* +10 % */
+    font-stretch:100%; /* largeur normale d'Archivo (le reste du site est resserré) */
     color:#fff; white-space:nowrap; transition:color 140ms ease;
   }
   .accroches a:hover .accroche-titre { color:rgba(255,255,255,.6); }

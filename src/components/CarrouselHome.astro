@@ -106,6 +106,26 @@ const { items } = Astro.props;
     const track = document.getElementById('carrousel-home');
     if (!wrap || !track) return;
 
+    // Chaque titre doit tenir sur 2 lignes sans être coupé : on resserre d'abord la police (largeur,
+    // jusqu'à 62 % = le minimum d'Archivo), puis seulement si besoin on réduit un peu la taille.
+    function ajusterTitres() {
+      track!.querySelectorAll<HTMLElement>('.carrousel-titre').forEach((titre) => {
+        titre.style.fontStretch = '';
+        titre.style.fontSize = '';
+        const coupe = () => titre.scrollHeight > titre.clientHeight + 1;
+        let largeur = parseFloat(getComputedStyle(titre).fontStretch) || 85;
+        while (coupe() && largeur > 62) {
+          largeur = Math.max(62, largeur - 2);
+          titre.style.fontStretch = `${largeur}%`;
+        }
+        let taille = parseFloat(getComputedStyle(titre).fontSize);
+        while (coupe() && taille > 14) {
+          taille -= 0.5;
+          titre.style.fontSize = `${taille}px`;
+        }
+      });
+    }
+
     const original = Array.from(track.children) as HTMLLIElement[];
     if (original.length === 0) return;
 
@@ -126,6 +146,14 @@ const { items } = Astro.props;
 
       [...original].reverse().forEach((li) => track.prepend(cloner(li)));
       original.forEach((li) => track.append(cloner(li)));
+
+      ajusterTitres();
+      document.fonts?.ready.then(ajusterTitres);
+      let minuteur: number | undefined;
+      window.addEventListener('resize', () => {
+        clearTimeout(minuteur);
+        minuteur = window.setTimeout(ajusterTitres, 150);
+      });
 
       const largeurSegment = track.scrollWidth / 3;
 
