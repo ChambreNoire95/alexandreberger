@@ -248,14 +248,20 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   }
   .demo-popup::backdrop { background:rgba(0,0,0,.85); }
   .demo-cadre { aspect-ratio:16/9; width:100%; background:#000; border-bottom:1px solid #fff; }
-  .demo-cadre :global(iframe) { width:100%; height:100%; border:0; display:block; }
+  /* L'iframe reste invisible (fond noir du cadre) jusqu'à son chargement :
+     évite le flash blanc du document vide avant l'affichage du lecteur. */
+  .demo-cadre :global(iframe) {
+    width:100%; height:100%; border:0; display:block; background:#000; color-scheme:dark;
+    opacity:0; transition:opacity 200ms ease;
+  }
+  .demo-cadre :global(iframe.pret) { opacity:1; }
   .demo-fermer {
     position:absolute; top:-2.6rem; right:0; width:2.2rem; height:2.2rem; padding:0;
     font-size:1.8rem; line-height:1; color:#fff; background:transparent; border:0; cursor:pointer;
   }
   .demo-fermer:hover { color:rgba(255,255,255,.6); }
   @media (prefers-reduced-motion: reduce) {
-    .apercu-item, .accroche-titre::before, .apercu-fleche { transition:none !important; }
+    .apercu-item, .accroche-titre::before, .apercu-fleche, .demo-cadre :global(iframe) { transition:none !important; }
   }
 </style>
 
@@ -336,6 +342,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       iframe.title = 'Bande démo';
       iframe.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
       iframe.allowFullscreen = true;
+      iframe.addEventListener('load', () => iframe.classList.add('pret'), { once: true });
       cadre.replaceChildren(iframe);
       popup.showModal();
     };
