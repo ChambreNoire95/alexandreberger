@@ -4,6 +4,7 @@ slug: zinedine-zidane-ballon-or-benzema
 categorie: commandes
 enChantier: false
 brouillon: false
+horsRecherche: false
 role: Cadreur
 accroche: "Documentaire de Mathieu Spadaro pour L'Équipe Explore : je cadre les
   interviews de Zidane, Courtois et Hegerberg."
@@ -11,6 +12,7 @@ secteurs:
   - Sport
 besoins:
   - Interviews
+  - Tournage à l'étranger
 formats:
   - Long
 client: L'Équipe / Sapari Productions
