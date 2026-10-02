@@ -10,6 +10,8 @@ secteurs:
   - Série/Cinéma
 besoins:
   - Mise en scène
+formats:
+  - Court
 client: DISNEY+
 type: Activation / Aftermovie
 date: 2023-03-01

@@ -11,6 +11,9 @@ secteurs:
   - Série/Cinéma
 besoins:
   - Mise en scène
+formats:
+  - Court
+  - Réseaux sociaux
 client: Disney+
 type: Activation / Aftermovie
 date: 2022-05-27

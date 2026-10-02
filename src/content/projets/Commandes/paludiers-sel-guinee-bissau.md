@@ -12,6 +12,8 @@ secteurs:
 besoins:
   - Tournage à l'étranger
   - Interviews
+formats:
+  - Long
 client: Univers Sel
 type: Documentaire
 date: 2019-05-16

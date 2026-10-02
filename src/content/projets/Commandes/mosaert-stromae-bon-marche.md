@@ -12,6 +12,8 @@ secteurs:
 besoins:
   - Direction artistique
   - Projet au long cours
+formats:
+  - Court
 client: Le Bon Marché Rive Gauche
 type: Making-of
 date: 2018-04-08

@@ -10,6 +10,8 @@ secteurs:
   - Sport
 besoins:
   - Interviews
+formats:
+  - Long
 client: L'Équipe
 type: Documentaire
 date: 2024-04-01

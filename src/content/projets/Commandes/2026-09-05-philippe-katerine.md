@@ -13,6 +13,8 @@ secteurs:
   - Culture
 besoins:
   - Direction artistique
+formats:
+  - Court
 client: Le Bon Marché Rive Gauche
 type: Making-of
 date: 2022-02-26

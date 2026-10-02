@@ -11,6 +11,8 @@ secteurs:
   - Musique
 besoins:
   - Interviews
+formats:
+  - Long
 client: Universal Music France
 type: Documentaire
 date: 2026-09-01

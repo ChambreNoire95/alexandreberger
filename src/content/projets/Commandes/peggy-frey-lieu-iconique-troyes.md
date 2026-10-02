@@ -10,6 +10,9 @@ secteurs:
   - Mode
 besoins:
   - Mise en scène
+formats:
+  - Court
+  - Réseaux sociaux
 client: Petit Bateau
 type: Activation / Aftermovie
 date: 2024-05-16

@@ -11,6 +11,8 @@ secteurs:
   - Sport
 besoins:
   - Interviews
+formats:
+  - Long
 client: L'Équipe / Sapari Productions
 type: Documentaire
 date: 2022-10-17

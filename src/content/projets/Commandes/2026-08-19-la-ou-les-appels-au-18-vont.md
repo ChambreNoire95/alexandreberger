@@ -10,6 +10,8 @@ secteurs:
   - Société
 besoins:
   - Interviews
+formats:
+  - Long
 client: POMPIERS 95
 type: Documentaire
 date: 2025-05-20

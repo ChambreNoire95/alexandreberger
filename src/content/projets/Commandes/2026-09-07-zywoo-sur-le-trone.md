@@ -10,6 +10,9 @@ secteurs:
   - Sport
 besoins:
   - Mise en scène
+formats:
+  - Court
+  - Réseaux sociaux
 client: Team Vitality
 type: Activation / Aftermovie
 date: 2024-03-12

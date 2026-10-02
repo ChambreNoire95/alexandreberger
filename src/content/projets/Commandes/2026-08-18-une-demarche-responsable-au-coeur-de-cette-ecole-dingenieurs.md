@@ -11,6 +11,8 @@ secteurs:
   - Environnement
 besoins:
   - Interviews
+formats:
+  - Court
 client: Polytech montpellier
 type: Institutionnel
 date: 2022-08-18

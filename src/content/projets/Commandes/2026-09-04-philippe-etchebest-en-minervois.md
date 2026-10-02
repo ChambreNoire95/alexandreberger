@@ -10,6 +10,8 @@ secteurs:
   - Culture
 besoins:
   - Mise en scène
+formats:
+  - Série
 date: 2015-06-04
 carrousel: true
 ordreCarrousel: 10

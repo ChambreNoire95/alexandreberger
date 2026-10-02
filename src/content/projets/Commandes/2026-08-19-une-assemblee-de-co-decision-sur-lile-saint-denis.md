@@ -11,6 +11,8 @@ secteurs:
 besoins:
   - Interviews
   - Projet au long cours
+formats:
+  - Long
 client: Les Cahiers Pour Décider et Agir
 type: Documentaire
 date: 2026-03-01

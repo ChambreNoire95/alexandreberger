@@ -11,6 +11,8 @@ secteurs:
   - Environnement
 besoins:
   - Tournage à l'étranger
+formats:
+  - Court
 client: Dessine l'Espoir
 type: Institutionnel
 date: 2023-08-16
