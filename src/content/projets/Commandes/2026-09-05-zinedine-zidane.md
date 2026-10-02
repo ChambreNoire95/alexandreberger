@@ -3,11 +3,15 @@ titre: Karim Benzema, le sacre du Ballon d'Or 2022
 slug: zinedine-zidane-ballon-or-benzema
 categorie: commandes
 enChantier: false
+brouillon: false
 role: Cadreur
+accroche: "Documentaire de Mathieu Spadaro pour L'Équipe Explore : je cadre les
+  interviews de Zidane, Courtois et Hegerberg."
 client: L'Équipe / Sapari Productions
 type: Documentaire
-accroche: "Documentaire de Mathieu Spadaro pour L'Équipe Explore : je cadre les interviews de Zidane, Courtois et Hegerberg."
 date: 2022-10-17
+titreFilm: LA COURSE VERS L'ÉTERNITÉ
+duree: 55min
 couverture: /uploads/ZidaneBallonOr_2022-10-17_1.jpg
 couvertureAlt: Zinédine Zidane interviewé pour le documentaire L'Équipe Explore
   sur le Ballon d'Or 2022
