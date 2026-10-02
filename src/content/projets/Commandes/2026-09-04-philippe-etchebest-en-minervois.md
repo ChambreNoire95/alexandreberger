@@ -5,6 +5,7 @@ role: Producteur / Réalisateur
 client: Le Syndicat du Cru Minervois
 type: Documentaire
 accroche: "Le chef Philippe Etchebest s'invite le temps d'un épisode du road-movie « Mon Minervois », entre Narbonne et Carcassonne."
+titreFilm: "Mon Minervois, 30 ans d'aventures"
 date: 2015-06-04
 carrousel: true
 ordreCarrousel: 10

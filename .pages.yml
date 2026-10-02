@@ -19,6 +19,7 @@ content:
     path: src/content/settings/bande-demo.json
     fields:
       - { name: video, label: "Lien de la vidéo (YouTube ou Vimeo)", type: string, description: "S'ouvre en pop-up depuis l'encart par défaut de la page d'accueil. Si vide, l'encart n'apparaît pas." }
+      - { name: duree, label: "Durée (optionnel)", type: string, description: "Ex. 2 min. Affichée à côté du titre « Bande démo »." }
       - { name: image, label: "Image de l'encart (optionnel)", type: image, description: "Format 16/9. Si vide, l'encart est un fond sombre avec un bouton lecture." }
 
   - name: projets-commandes
@@ -38,6 +39,8 @@ content:
       - { name: client, label: Client, type: string }
       - { name: type, label: "Type de film", type: select, options: { values: ["Making-of", "Documentaire", "Activation / Aftermovie", "Institutionnel", "Brand Content", "RSE", "Fiction"] }, description: "Utilisé pour le filtre par catégorie sur la page Commandes." }
       - { name: date, label: Date, type: date, options: { format: "yyyy-MM-dd" }, description: "Détermine aussi l'ordre d'affichage sur la home (plus récente en premier)." }
+      - { name: titreFilm, label: "Titre du film", type: string, description: "Titre du film lui-même, affiché au-dessus de l'image dans l'aperçu de la page d'accueil (ex. « Mon Minervois, 30 ans d'aventures »). Si vide, aucun titre n'est affiché." }
+      - { name: duree, label: Durée, type: string, description: "Ex. 12 min, 1h30. Affichée à côté du titre du film dans l'aperçu de la page d'accueil, et sur la fiche." }
       - { name: couverture, label: Couverture, type: image }
       - { name: couvertureAlt, label: "Texte alternatif (couverture)", type: string, description: "Décrit l'image pour le SEO et l'accessibilité. Si vide, le titre du projet est utilisé à la place." }
       - { name: carrousel, label: "Afficher dans le carrousel (home)", type: boolean, default: false, description: "Ajoute ce projet au carrousel photo en haut de la page d'accueil. L'ordre se règle dans \"Ordre du carrousel\" (menu de gauche), pas ici." }
