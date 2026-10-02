@@ -24,6 +24,7 @@ const apercus = projets
   .map(({ p, index }) => ({
     index,
     href: `/projets/${p.id}`,
+    titre: p.data.titre,
     image: (p.data.couverture || p.data.image1) as string,
     date: p.data.date?.toLocaleDateString("fr-FR", { month: "long", year: "numeric" }),
     client: p.data.client,
@@ -107,7 +108,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
             <p class="apercu-meta">{[a.date, a.client].filter(Boolean).join(" · ")}</p>
           )}
           {a.accroche && <p class="apercu-accroche">{a.accroche}</p>}
-          <a class="apercu-bouton" href={a.href}>En savoir +</a>
+          <a class="apercu-fleche" href={a.href} aria-label={`En savoir plus : ${a.titre}`}>→</a>
         </article>
       ))}
     </div>
@@ -184,7 +185,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     .apercu { display:block; position:sticky; top:28px; margin-top:4.5rem; }
     .apercu-pile { display:grid; }
     .apercu-item {
-      grid-area:1 / 1; display:flex; flex-direction:column; gap:1rem;
+      grid-area:1 / 1; align-self:start; display:flex; flex-direction:column; gap:1rem;
       box-sizing:border-box; padding:10px; border:1px solid rgba(255,255,255,.35); border-radius:2px;
       opacity:0; visibility:hidden; transition:opacity 220ms ease, visibility 0s linear 220ms;
     }
@@ -218,6 +219,13 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     }
     .apercu-bouton:hover, .apercu-bouton:focus-visible { background:#fff; border-color:#fff; color:#0b0b0b; }
 
+    /* Flèche vers la fiche, en bas à droite du cadre. */
+    .apercu-fleche {
+      align-self:flex-end; margin-top:-.2rem; text-decoration:none;
+      font-size:1.4rem; line-height:1; color:#fff; transition:transform 140ms ease, color 140ms ease;
+    }
+    .apercu-fleche:hover, .apercu-fleche:focus-visible { transform:translateX(.3rem); color:rgba(255,255,255,.7); }
+
     /* Encart « bande démo » : même gabarit qu'une fiche projet. */
     .apercu-demo-ouvrir { position:relative; cursor:pointer; background:linear-gradient(135deg,#1c1c1c,#0b0b0b); }
     .apercu-demo-ouvrir :global(img) { width:100%; height:100%; object-fit:cover; display:block; }
@@ -247,7 +255,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   }
   .demo-fermer:hover { color:rgba(255,255,255,.6); }
   @media (prefers-reduced-motion: reduce) {
-    .apercu-item, .accroche-titre::before { transition:none !important; }
+    .apercu-item, .accroche-titre::before, .apercu-fleche { transition:none !important; }
   }
 </style>
 
