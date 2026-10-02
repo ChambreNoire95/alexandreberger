@@ -24,6 +24,8 @@ interface DonneesBooking {
   date?: string;
   lieu?: string;
   budget?: string;
+  criteres?: string; // critères de la recherche de références (page d'accueil)
+  references?: string; // références sélectionnées, une par ligne
   description: string;
   site?: string; // honeypot anti-spam, doit rester vide
 }
@@ -42,6 +44,8 @@ const LABELS: Record<string, string> = {
   date: "Date de début souhaitée",
   lieu: "Lieu",
   budget: "Budget estimé",
+  criteres: "Critères de recherche",
+  references: "Références sélectionnées",
   description: "Description du projet",
 };
 
@@ -55,7 +59,8 @@ function reponseJson(corps: unknown, status = 200) {
 function recapitulatif(d: DonneesBooking, inclureEmail = true) {
   return (Object.keys(LABELS) as (keyof DonneesBooking)[])
     .filter((champ) => (inclureEmail || champ !== "email") && String(d[champ] ?? "").trim())
-    .map((champ) => `${LABELS[champ]} : ${d[champ]}`)
+    // Les références tiennent sur plusieurs lignes : on les passe à la ligne sous le libellé.
+    .map((champ) => `${LABELS[champ]} :${champ === "references" ? "\n" : " "}${d[champ]}`)
     .join("\n");
 }
 
@@ -118,6 +123,10 @@ export const POST: APIRoute = async ({ request }) => {
   if (donnees.site) {
     return reponseJson({ ok: true });
   }
+
+  // Champs libres envoyés par le navigateur : on borne leur taille et leur type.
+  donnees.criteres = typeof donnees.criteres === "string" ? donnees.criteres.slice(0, 500) : undefined;
+  donnees.references = typeof donnees.references === "string" ? donnees.references.slice(0, 3000) : undefined;
 
   const manquants = CHAMPS_REQUIS.filter((champ) => !String(donnees[champ] ?? "").trim());
   if (manquants.length > 0) {

@@ -521,6 +521,30 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       });
     };
 
+    // « Parlons de votre projet » : on emporte la sélection (références affichées + critères) vers le formulaire Booking.
+    dialogue.querySelector('.rech-contact')?.addEventListener('click', () => {
+      try {
+        const references = lis
+          .filter((li) => !li.hidden)
+          .map((li) => ({
+            titre: li.querySelector('.rech-nom')?.textContent?.trim() ?? '',
+            chemin: li.querySelector('a')?.getAttribute('href') ?? '',
+            creation: !!li.querySelector('.rech-etiquette'),
+          }))
+          .filter((r) => r.titre && r.chemin);
+        const criteres = [
+          secteur && `Univers : ${secteur}`,
+          besoins.size && `Critères : ${[...besoins].join(', ')}`,
+          formats.size && `Format/Durée : ${[...formats].join(', ')}`,
+          tons.size && `Ton : ${[...tons].join(', ')}`,
+        ].filter(Boolean).join(' · ');
+        if (references.length) sessionStorage.setItem('references-booking', JSON.stringify({ references, criteres }));
+        else sessionStorage.removeItem('references-booking');
+      } catch {
+        /* stockage indisponible : le formulaire s'affichera simplement sans références */
+      }
+    });
+
     document.querySelectorAll('[data-recherche-ouvrir]').forEach((b) =>
       b.addEventListener('click', () => dialogue.showModal())
     );

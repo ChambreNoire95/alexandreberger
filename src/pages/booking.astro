@@ -86,6 +86,13 @@ const description = "Demande de tournage auprès d'Alexandre Berger, réalisateu
         <input type="text" name="budget" />
       </label>
 
+      <section class="champ references" id="references-booking" hidden>
+        <span>Références</span>
+        <p class="references-intro">Les références que vous avez sélectionnées sur la page d'accueil. Retirez celles qui ne vous intéressent pas.</p>
+        <p class="references-criteres"></p>
+        <ul class="references-liste"></ul>
+      </section>
+
       <label class="champ">
         <span>Description du projet *</span>
         <textarea name="description" rows="6" placeholder="Sujet, intention, contraintes, références…" required></textarea>
@@ -101,6 +108,60 @@ const description = "Demande de tournage auprès d'Alexandre Berger, réalisateu
   function initFormBooking() {
     const form = document.getElementById("form-booking") as HTMLFormElement | null;
     if (!form) return;
+
+    const bloc = document.getElementById("references-booking");
+    const liste = bloc?.querySelector<HTMLUListElement>(".references-liste");
+    const criteresEl = bloc?.querySelector<HTMLElement>(".references-criteres");
+    let references: { titre: string; chemin: string; creation: boolean }[] = [];
+    let criteres = "";
+
+    function afficherReferences() {
+      if (!bloc || !liste || !criteresEl) return;
+      liste.replaceChildren();
+      references.forEach((ref, index) => {
+        const li = document.createElement("li");
+        const lien = document.createElement("a");
+        lien.href = ref.chemin;
+        lien.target = "_blank";
+        lien.rel = "noopener";
+        lien.textContent = ref.titre;
+        li.append(lien);
+        if (ref.creation) {
+          const etiquette = document.createElement("em");
+          etiquette.textContent = "Création";
+          li.append(etiquette);
+        }
+        const retirer = document.createElement("button");
+        retirer.type = "button";
+        retirer.className = "retirer";
+        retirer.setAttribute("aria-label", `Retirer ${ref.titre}`);
+        retirer.textContent = "×";
+        retirer.addEventListener("click", () => {
+          references.splice(index, 1);
+          afficherReferences();
+        });
+        li.append(retirer);
+        liste.append(li);
+      });
+      criteresEl.textContent = criteres;
+      criteresEl.hidden = !criteres;
+      bloc.hidden = references.length === 0;
+    }
+
+    // Sélection emportée depuis « Parlons de votre projet » (page d'accueil).
+    try {
+      const brut = sessionStorage.getItem("references-booking");
+      if (brut) {
+        const stocke = JSON.parse(brut);
+        if (Array.isArray(stocke.references)) {
+          references = stocke.references.filter((r: { titre?: unknown; chemin?: unknown }) => typeof r.titre === "string" && typeof r.chemin === "string");
+          criteres = typeof stocke.criteres === "string" ? stocke.criteres : "";
+        }
+      }
+    } catch {
+      references = [];
+    }
+    afficherReferences();
 
     const bouton = form.querySelector<HTMLButtonElement>('button[type="submit"]');
     const statut = form.querySelector<HTMLElement>(".statut");
@@ -119,7 +180,13 @@ const description = "Demande de tournage auprès d'Alexandre Berger, réalisateu
         bouton.textContent = "Envoi en cours…";
       }
 
-      const donnees = Object.fromEntries(new FormData(form).entries());
+      const donnees: Record<string, FormDataEntryValue> = Object.fromEntries(new FormData(form).entries());
+      if (references.length) {
+        donnees.references = references
+          .map((r) => `- ${r.titre}${r.creation ? " (création)" : ""} : ${location.origin}${r.chemin}`)
+          .join("\n");
+        if (criteres) donnees.criteres = criteres;
+      }
 
       try {
         const reponse = await fetch("/api/booking", {
@@ -132,6 +199,10 @@ const description = "Demande de tournage auprès d'Alexandre Berger, réalisateu
         if (reponse.ok && resultat.ok) {
           afficherStatut("Votre demande a bien été envoyée. Vous allez recevoir un email de confirmation, je reviens vers vous rapidement.", true);
           form.reset();
+          references = [];
+          criteres = "";
+          afficherReferences();
+          try { sessionStorage.removeItem("references-booking"); } catch { /* sans effet */ }
         } else {
           afficherStatut(resultat.erreur || "Une erreur est survenue. Merci de réessayer.", false);
         }
@@ -180,6 +251,29 @@ const description = "Demande de tournage auprès d'Alexandre Berger, réalisateu
     cursor:pointer; transition:opacity 140ms ease;
   }
   button[type="submit"]:hover { opacity:.85; }
+
+  .references { gap:.7rem; }
+  .references-intro { margin:0; font-weight:300; font-size:.9rem; line-height:1.5; color:rgba(255,255,255,.65); }
+  .references-criteres {
+    margin:0; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:.68rem;
+    letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.5);
+  }
+  .references-liste { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.5rem; }
+  .references-liste :global(li) {
+    display:flex; align-items:center; gap:.7rem; padding:.6rem .8rem;
+    border:1px solid rgba(255,255,255,.3); border-radius:2px;
+  }
+  .references-liste :global(a) { flex:1; color:#fff; font-weight:700; font-size:.95rem; text-decoration:none; }
+  .references-liste :global(a:hover) { text-decoration:underline; }
+  .references-liste :global(em) {
+    font-style:normal; padding:.1rem .4rem; border:1px solid rgba(255,255,255,.6); border-radius:2px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:.62rem; letter-spacing:.14em;
+    text-transform:uppercase; color:#fff;
+  }
+  .references-liste :global(.retirer) {
+    padding:0 .3rem; font-size:1.4rem; line-height:1; color:#fff; background:transparent; border:0; cursor:pointer;
+  }
+  .references-liste :global(.retirer:hover) { color:rgba(255,255,255,.6); }
 
   .statut { font-weight:300; font-size:.9rem; color:rgba(255,255,255,.6); margin:0; }
   .statut-erreur { color:#e11d2e; }
