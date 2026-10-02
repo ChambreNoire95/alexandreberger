@@ -326,6 +326,11 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     const ouvrir = () => {
       const url = new URL(popup.dataset.src!);
       url.searchParams.set('autoplay', '1');
+      // Vidéas : le preset du lecteur peut être « muet » et sans contrôles ; on force le son.
+      if (url.hostname.endsWith('videas.fr')) {
+        url.searchParams.set('mute', '0');
+        url.searchParams.set('controls', '1');
+      }
       const iframe = document.createElement('iframe');
       iframe.src = url.toString();
       iframe.title = 'Bande démo';
