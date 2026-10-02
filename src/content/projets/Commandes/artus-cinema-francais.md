@@ -7,7 +7,7 @@ role: Réalisateur
 accroche: Plusieurs semaines dans le Vercors sur le tournage d'« Un p'tit truc
   en plus », au plus près des « pensionnaires ».
 secteurs:
-  - Cinéma
+  - Série/Cinéma
 besoins:
   - Projet au long cours
 client: Cine Nomine / Pan Distribution

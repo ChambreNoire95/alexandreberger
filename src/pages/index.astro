@@ -42,7 +42,7 @@ const fichesRecherche = projets.map((p) => ({
   se: p.data.secteurs ?? [],
   be: p.data.besoins ?? [],
 }));
-const SECTEURS = ["Mode", "Musique", "Cinéma", "Art", "Culture", "Éducation", "Société", "Sport", "Solidarité", "Environnement"];
+const SECTEURS = ["Mode", "Musique", "Série/Cinéma", "Art", "Culture", "Éducation", "Société", "Sport", "Solidarité", "Environnement"];
 const BESOINS = ["Interviews", "Mise en scène", "Tournage à l'étranger", "Projet au long cours", "Direction artistique"];
 // Seules les valeurs réellement utilisées par au moins une fiche sont proposées.
 const secteursRecherche = SECTEURS.filter((x) => fichesRecherche.some((f) => f.se.includes(x)));

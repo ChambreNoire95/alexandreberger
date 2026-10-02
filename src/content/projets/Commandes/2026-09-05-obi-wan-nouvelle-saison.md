@@ -8,7 +8,7 @@ role: Réalisateur
 accroche: Henry Tran et Deujna sont initiés au sabre laser, puis s'affrontent
   dans un duel filmé pour la sortie de la saison d'Obi-Wan Kenobi.
 secteurs:
-  - Cinéma
+  - Série/Cinéma
 besoins:
   - Mise en scène
 client: Disney+
