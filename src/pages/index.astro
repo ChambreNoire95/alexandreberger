@@ -8,6 +8,8 @@ import OptimizedImage from "../components/OptimizedImage.astro";
 import { getCollection } from "astro:content";
 import { getItemsCarrousel } from "../lib/carrousel";
 import { descriptionDepuisTexte } from "../lib/meta";
+import { urlEmbed } from "../lib/video";
+import bandeDemo from "../content/settings/bande-demo.json";
 
 const projets = (await getCollection("projets", ({ data }) => data.categorie === "commandes" && !data.brouillon)).sort(
   // Plus récente en premier, plus ancienne en bas (comme sur Créations).
@@ -15,11 +17,13 @@ const projets = (await getCollection("projets", ({ data }) => data.categorie ===
 );
 
 // Panneau d'aperçu (écran large + souris) : un aperçu par projet ayant une image.
+const demoUrl = bandeDemo.video?.trim() ? urlEmbed(bandeDemo.video.trim()) : null;
 const apercus = projets
   .map((p, index) => ({ p, index }))
   .filter(({ p }) => p.data.couverture || p.data.image1)
   .map(({ p, index }) => ({
     index,
+    href: `/projets/${p.id}`,
     image: (p.data.couverture || p.data.image1) as string,
     date: p.data.date?.toLocaleDateString("fr-FR", { month: "long", year: "numeric" }),
     client: p.data.client,
@@ -73,8 +77,19 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     })}
   </ul>
 
-  <aside class="apercu" aria-hidden="true">
+  <aside class="apercu" aria-label="Aperçu du projet">
     <div class="apercu-pile">
+      {demoUrl && (
+        <article class="apercu-item apercu-demo" data-index="-1" data-demo>
+          <button type="button" class="apercu-image apercu-demo-ouvrir" data-demo-ouvrir aria-haspopup="dialog">
+            {bandeDemo.image && <OptimizedImage src={bandeDemo.image} alt="" sizes="420px" />}
+            <span class="apercu-demo-play" aria-hidden="true"></span>
+          </button>
+          <p class="apercu-meta">Bande démo</p>
+          <p class="apercu-accroche">Mon travail en quelques images : documentaire, fiction et films de marque.</p>
+          <button type="button" class="apercu-bouton" data-demo-ouvrir aria-haspopup="dialog">Voir la bande démo</button>
+        </article>
+      )}
       {apercus.map((a) => (
         <article class="apercu-item" data-index={a.index}>
           <div class="apercu-image">
@@ -84,11 +99,19 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
             <p class="apercu-meta">{[a.date, a.client].filter(Boolean).join(" · ")}</p>
           )}
           {a.accroche && <p class="apercu-accroche">{a.accroche}</p>}
+          <a class="apercu-bouton" href={a.href}>En savoir +</a>
         </article>
       ))}
     </div>
   </aside>
   </div>
+
+  {demoUrl && (
+    <dialog class="demo-popup" id="demo-popup" aria-label="Bande démo" data-src={demoUrl}>
+      <button type="button" class="demo-fermer" data-demo-fermer aria-label="Fermer">×</button>
+      <div class="demo-cadre"></div>
+    </dialog>
+  )}
 </Layout>
 
 <style>
@@ -158,6 +181,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     }
     .apercu-item.actif { opacity:1; visibility:visible; transition-delay:0s; }
     .apercu-image {
+      display:block; width:100%; padding:0; border:0; border-bottom:1px solid #fff;
       aspect-ratio:16/9; overflow:hidden; border-radius:2px; background:#111;
     }
     .apercu-image :global(img) { width:100%; height:100%; object-fit:cover; display:block; }
@@ -168,7 +192,44 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       font-size:.77rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.45);
     }
     .apercu-accroche { margin:0; font-weight:300; font-size:1rem; line-height:1.6; color:rgba(255,255,255,.8); }
+
+    .apercu-bouton {
+      align-self:flex-start; margin-top:.4rem; cursor:pointer; text-decoration:none;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
+      color:#fff; background:transparent; border:1px solid rgba(255,255,255,.5); border-radius:2px;
+      padding:.5rem .9rem; transition:background 140ms ease, color 140ms ease, border-color 140ms ease;
+    }
+    .apercu-bouton:hover, .apercu-bouton:focus-visible { background:#fff; border-color:#fff; color:#0b0b0b; }
+
+    /* Encart « bande démo » : même gabarit qu'une fiche projet. */
+    .apercu-demo-ouvrir { position:relative; cursor:pointer; background:linear-gradient(135deg,#1c1c1c,#0b0b0b); }
+    .apercu-demo-ouvrir :global(img) { width:100%; height:100%; object-fit:cover; display:block; }
+    .apercu-demo-play {
+      position:absolute; top:50%; left:50%; width:64px; height:64px; margin:-32px 0 0 -32px;
+      border:1px solid #fff; border-radius:50%; background:rgba(0,0,0,.45);
+      transition:background 140ms ease, transform 140ms ease;
+    }
+    .apercu-demo-play::before {
+      content:""; position:absolute; top:50%; left:50%; margin:-9px 0 0 -6px;
+      border-style:solid; border-width:9px 0 9px 16px; border-color:transparent transparent transparent #fff;
+    }
+    .apercu-demo-ouvrir:hover .apercu-demo-play { background:rgba(255,255,255,.18); transform:scale(1.06); }
   }
+
+  /* Pop-up vidéo (ouverte depuis l'encart « bande démo »). */
+  .demo-popup {
+    padding:0; border:0; background:transparent; color:#fff;
+    width:min(92vw, 1100px); max-width:none; max-height:none; overflow:visible;
+  }
+  .demo-popup::backdrop { background:rgba(0,0,0,.85); }
+  .demo-cadre { aspect-ratio:16/9; width:100%; background:#000; border-bottom:1px solid #fff; }
+  .demo-cadre :global(iframe) { width:100%; height:100%; border:0; display:block; }
+  .demo-fermer {
+    position:absolute; top:-2.6rem; right:0; width:2.2rem; height:2.2rem; padding:0;
+    font-size:1.8rem; line-height:1; color:#fff; background:transparent; border:0; cursor:pointer;
+  }
+  .demo-fermer:hover { color:rgba(255,255,255,.6); }
   @media (prefers-reduced-motion: reduce) {
     .apercu-item, .accroche-titre::before { transition:none !important; }
   }
@@ -206,6 +267,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     if (!liste || !panneau || !matchMedia('(min-width: 1100px) and (hover: hover) and (pointer: fine)').matches) return;
 
     const fiches = [...panneau.querySelectorAll<HTMLElement>('.apercu-item')];
+    const conteneur = liste.closest<HTMLElement>('.liste-apercu');
     const activer = (index: number) => {
       fiches.forEach((fiche) => {
         const actif = Number(fiche.dataset.index) === index;
@@ -217,8 +279,10 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       const li = (event.target as HTMLElement).closest<HTMLLIElement>('li[data-apercu]');
       if (li) activer(Number(li.dataset.apercu));
     };
-    // Au repos et après un filtre : le premier projet visible (le plus récent).
+    // Au repos et après un filtre : l'encart « bande démo » s'il existe, sinon
+    // le premier projet visible (le plus récent).
     const parDefaut = () => {
+      if (panneau.querySelector('[data-demo]')) return activer(-1);
       const li = liste.querySelector<HTMLLIElement>('li[data-apercu]:not([hidden])');
       activer(li ? Number(li.dataset.apercu) : -1);
     };
@@ -226,9 +290,35 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     liste.addEventListener('mouseover', depuis);
     liste.addEventListener('focusin', depuis);
     liste.addEventListener('filtre', parDefaut);
+    // Le curseur quitte l'ensemble liste + panneau : retour à l'encart par défaut.
+    conteneur?.addEventListener('mouseleave', parDefaut);
     parDefaut();
+  }
+
+  function setupDemo() {
+    const popup = document.getElementById('demo-popup') as HTMLDialogElement | null;
+    if (!popup) return;
+    const cadre = popup.querySelector<HTMLElement>('.demo-cadre')!;
+    const ouvrir = () => {
+      const url = new URL(popup.dataset.src!);
+      url.searchParams.set('autoplay', '1');
+      const iframe = document.createElement('iframe');
+      iframe.src = url.toString();
+      iframe.title = 'Bande démo';
+      iframe.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
+      iframe.allowFullscreen = true;
+      cadre.replaceChildren(iframe);
+      popup.showModal();
+    };
+    document.querySelectorAll('[data-demo-ouvrir]').forEach((b) => b.addEventListener('click', ouvrir));
+    popup.querySelector('[data-demo-fermer]')?.addEventListener('click', () => popup.close());
+    // Clic sur le fond sombre = fermeture.
+    popup.addEventListener('click', (e) => { if (e.target === popup) popup.close(); });
+    // Vide l'iframe à la fermeture pour couper le son.
+    popup.addEventListener('close', () => cadre.replaceChildren());
   }
 
   document.addEventListener('astro:page-load', setupFiltres);
   document.addEventListener('astro:page-load', setupApercu);
+  document.addEventListener('astro:page-load', setupDemo);
 </script>
