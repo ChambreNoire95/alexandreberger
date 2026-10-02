@@ -63,6 +63,7 @@ content:
       - { name: anneeFin, label: "Année de fin (optionnel)", type: number, options: { min: 1980, max: 2100 }, description: "À renseigner uniquement si le projet s'est déroulé sur plusieurs années : affiche par exemple 2020/2021." }
       - { name: genre, label: Genre, type: select, options: { values: ["Fiction", "Documentaire", "Clip", "Expérimental"] }, description: "Affiché à côté de l'année. Utilisé pour le filtre par catégorie sur la page Créations." }
       - { name: role, label: "Rôle", type: select, options: { values: ["Réalisateur", "Producteur"] }, description: "Utilisé pour le second filtre (par rôle) sur la page Créations." }
+      - { name: realisateur, label: "Réalisateur (si ce n'est pas moi)", type: string, description: "Pour un projet réalisé par quelqu'un d'autre : son nom s'affiche sous le titre sur la page Créations (« Réalisé par … »). Laisser vide sinon." }
       - { name: duree, label: Durée, type: string, description: "Ex. 12 min, 1h30. Affichée à côté de l'année." }
       - { name: couverture, label: Couverture, type: image }
       - { name: couvertureAlt, label: "Texte alternatif (couverture)", type: string, description: "Décrit l'image pour le SEO et l'accessibilité. Si vide, le titre du projet est utilisé à la place." }
