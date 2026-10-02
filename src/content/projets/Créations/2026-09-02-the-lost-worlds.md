@@ -8,6 +8,7 @@ secteurs:
   - Culture
 besoins:
   - Mise en scène / Direction artistique
+  - Images d'archives
 formats:
   - Série
   - Réseaux sociaux

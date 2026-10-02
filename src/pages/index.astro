@@ -56,7 +56,7 @@ const fichesRecherche = elementsRecherche.map(({ p }) => ({
   to: p.data.tons ?? [],
 }));
 const SECTEURS = ["Mode", "Musique", "Série/Cinéma", "Art", "Culture", "Terroir / Gastronomie", "Éducation", "Sciences", "Société", "Sport", "Solidarité", "Environnement"];
-const BESOINS = ["Interviews", "Mise en scène / Direction artistique", "Tournage à l'étranger", "Projet au long cours"];
+const BESOINS = ["Interviews", "Mise en scène / Direction artistique", "Tournage à l'étranger", "Projet au long cours", "Images d'archives"];
 // Seules les valeurs réellement utilisées par au moins une fiche sont proposées.
 const secteursRecherche = SECTEURS.filter((x) => fichesRecherche.some((f) => f.se.includes(x)));
 const FORMATS = ["Réseaux sociaux", "Court", "Long", "Série"];
