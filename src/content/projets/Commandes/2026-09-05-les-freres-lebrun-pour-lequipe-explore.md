@@ -9,7 +9,7 @@ accroche: Alexis et Félix Lebrun racontent leur formation à Montpellier dans �
 client: L'Équipe
 type: Documentaire
 date: 2024-04-01
-titreFilm: ENFANCE D'U STYLE
+titreFilm: ENFANCE D'UN STYLE
 duree: 10min
 couverture: /uploads/FreresLebrun_2024-04-01_1.jpg
 couvertureAlt: Alexis et Félix Lebrun souriants, interviewés pour "Enfance d'un
