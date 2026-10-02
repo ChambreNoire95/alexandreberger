@@ -3,6 +3,7 @@ titre: Les Frères Lebrun replongent en enfance pour L'Équipe
 categorie: commandes
 enChantier: false
 brouillon: false
+horsRecherche: false
 role: Réalisateur
 accroche: Alexis et Félix Lebrun racontent leur formation à Montpellier dans «
   Enfance d'un style », grand format de L'Équipe Explore.
@@ -11,7 +12,7 @@ secteurs:
 besoins:
   - Interviews
 formats:
-  - Long
+  - Court
 client: L'Équipe
 type: Documentaire
 date: 2024-04-01
