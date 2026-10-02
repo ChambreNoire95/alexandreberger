@@ -14,7 +14,7 @@ besoins:
 formats:
   - Long
 tons:
-  - Dramatique
+  - Informatif
 client: Universal Music France
 type: Documentaire
 date: 2026-09-01
