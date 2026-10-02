@@ -85,7 +85,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       {demoUrl && (
         <article class="apercu-item apercu-demo" data-index="-1" data-demo>
           <p class="apercu-entete"><span class="apercu-titre-film">Bande démo</span>{bandeDemo.duree?.trim() && <span class="apercu-duree">{bandeDemo.duree.trim()}</span>}</p>
-          <button type="button" class="apercu-image apercu-demo-ouvrir" data-demo-ouvrir aria-haspopup="dialog">
+          <button type="button" class:list={["apercu-image", "apercu-demo-ouvrir", { "avec-image": !!bandeDemo.image }]} data-demo-ouvrir aria-haspopup="dialog">
             {bandeDemo.image && <OptimizedImage src={bandeDemo.image} alt="" sizes="420px" />}
             <span class="apercu-demo-play" aria-hidden="true"></span>
           </button>
@@ -237,6 +237,13 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     .apercu-demo-play::before {
       content:""; position:absolute; top:50%; left:50%; margin:-9px 0 0 -6px;
       border-style:solid; border-width:9px 0 9px 16px; border-color:transparent transparent transparent #fff;
+    }
+    /* Avec une image (souvent un titre au centre) : bouton lecture en bas à gauche. */
+    .apercu-demo-ouvrir.avec-image .apercu-demo-play {
+      top:auto; left:14px; bottom:14px; width:44px; height:44px; margin:0;
+    }
+    .apercu-demo-ouvrir.avec-image .apercu-demo-play::before {
+      margin:-7px 0 0 -4px; border-width:7px 0 7px 12px;
     }
     .apercu-demo-ouvrir:hover .apercu-demo-play { background:rgba(255,255,255,.18); transform:scale(1.06); }
   }
