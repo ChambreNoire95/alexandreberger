@@ -13,6 +13,8 @@ besoins:
 formats:
   - Court
   - Réseaux sociaux
+tons:
+  - Promotionnel
 client: Petit Bateau
 type: Activation / Aftermovie
 date: 2024-05-16

@@ -15,6 +15,7 @@ formats:
   - Réseaux sociaux
 tons:
   - Décalé
+  - Promotionnel
 client: Team Vitality
 type: Activation / Aftermovie
 date: 2024-03-12

@@ -12,6 +12,8 @@ besoins:
   - Mise en scène / Direction artistique
 formats:
   - Court
+tons:
+  - Promotionnel
 client: DISNEY+
 type: Activation / Aftermovie
 date: 2023-03-01

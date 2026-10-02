@@ -59,7 +59,7 @@ const BESOINS = ["Interviews", "Mise en scène / Direction artistique", "Tournag
 // Seules les valeurs réellement utilisées par au moins une fiche sont proposées.
 const secteursRecherche = SECTEURS.filter((x) => fichesRecherche.some((f) => f.se.includes(x)));
 const FORMATS = ["Réseaux sociaux", "Court", "Long", "Série"];
-const TONS = ["Humour", "Dramatique", "Informatif", "Décalé"];
+const TONS = ["Humour", "Informatif", "Décalé", "Promotionnel"];
 const tonsRecherche = TONS.filter((x) => fichesRecherche.some((f) => f.to.includes(x)));
 const formatsRecherche = FORMATS.filter((x) => fichesRecherche.some((f) => f.fo.includes(x)));
 const besoinsRecherche = BESOINS.filter((x) => fichesRecherche.some((f) => f.be.includes(x)));

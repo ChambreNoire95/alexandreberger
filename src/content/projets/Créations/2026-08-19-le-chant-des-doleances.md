@@ -10,8 +10,6 @@ besoins:
   - Mise en scène / Direction artistique
 formats:
   - Court
-tons:
-  - Dramatique
 role: Réalisateur
 duree: 6min31
 carrousel: false

@@ -17,6 +17,7 @@ formats:
 tons:
   - Humour
   - Décalé
+  - Promotionnel
 client: Disney+
 type: Activation / Aftermovie
 date: 2022-05-27

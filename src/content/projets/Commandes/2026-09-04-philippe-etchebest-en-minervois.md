@@ -12,6 +12,8 @@ besoins:
   - Mise en scène / Direction artistique
 formats:
   - Série
+tons:
+  - Promotionnel
 date: 2015-06-04
 carrousel: true
 ordreCarrousel: 10
