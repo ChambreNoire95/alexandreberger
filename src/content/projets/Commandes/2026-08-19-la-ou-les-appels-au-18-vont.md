@@ -11,7 +11,7 @@ secteurs:
 besoins:
   - Interviews
 formats:
-  - Long
+  - Court
 tons:
   - Informatif
 client: POMPIERS 95
