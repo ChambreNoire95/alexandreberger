@@ -481,11 +481,12 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
         etat.textContent = "Rien qui croise ces critères pour l'instant. Essayez d'autres critères, ou parlons de votre projet.";
         return;
       }
+      // « 5/8 » quand il y a plus de correspondances que de résultats affichés.
+      const tronque = candidats.length > retenus.length;
+      const compte = tronque ? `${retenus.length}/${candidats.length}` : `${retenus.length}`;
       etat.textContent = !besoins.size
-        ? `${secteur ? `Univers ${secteur} · ` : ''}${retenus.length} référence${retenus.length > 1 ? 's' : ''}`
-        : retenus[0].couverts === besoins.size
-          ? 'Les références qui répondent à vos besoins'
-          : 'Les références les plus proches de vos besoins';
+        ? `${secteur ? `Univers ${secteur} · ` : ''}${compte} référence${retenus.length > 1 ? 's' : ''}`
+        : `${retenus[0].couverts === besoins.size ? 'Les références qui répondent à vos besoins' : 'Les références les plus proches de vos besoins'}${tronque ? ` · ${compte}` : ''}`;
 
       retenus.forEach((r) => {
         const li = lis[r.index];
