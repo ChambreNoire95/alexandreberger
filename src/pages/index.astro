@@ -84,8 +84,8 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     <div class="apercu-pile">
       {demoUrl && (
         <article class="apercu-item apercu-demo" data-index="-1" data-demo>
-          <p class="apercu-entete"><span class="apercu-titre-film">Bande démo</span>{bandeDemo.duree?.trim() && <span class="apercu-duree">{bandeDemo.duree.trim()}</span>}</p>
-          <button type="button" class:list={["apercu-image", "apercu-demo-ouvrir", { "avec-image": !!bandeDemo.image }]} data-demo-ouvrir aria-haspopup="dialog" aria-label="Voir la bande démo">
+          <p class="apercu-entete"><span class="apercu-titre-film">DEMOREEL</span>{bandeDemo.duree?.trim() && <span class="apercu-duree">{bandeDemo.duree.trim()}</span>}</p>
+          <button type="button" class:list={["apercu-image", "apercu-demo-ouvrir", { "avec-image": !!bandeDemo.image }]} data-demo-ouvrir aria-haspopup="dialog" aria-label="Voir la demoreel">
             {bandeDemo.image && <OptimizedImage src={bandeDemo.image} alt="" sizes="420px" />}
             <span class="apercu-demo-play" aria-hidden="true"></span>
           </button>
@@ -115,7 +115,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   </div>
 
   {demoUrl && (
-    <dialog class="demo-popup" id="demo-popup" aria-label="Bande démo" data-src={demoUrl}>
+    <dialog class="demo-popup" id="demo-popup" aria-label="Demoreel" data-src={demoUrl}>
       <button type="button" class="demo-fermer" data-demo-fermer aria-label="Fermer">×</button>
       <div class="demo-cadre"></div>
     </dialog>
@@ -336,7 +336,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       }
       const iframe = document.createElement('iframe');
       iframe.src = url.toString();
-      iframe.title = 'Bande démo';
+      iframe.title = 'Demoreel';
       iframe.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
       iframe.allowFullscreen = true;
       iframe.addEventListener('load', () => iframe.classList.add('pret'), { once: true });

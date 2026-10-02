@@ -14,12 +14,12 @@ content:
         list: true
 
   - name: bande-demo
-    label: "Bande démo (accueil)"
+    label: "Demoreel (accueil)"
     type: file
     path: src/content/settings/bande-demo.json
     fields:
       - { name: video, label: "Lien de la vidéo (YouTube ou Vimeo)", type: string, description: "S'ouvre en pop-up depuis l'encart par défaut de la page d'accueil. Si vide, l'encart n'apparaît pas." }
-      - { name: duree, label: "Durée (optionnel)", type: string, description: "Ex. 2 min. Affichée à côté du titre « Bande démo »." }
+      - { name: duree, label: "Durée (optionnel)", type: string, description: "Ex. 2 min. Affichée à côté du titre « DEMOREEL »." }
       - { name: image, label: "Image de l'encart (optionnel)", type: image, description: "Format 16/9. Si vide, l'encart est un fond sombre avec un bouton lecture." }
 
   - name: projets-commandes
