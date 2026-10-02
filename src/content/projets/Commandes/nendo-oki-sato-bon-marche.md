@@ -3,14 +3,14 @@ titre: Oki Sato du studio nendo transforme la pluie en fleurs
 categorie: commandes
 enChantier: false
 brouillon: false
+horsRecherche: false
 role: Producteur / Réalisateur / Monteur
 accroche: "Des gouttes de pluie cinétiques qui se changent en champ de
   marguerites : « Ame Nochi Hana », l'installation de nendo."
 secteurs:
   - Art
-  - Culture
 besoins:
-  - Mise en scène / Direction artistique
+  - Interviews
   - Tournage à l'étranger
 formats:
   - Court
