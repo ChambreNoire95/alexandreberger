@@ -85,12 +85,11 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       {demoUrl && (
         <article class="apercu-item apercu-demo" data-index="-1" data-demo>
           <p class="apercu-entete"><span class="apercu-titre-film">Bande démo</span>{bandeDemo.duree?.trim() && <span class="apercu-duree">{bandeDemo.duree.trim()}</span>}</p>
-          <button type="button" class:list={["apercu-image", "apercu-demo-ouvrir", { "avec-image": !!bandeDemo.image }]} data-demo-ouvrir aria-haspopup="dialog">
+          <button type="button" class:list={["apercu-image", "apercu-demo-ouvrir", { "avec-image": !!bandeDemo.image }]} data-demo-ouvrir aria-haspopup="dialog" aria-label="Voir la bande démo">
             {bandeDemo.image && <OptimizedImage src={bandeDemo.image} alt="" sizes="420px" />}
             <span class="apercu-demo-play" aria-hidden="true"></span>
           </button>
           <p class="apercu-accroche">Mon travail en quelques images : documentaire, fiction et films de marque.</p>
-          <button type="button" class="apercu-bouton" data-demo-ouvrir aria-haspopup="dialog">Voir la bande démo</button>
         </article>
       )}
       {apercus.map((a) => (
@@ -209,15 +208,6 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       font-size:.77rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.45);
     }
     .apercu-accroche { margin:0; font-weight:300; font-size:1rem; line-height:1.6; color:rgba(255,255,255,.8); }
-
-    .apercu-bouton {
-      align-self:flex-start; margin-top:.4rem; cursor:pointer; text-decoration:none;
-      font-family: ui-monospace, "SF Mono", Menlo, monospace;
-      font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
-      color:#fff; background:transparent; border:1px solid rgba(255,255,255,.5); border-radius:2px;
-      padding:.5rem .9rem; transition:background 140ms ease, color 140ms ease, border-color 140ms ease;
-    }
-    .apercu-bouton:hover, .apercu-bouton:focus-visible { background:#fff; border-color:#fff; color:#0b0b0b; }
 
     /* Flèche vers la fiche, en bas à droite du cadre. */
     .apercu-fleche {
