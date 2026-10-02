@@ -3,11 +3,15 @@ titre: "Rock'n'roll man : Johnny Hallyday sur les traces du King"
 slug: johnny-hallyday-coulisses-destination-vegas
 categorie: commandes
 enChantier: false
+brouillon: false
 role: Monteur
+accroche: "Destination Vegas : 5 000 fans français invités par Johnny Hallyday à
+  un concert unique à l'Aladdin Theatre."
 client: Universal Music France
 type: Documentaire
-accroche: "Destination Vegas : 5 000 fans français invités par Johnny Hallyday à un concert unique à l'Aladdin Theatre."
 date: 2026-09-01
+titreFilm: Rock'n'roll Man
+duree: 32min
 couverture: /uploads/JohnnyHallydayVegas_2026-11-01_1.jpg
 couvertureAlt: Johnny Hallyday devant l'enseigne annonçant son concert à
   l'Aladdin Theatre, Destination Vegas
