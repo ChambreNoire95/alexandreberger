@@ -14,6 +14,8 @@ besoins:
 formats:
   - Série
   - Réseaux sociaux
+tons:
+  - Décalé
 role: Réalisateur
 duree: Série
 carrousel: true

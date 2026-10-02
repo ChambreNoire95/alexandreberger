@@ -52,12 +52,15 @@ const fichesRecherche = elementsRecherche.map(({ p }) => ({
   se: p.data.secteurs ?? [],
   be: p.data.besoins ?? [],
   fo: p.data.formats ?? [],
+  to: p.data.tons ?? [],
 }));
 const SECTEURS = ["Mode", "Musique", "Série/Cinéma", "Art", "Culture", "Éducation", "Société", "Sport", "Solidarité", "Environnement"];
 const BESOINS = ["Interviews", "Mise en scène", "Tournage à l'étranger", "Projet au long cours", "Direction artistique"];
 // Seules les valeurs réellement utilisées par au moins une fiche sont proposées.
 const secteursRecherche = SECTEURS.filter((x) => fichesRecherche.some((f) => f.se.includes(x)));
 const FORMATS = ["Réseaux sociaux", "Court", "Long", "Série"];
+const TONS = ["Humour", "Dramatique", "Informatif", "Décalé"];
+const tonsRecherche = TONS.filter((x) => fichesRecherche.some((f) => f.to.includes(x)));
 const formatsRecherche = FORMATS.filter((x) => fichesRecherche.some((f) => f.fo.includes(x)));
 const besoinsRecherche = BESOINS.filter((x) => fichesRecherche.some((f) => f.be.includes(x)));
 const indexAvecApercu = new Set(apercus.map((a) => a.index));
@@ -146,7 +149,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   <dialog class="rech" id="rech" aria-labelledby="rech-titre">
     <button type="button" class="rech-fermer" data-rech-fermer aria-label="Fermer">×</button>
     <h2 class="rech-titre" id="rech-titre">Quel est votre projet ?</h2>
-    <p class="rech-intro">Choisissez votre univers, vos besoins et le format : je vous montre les références les plus proches.</p>
+    <p class="rech-intro">Choisissez votre univers, vos besoins, le format et le ton : je vous montre les références les plus proches.</p>
     <p class="rech-groupe">Univers</p>
     <div class="rech-pastilles" role="group" aria-label="Univers">
       {secteursRecherche.map((m) => <button type="button" data-groupe="secteur" data-pastille={m} aria-pressed="false">{m}</button>)}
@@ -158,6 +161,10 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     <p class="rech-groupe">Format/Durée</p>
     <div class="rech-pastilles" role="group" aria-label="Format/Durée">
       {formatsRecherche.map((m) => <button type="button" data-groupe="format" data-pastille={m} aria-pressed="false">{m}</button>)}
+    </div>
+    <p class="rech-groupe">Ton</p>
+    <div class="rech-pastilles" role="group" aria-label="Ton">
+      {tonsRecherche.map((m) => <button type="button" data-groupe="ton" data-pastille={m} aria-pressed="false">{m}</button>)}
     </div>
     <p class="rech-etat" id="rech-etat" aria-live="polite"></p>
     <ul class="rech-resultats" id="rech-resultats">
@@ -462,7 +469,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     parDefaut();
   }
 
-  interface FicheRecherche { se: string[]; be: string[]; fo: string[]; }
+  interface FicheRecherche { se: string[]; be: string[]; fo: string[]; to: string[]; }
 
   function setupRecherche(fiches: FicheRecherche[]) {
     const dialogue = document.getElementById('rech') as HTMLDialogElement | null;
@@ -476,22 +483,23 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     let secteur = '';
     const besoins = new Set<string>();
     const formats = new Set<string>(); // plusieurs formats possibles : un film qui en a au moins un convient
+    const tons = new Set<string>(); // idem pour le ton
 
     const lancer = () => {
       pastilles.forEach((b) => {
         const v = b.dataset.pastille ?? '';
-        const actif = b.dataset.groupe === 'secteur' ? secteur === v : b.dataset.groupe === 'besoin' ? besoins.has(v) : formats.has(v);
+        const actif = b.dataset.groupe === 'secteur' ? secteur === v : b.dataset.groupe === 'besoin' ? besoins.has(v) : b.dataset.groupe === 'format' ? formats.has(v) : tons.has(v);
         b.setAttribute('aria-pressed', String(actif));
       });
       lis.forEach((li) => { li.hidden = true; });
-      if (!secteur && !besoins.size && !formats.size) {
+      if (!secteur && !besoins.size && !formats.size && !tons.size) {
         etat.textContent = '';
         return;
       }
 
       const candidats = fiches
         .map((f, index) => ({ index, couverts: f.be.filter((x) => besoins.has(x)).length }))
-        .filter((r) => (!secteur || fiches[r.index].se.includes(secteur)) && (!besoins.size || r.couverts > 0) && (!formats.size || fiches[r.index].fo.some((x) => formats.has(x))))
+        .filter((r) => (!secteur || fiches[r.index].se.includes(secteur)) && (!besoins.size || r.couverts > 0) && (!formats.size || fiches[r.index].fo.some((x) => formats.has(x))) && (!tons.size || fiches[r.index].to.some((x) => tons.has(x))))
         .sort((a, b) => b.couverts - a.couverts || a.index - b.index); // à égalité : le plus récent d'abord
 
       const retenus = candidats.slice(0, 5);
@@ -523,7 +531,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
         const valeur = b.dataset.pastille ?? '';
         if (b.dataset.groupe === 'secteur') secteur = secteur === valeur ? '' : valeur;
         else {
-          const ensemble = b.dataset.groupe === 'besoin' ? besoins : formats;
+          const ensemble = b.dataset.groupe === 'besoin' ? besoins : b.dataset.groupe === 'format' ? formats : tons;
           if (ensemble.has(valeur)) ensemble.delete(valeur);
           else ensemble.add(valeur);
         }

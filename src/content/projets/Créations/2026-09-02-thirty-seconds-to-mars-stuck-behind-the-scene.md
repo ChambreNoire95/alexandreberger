@@ -9,6 +9,8 @@ besoins:
   - Interviews
 formats:
   - Court
+tons:
+  - Informatif
 role: Réalisateur
 duree: 11 min
 carrousel: true

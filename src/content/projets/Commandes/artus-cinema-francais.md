@@ -10,6 +10,8 @@ secteurs:
   - Série/Cinéma
 besoins:
   - Projet au long cours
+tons:
+  - Humour
 client: Cine Nomine / Pan Distribution
 type: Making-of
 date: 2024-06-01

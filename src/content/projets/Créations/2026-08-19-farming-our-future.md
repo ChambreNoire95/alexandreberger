@@ -12,6 +12,8 @@ besoins:
   - Tournage à l'étranger
 formats:
   - Court
+tons:
+  - Informatif
 role: Réalisateur
 duree: 12min
 image1: /uploads/FarmingOurFuture_2019_1.jpg

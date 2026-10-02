@@ -13,6 +13,8 @@ besoins:
   - Projet au long cours
 formats:
   - Long
+tons:
+  - Informatif
 role: Producteur
 realisateur: NICOLAS PLOUMPIDIS
 duree: 52min

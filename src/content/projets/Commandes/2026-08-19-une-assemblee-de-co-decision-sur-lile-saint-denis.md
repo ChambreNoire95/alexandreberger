@@ -13,6 +13,8 @@ besoins:
   - Projet au long cours
 formats:
   - Long
+tons:
+  - Informatif
 client: Les Cahiers Pour Décider et Agir
 type: Documentaire
 date: 2026-03-01

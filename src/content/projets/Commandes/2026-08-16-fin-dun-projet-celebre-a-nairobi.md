@@ -16,6 +16,8 @@ besoins:
 formats:
   - Série
   - Long
+tons:
+  - Informatif
 client: Agropolis Fondation
 type: Institutionnel
 date: 2024-10-01

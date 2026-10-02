@@ -13,6 +13,8 @@ besoins:
 formats:
   - Court
   - Réseaux sociaux
+tons:
+  - Décalé
 client: Team Vitality
 type: Activation / Aftermovie
 date: 2024-03-12

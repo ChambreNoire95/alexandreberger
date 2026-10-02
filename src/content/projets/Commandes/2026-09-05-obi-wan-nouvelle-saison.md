@@ -14,6 +14,9 @@ besoins:
 formats:
   - Court
   - Réseaux sociaux
+tons:
+  - Humour
+  - Décalé
 client: Disney+
 type: Activation / Aftermovie
 date: 2022-05-27

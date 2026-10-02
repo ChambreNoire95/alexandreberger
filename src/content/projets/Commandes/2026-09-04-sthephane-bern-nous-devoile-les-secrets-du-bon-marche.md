@@ -11,6 +11,8 @@ secteurs:
 besoins:
   - Interviews
   - Mise en scène
+tons:
+  - Informatif
 client: Le Bon Marché Rive Gauche
 type: Documentaire
 date: 2020-04-01

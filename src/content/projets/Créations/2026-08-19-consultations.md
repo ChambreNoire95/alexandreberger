@@ -9,6 +9,9 @@ besoins:
   - Mise en scène
 formats:
   - Série
+tons:
+  - Humour
+  - Décalé
 role: Producteur
 realisateur: David Rinaldi
 image1: /uploads/Consultations_2016_1.jpg

@@ -13,6 +13,8 @@ besoins:
   - Interviews
 formats:
   - Court
+tons:
+  - Informatif
 client: Polytech montpellier
 type: Institutionnel
 date: 2022-08-18

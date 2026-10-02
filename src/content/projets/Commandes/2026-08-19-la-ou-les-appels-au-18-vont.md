@@ -12,6 +12,8 @@ besoins:
   - Interviews
 formats:
   - Long
+tons:
+  - Informatif
 client: POMPIERS 95
 type: Documentaire
 date: 2025-05-20

@@ -9,6 +9,9 @@ besoins:
   - Mise en scène
 formats:
   - Court
+tons:
+  - Humour
+  - Décalé
 role: Réalisateur
 duree: 8min12
 description: Réalisé dans le cadre du 48 Hour Film Project à Paris, « Yesterday » raconte de façon décalée la création des Beatles, dont les membres se retrouvent égarés après un voyage dans le temps.
