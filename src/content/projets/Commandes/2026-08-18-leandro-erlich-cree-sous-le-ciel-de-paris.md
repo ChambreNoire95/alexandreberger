@@ -4,6 +4,7 @@ categorie: commandes
 role: Producteur / Réalisateur / Monteur
 client: Le Bon Marché Rive Gauche
 type: Making-of
+accroche: "Des nuages flottent dans les vitrines et sous la verrière du Bon Marché : Leandro Erlich fait du ciel de Paris une installation."
 date: 2018-01-10
 couverture: /uploads/LeandroErlichSousLeCiel_2018-01-10_1.jpg
 couvertureAlt: Leandro Erlich lève les yeux vers un nuage de son installation "Sous le Ciel" au Bon Marché Rive Gauche

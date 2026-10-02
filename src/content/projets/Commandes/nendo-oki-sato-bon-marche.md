@@ -4,6 +4,7 @@ categorie: commandes
 role: Producteur / Réalisateur / Monteur
 client: Le Bon Marché Rive Gauche
 type: Making-of
+accroche: "Des gouttes de pluie cinétiques qui se changent en champ de marguerites : « Ame Nochi Hana », l'installation de nendo."
 date: 2020-01-10
 carrousel: true
 ordreCarrousel: 8

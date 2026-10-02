@@ -6,6 +6,7 @@ enChantier: false
 role: Réalisateur
 client: Le Bon Marché Rive Gauche
 type: Making-of
+accroche: "Au Bon Marché, Philippe Katerine installe le mignonisme : sculptures, dessins et un immense personnage rose, Monsieur Rose."
 date: 2022-02-26
 carrousel: true
 carrouselTitre: Le Mignonisme de Philippe Katerine

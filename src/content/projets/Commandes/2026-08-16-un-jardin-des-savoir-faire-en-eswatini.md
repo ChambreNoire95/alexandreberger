@@ -4,6 +4,7 @@ categorie: commandes
 role: Réalisateur / Monteur
 client: Dessine l'Espoir
 type: Institutionnel
+accroche: "Un hectare d'agroforesterie, de formation et d'artisanat en Eswatini : le Jardin des Savoir-Faire de Dessine l'Espoir."
 date: 2023-08-16
 video: https://youtu.be/zPGempw89UM?si=D_U_TXLM4JhxOOWj
 couverture: /uploads/JardinSavoirFaireEswatini_2023-08-16_1.jpg

@@ -4,6 +4,7 @@ categorie: commandes
 role: Producteur / Réalisateur
 client: Univers Sel
 type: Documentaire
+accroche: "Des paludiers de Guérande transmettent la saliculture solaire aux producteurs de sel de Kapatres, en Guinée-Bissau."
 date: 2019-05-16
 carrousel: false
 ordreCarrousel: 5

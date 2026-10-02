@@ -4,6 +4,7 @@ categorie: commandes
 role: Producteur / Réalisateur / Monteur
 client: Le SDIS Guadeloupe
 type: Documentaire
+accroche: "Pour le 14 juillet 2025, la zone Antilles-Guyane forme le 18e Bataillon des sapeurs-pompiers de France et défile à Paris."
 date: 2025-07-14
 couverture: /uploads/18BSPF.jpg
 carrousel: false

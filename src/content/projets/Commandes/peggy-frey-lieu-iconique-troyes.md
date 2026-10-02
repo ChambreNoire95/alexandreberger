@@ -4,6 +4,7 @@ categorie: commandes
 role: Réalisateur / Monteur
 client: Petit Bateau
 type: Activation / Aftermovie
+accroche: "Peggy Frey pousse les portes de l'usine historique Petit Bateau à Troyes et découvre la fabrication de ses pièces iconiques."
 date: 2024-05-16
 carrousel: true
 ordreCarrousel: 6

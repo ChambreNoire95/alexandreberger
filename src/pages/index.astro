@@ -4,13 +4,28 @@ import Layout from "../layouts/Layout.astro";
 import Signature from "../components/Signature.astro";
 import TitreSwitch from "../components/TitreSwitch.astro";
 import CarrouselHome from "../components/CarrouselHome.astro";
+import OptimizedImage from "../components/OptimizedImage.astro";
 import { getCollection } from "astro:content";
 import { getItemsCarrousel } from "../lib/carrousel";
+import { descriptionDepuisTexte } from "../lib/meta";
 
 const projets = (await getCollection("projets", ({ data }) => data.categorie === "commandes" && !data.brouillon)).sort(
   // Plus récente en premier, plus ancienne en bas (comme sur Créations).
   (a, b) => (b.data.date?.valueOf() ?? -Infinity) - (a.data.date?.valueOf() ?? -Infinity)
 );
+
+// Panneau d'aperçu (écran large + souris) : un aperçu par projet ayant une image.
+const apercus = projets
+  .map((p, index) => ({ p, index }))
+  .filter(({ p }) => p.data.couverture || p.data.image1)
+  .map(({ p, index }) => ({
+    index,
+    image: (p.data.couverture || p.data.image1) as string,
+    date: p.data.date?.toLocaleDateString("fr-FR", { month: "long", year: "numeric" }),
+    client: p.data.client,
+    accroche: p.data.accroche ?? descriptionDepuisTexte(p.body, 140),
+  }));
+const indexAvecApercu = new Set(apercus.map((a) => a.index));
 
 const itemsCarrousel = await getItemsCarrousel();
 
@@ -40,10 +55,11 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     </nav>
   )}
 
+  <div class="liste-apercu">
   <ul id="accroches" class:list={["accroches", { "sans-filtres": typesPresents.length === 0 }]}>
-    {projets.map((p) => {
+    {projets.map((p, index) => {
       return (
-        <li data-type={p.data.type || ""}>
+        <li data-type={p.data.type || ""} data-apercu={indexAvecApercu.has(index) ? index : undefined}>
           <a href={`/projets/${p.id}`}>
             <span class="accroche-titre">{p.data.titre}</span>
             {p.data.role && p.data.client ? (
@@ -56,6 +72,23 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       );
     })}
   </ul>
+
+  <aside class="apercu" aria-hidden="true">
+    <div class="apercu-pile">
+      {apercus.map((a) => (
+        <article class="apercu-item" data-index={a.index}>
+          <div class="apercu-image">
+            <OptimizedImage src={a.image} alt="" sizes="420px" />
+          </div>
+          {(a.date || a.client) && (
+            <p class="apercu-meta">{[a.date, a.client].filter(Boolean).join(" · ")}</p>
+          )}
+          {a.accroche && <p class="apercu-accroche">{a.accroche}</p>}
+        </article>
+      ))}
+    </div>
+  </aside>
+  </div>
 </Layout>
 
 <style>
@@ -93,6 +126,52 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   @media (max-width: 800px) {
     .saut-mobile { display:inline; }
   }
+
+  /* Écran large + souris : liste ferrée à gauche, panneau d'aperçu fixe à
+     droite. Ailleurs (mobile, tablette, tactile) : liste centrée inchangée. */
+  .liste-apercu { display:contents; }
+  .apercu { display:none; }
+  @media (min-width: 1100px) and (hover:hover) and (pointer:fine) {
+    .liste-apercu {
+      display:grid; grid-template-columns:minmax(0, 1fr) 420px; column-gap:5rem;
+      width:100%; max-width:1240px; align-items:start;
+    }
+    .accroches { align-items:flex-start; }
+    .accroches a { align-items:flex-start; text-align:left; }
+    .accroche-titre { white-space:normal; position:relative; }
+
+    /* Flèche « → » (comme le lien « Voir toute la playlist ») : suspendue dans
+       la marge gauche au survol/focus, donc sans décalage du titre. */
+    .accroche-titre::before {
+      content:"→"; position:absolute; left:-1.7em; top:0;
+      opacity:0; transform:translateX(-.4em);
+      transition:opacity 160ms ease, transform 160ms ease;
+    }
+    .accroches a:hover .accroche-titre::before,
+    .accroches a:focus-visible .accroche-titre::before { opacity:1; transform:none; }
+
+    .apercu { display:block; position:sticky; top:28px; margin-top:4.5rem; }
+    .apercu-pile { display:grid; }
+    .apercu-item {
+      grid-area:1 / 1; display:flex; flex-direction:column; gap:1rem;
+      opacity:0; visibility:hidden; transition:opacity 220ms ease, visibility 0s linear 220ms;
+    }
+    .apercu-item.actif { opacity:1; visibility:visible; transition-delay:0s; }
+    .apercu-image {
+      aspect-ratio:16/9; overflow:hidden; border-radius:2px; background:#111;
+    }
+    .apercu-image :global(img) { width:100%; height:100%; object-fit:cover; display:block; }
+    /* Les images ne sont demandées qu'à la première activation (classe posée en JS). */
+    .apercu-item:not(.charge) .apercu-image :global(picture) { display:none; }
+    .apercu-meta {
+      margin:0; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size:.77rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.45);
+    }
+    .apercu-accroche { margin:0; font-weight:300; font-size:1rem; line-height:1.6; color:rgba(255,255,255,.8); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .apercu-item, .accroche-titre::before { transition:none !important; }
+  }
 </style>
 
 <script>
@@ -113,11 +192,43 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
         li.hidden = type !== 'all' && li.dataset.type !== type;
       });
 
+      document.getElementById('accroches')?.dispatchEvent(new Event('filtre'));
+
       // Masquer/afficher des accroches change la hauteur de la page : on recale
       // aussitôt, dans la même image, sur la position de référence (titre en haut).
       scrollerVersTitre();
     });
   }
 
+  function setupApercu() {
+    const liste = document.getElementById('accroches');
+    const panneau = document.querySelector('.apercu');
+    if (!liste || !panneau || !matchMedia('(min-width: 1100px) and (hover: hover) and (pointer: fine)').matches) return;
+
+    const fiches = [...panneau.querySelectorAll<HTMLElement>('.apercu-item')];
+    const activer = (index: number) => {
+      fiches.forEach((fiche) => {
+        const actif = Number(fiche.dataset.index) === index;
+        fiche.classList.toggle('actif', actif);
+        if (actif) fiche.classList.add('charge');
+      });
+    };
+    const depuis = (event: Event) => {
+      const li = (event.target as HTMLElement).closest<HTMLLIElement>('li[data-apercu]');
+      if (li) activer(Number(li.dataset.apercu));
+    };
+    // Au repos et après un filtre : le premier projet visible (le plus récent).
+    const parDefaut = () => {
+      const li = liste.querySelector<HTMLLIElement>('li[data-apercu]:not([hidden])');
+      activer(li ? Number(li.dataset.apercu) : -1);
+    };
+
+    liste.addEventListener('mouseover', depuis);
+    liste.addEventListener('focusin', depuis);
+    liste.addEventListener('filtre', parDefaut);
+    parDefaut();
+  }
+
   document.addEventListener('astro:page-load', setupFiltres);
+  document.addEventListener('astro:page-load', setupApercu);
 </script>

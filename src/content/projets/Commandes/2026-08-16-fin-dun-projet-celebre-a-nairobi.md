@@ -4,6 +4,7 @@ categorie: commandes
 role: Réalisateur / Monteur
 client: Agropolis Fondation
 type: Institutionnel
+accroche: "Une série documentaire en trois volets sur le One Planet Fellowship : des chercheurs africains et leurs mentors européens."
 date: 2024-10-01
 couverture: /uploads/OnePlanetFellowship_2024-10-01_1.jpg
 couvertureAlt: Banderole du programme One Planet Fellowship, tournage du documentaire pour Agropolis Fondation

@@ -6,6 +6,7 @@ enChantier: false
 role: Monteur
 client: Universal Music France
 type: Documentaire
+accroche: "Destination Vegas : 5 000 fans français invités par Johnny Hallyday à un concert unique à l'Aladdin Theatre."
 date: 2026-09-01
 couverture: /uploads/JohnnyHallydayVegas_2026-11-01_1.jpg
 couvertureAlt: Johnny Hallyday devant l'enseigne annonçant son concert à

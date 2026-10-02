@@ -4,6 +4,7 @@ categorie: commandes
 role: Réalisateur
 client: DISNEY+
 type: Activation / Aftermovie
+accroche: "Un bot interactif prolonge l'univers de « Parallèles » : un dispositif distingué par le Grand Prix Stratégies de l'Innovation Média 2023."
 date: 2023-03-01
 couverture: /uploads/PARALLELES.jpg
 carrousel: false

@@ -26,6 +26,7 @@ content:
       - { name: enChantier, label: "Page en chantier", type: boolean, default: false, description: "Si activé, une note rouge italique s'affiche sur la fiche projet pour prévenir que la page est en cours de refonte. Désactiver une fois la page terminée." }
       - { name: brouillon, label: "Brouillon (page désactivée)", type: boolean, default: false, description: "Si activé, la fiche disparaît du site : page en 404, retirée des listes et du carrousel. Désactiver pour la republier." }
       - { name: role, label: "Rôle", type: string, description: "Ex. Réalisateur / Monteur — affiché avec le client (\"Rôle pour Client\") sous l'accroche sur la page Commandes, et dans les métadonnées de la fiche projet." }
+      - { name: accroche, label: "Phrase d'accroche", type: text, description: "Une phrase courte affichée dans l'aperçu au survol d'un titre sur la page d'accueil (idéalement 100 à 140 caractères). Si vide, la première phrase du texte est utilisée." }
       - { name: client, label: Client, type: string }
       - { name: type, label: "Type de film", type: select, options: { values: ["Making-of", "Documentaire", "Activation / Aftermovie", "Institutionnel", "Brand Content", "RSE", "Fiction"] }, description: "Utilisé pour le filtre par catégorie sur la page Commandes." }
       - { name: date, label: Date, type: date, options: { format: "yyyy-MM-dd" }, description: "Détermine aussi l'ordre d'affichage sur la home (plus récente en premier)." }

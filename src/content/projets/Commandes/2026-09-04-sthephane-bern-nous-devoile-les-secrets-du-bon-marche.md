@@ -4,6 +4,7 @@ categorie: commandes
 role: producteur / Réalisateur
 client: Le Bon Marché Rive Gauche
 type: Documentaire
+accroche: "Stéphane Bern raconte Aristide et Marguerite Boucicaut, fondateurs du premier grand magasin du monde toujours en activité."
 date: 2020-04-01
 carrousel: true
 ordreCarrousel: 10

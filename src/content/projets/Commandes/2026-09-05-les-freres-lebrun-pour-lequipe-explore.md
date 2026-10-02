@@ -5,6 +5,7 @@ enChantier: false
 role: Réalisateur
 client: L'Équipe
 type: Documentaire
+accroche: "Alexis et Félix Lebrun racontent leur formation à Montpellier dans « Enfance d'un style », grand format de L'Équipe Explore."
 date: 2024-04-01
 couverture: /uploads/FreresLebrun_2024-04-01_1.jpg
 couvertureAlt: Alexis et Félix Lebrun souriants, interviewés pour "Enfance d'un

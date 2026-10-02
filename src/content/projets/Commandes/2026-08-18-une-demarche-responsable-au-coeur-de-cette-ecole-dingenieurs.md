@@ -4,6 +4,7 @@ categorie: commandes
 role: Réalisateur / Monteur
 client: Polytech montpellier
 type: Institutionnel
+accroche: "Engagée dans le développement durable depuis 2010, Polytech Montpellier forme ses ingénieurs à leur responsabilité sociétale."
 date: 2022-08-18
 video: https://www.youtube.com/watch?v=UjvviZ_MjFE
 couverture: /uploads/PolytechMontpellierDDRS_2022-08-18_1.jpg

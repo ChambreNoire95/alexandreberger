@@ -6,6 +6,7 @@ enChantier: false
 role: Cadreur
 client: L'Équipe / Sapari Productions
 type: Documentaire
+accroche: "Documentaire de Mathieu Spadaro pour L'Équipe Explore : je cadre les interviews de Zidane, Courtois et Hegerberg."
 date: 2022-10-17
 couverture: /uploads/ZidaneBallonOr_2022-10-17_1.jpg
 couvertureAlt: Zinédine Zidane interviewé pour le documentaire L'Équipe Explore

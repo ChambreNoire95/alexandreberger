@@ -4,6 +4,7 @@ categorie: commandes
 role: Producteur / Réalisateur / Monteur
 client: Le Bon Marché Rive Gauche
 type: Making-of
+accroche: "De la séance photo à la soirée d'inauguration, l'« Usine Fantastique » de Stromae et Mosaert racontée étape par étape."
 date: 2018-04-08
 couverture: /uploads/Mosaert_Fabrique.jpg
 carrousel: true

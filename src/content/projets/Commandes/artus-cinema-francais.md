@@ -4,6 +4,7 @@ categorie: commandes
 role: Réalisateur
 client: Cine Nomine / Pan Distribution
 type: Making-of
+accroche: "Plusieurs semaines dans le Vercors sur le tournage d'« Un p'tit truc en plus », au plus près des « pensionnaires »."
 date: 2024-06-01
 couverture: /uploads/UPTE_visuel_site.jpg
 carrousel: true

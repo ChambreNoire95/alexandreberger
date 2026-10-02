@@ -6,6 +6,7 @@ enChantier: false
 role: Réalisateur
 client: Disney+
 type: Activation / Aftermovie
+accroche: "Henry Tran et Deujna sont initiés au sabre laser, puis s'affrontent dans un duel filmé pour la sortie de la saison d'Obi-Wan Kenobi."
 date: 2022-05-27
 carrousel: true
 carrouselTitre: Henry Tran, Deujna et la Force

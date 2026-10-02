@@ -4,6 +4,7 @@ categorie: commandes
 role: Producteur / Réalisateur / Monteur
 client: Le Bon Marché Rive Gauche
 type: Making-of
+accroche: "Simone, valkyrie monumentale de 30,5 mètres, enveloppe les escalators du Bon Marché en hommage à Simone de Beauvoir et Simone Weil."
 date: 2019-01-10
 carrousel: true
 ordreCarrousel: 1
