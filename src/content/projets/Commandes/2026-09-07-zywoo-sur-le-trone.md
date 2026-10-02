@@ -2,11 +2,14 @@
 titre: ZywOo, sur le trône de la Team Vitality
 categorie: commandes
 enChantier: false
+brouillon: false
 role: Réalisateur
+accroche: "L'aftermovie de « The King Remains » : ZywOo prolonge son contrat,
+  installé sur un trône d'armes dorées face à la Tour Eiffel."
 client: Team Vitality
 type: Activation / Aftermovie
-accroche: "L'aftermovie de « The King Remains » : ZywOo prolonge son contrat, installé sur un trône d'armes dorées face à la Tour Eiffel."
 date: 2024-03-12
+titreFilm: The King Remains
 couverture: /uploads/ZywooThrone_2024-03-12_1.jpg
 couvertureAlt: ZywOo, couronné de munitions, pose devant son trône d'armes
   dorées pour l'événement Team Vitality "The King Remains"
