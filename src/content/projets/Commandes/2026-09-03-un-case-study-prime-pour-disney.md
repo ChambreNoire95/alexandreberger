@@ -1,5 +1,5 @@
 ---
-titre: Un Case Study primé pour Disney+
+titre: Un Case Study primé pour la nouvelle série de Disney+
 categorie: commandes
 role: Réalisateur
 client: DISNEY+
