@@ -17,6 +17,11 @@ const projets = (await getCollection("projets", ({ data }) => data.categorie ===
 );
 
 // Panneau d'aperçu (écran large + souris) : un aperçu par projet ayant une image.
+// Durée : les unités (min, h, s…) sont enveloppées pour être affichées plus petites.
+const echapper = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const dureeHtml = (d?: string) =>
+  d ? echapper(d).replace(/[a-zA-ZÀ-ÿ]+/g, '<span class="duree-unite">$&</span>') : undefined;
+
 const demoUrl = bandeDemo.video?.trim() ? urlEmbed(bandeDemo.video.trim()) : null;
 const apercus = projets
   .map((p, index) => ({ p, index }))
@@ -84,7 +89,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     <div class="apercu-pile">
       {demoUrl && (
         <article class="apercu-item apercu-demo" data-index="-1" data-demo>
-          <p class="apercu-entete"><span class="apercu-titre-film">DEMOREEL</span>{bandeDemo.duree?.trim() && <span class="apercu-duree">{bandeDemo.duree.trim()}</span>}</p>
+          <p class="apercu-entete"><span class="apercu-titre-film">DEMOREEL</span>{bandeDemo.duree?.trim() && <span class="apercu-duree" set:html={dureeHtml(bandeDemo.duree.trim())} />}</p>
           <button type="button" class:list={["apercu-image", "apercu-demo-ouvrir", { "avec-image": !!bandeDemo.image }]} data-demo-ouvrir aria-haspopup="dialog" aria-label="Voir la demoreel">
             {bandeDemo.image && <OptimizedImage src={bandeDemo.image} alt="" sizes="420px" />}
             <span class="apercu-demo-play" aria-hidden="true"></span>
@@ -97,7 +102,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
           {(a.titreFilm || a.duree) && (
             <p class="apercu-entete">
               {a.titreFilm && <span class="apercu-titre-film">{a.titreFilm}</span>}
-              {a.duree && <span class="apercu-duree">{a.duree}</span>}
+              {a.duree && <span class="apercu-duree" set:html={dureeHtml(a.duree)} />}
             </p>
           )}
           <div class="apercu-image">
@@ -203,6 +208,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       flex:none; margin-left:auto; font-family: ui-monospace, "SF Mono", Menlo, monospace;
       font-size:.77rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.45);
     }
+    .apercu-duree :global(.duree-unite) { font-size:.5em; }
     .apercu-meta {
       margin:0; font-family: ui-monospace, "SF Mono", Menlo, monospace;
       font-size:.77rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.45);
