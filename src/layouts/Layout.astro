@@ -37,7 +37,7 @@ const clients = [
   "Le Syndicat du Cru Minervois", "TUI", "Mediaposte",
 ].sort((a, b) => a.localeCompare(b, "fr"));
 
-const presentation = "Réalisateur freelance basé en Île-de-France, je fabrique principalement des films basés sur le réel, de la commande institutionnelle en France aux projets tournés aux quatre coins du monde.";
+const presentation = "Réalisateur freelance basé en Île-de-France, je fabrique principalement des films basés sur le réel. Seul, caméra à la main, ou avec une équipe de professionnels à mes côtés, je m'adapte à vos besoins pour mener à bien l'ensemble de vos besoins en communication audiovisuelle et servir votre stratégie globale.";
 
 const entreesCarnet = await getCollection("carnet", ({ data }) => !data.brouillon);
 const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())[0];
