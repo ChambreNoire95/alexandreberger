@@ -4,14 +4,15 @@ slug: johnny-hallyday-coulisses-destination-vegas
 categorie: commandes
 enChantier: false
 role: Monteur
-client: Universal Music
+client: Universal Music France
 type: Documentaire
 date: 2026-11-01
+couverture: /uploads/JohnnyHallydayVegas_2026-11-01_1.jpg
+couvertureAlt: Johnny Hallyday devant l'enseigne annonçant son concert à
+  l'Aladdin Theatre, Destination Vegas
 carrousel: true
 carrouselTitre: Johnny Hallyday à Las Vegas
 carrouselImage: /uploads/Johnny_Hallyday_Portrait_Style.jpeg
-couverture: /uploads/JohnnyHallydayVegas_2026-11-01_1.jpg
-couvertureAlt: Johnny Hallyday devant l'enseigne annonçant son concert à l'Aladdin Theatre, Destination Vegas
 image1: /uploads/JohnnyHallydayVegas_2026-11-01_2.jpg
 image1Alt: Johnny Hallyday à moto dans les rues de Las Vegas, Destination Vegas
 image2: /uploads/JohnnyHallydayVegas_2026-11-01_3.jpg
