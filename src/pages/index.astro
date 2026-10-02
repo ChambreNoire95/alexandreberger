@@ -381,6 +381,22 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     border-bottom:1px solid rgba(255,255,255,.5); padding-bottom:.15rem;
   }
   .rech-contact:hover { border-bottom-color:#fff; }
+  /* Grand écran : fenêtre plus large et plus aérée, pour le confort. */
+  @media (min-width: 900px) {
+    .rech { width:min(92vw, 880px); max-height:92vh; padding:2.2rem 2.5rem; }
+    .rech-titre { font-size:1.4rem; margin-bottom:.7rem; }
+    .rech-intro { font-size:1.05rem; margin-bottom:1.7rem; }
+    .rech-groupe { font-size:.76rem; margin-bottom:.65rem; }
+    .rech-pastilles { gap:.6rem; margin-bottom:1.3rem; }
+    .rech-pastilles button { font-size:.78rem; padding:.55rem 1rem; }
+    .rech-etat { font-size:.78rem; margin:1.1rem 0 .8rem; }
+    .rech-resultats { gap:.8rem; }
+    .rech-resultats a { gap:1.3rem; padding:12px; }
+    .rech-vignette { width:168px; }
+    .rech-nom { font-size:1.1rem; }
+    .rech-client { font-size:.74rem; }
+    .rech-contact { margin-top:1.5rem; font-size:1rem; }
+  }
   @media (max-width: 520px) {
     .rech { padding:1.1rem; }
     .rech-vignette { width:84px; }
