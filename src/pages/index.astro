@@ -74,7 +74,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       {typesPresents.map((t) => (
         <button type="button" data-type={t} aria-pressed="false">{t}</button>
       ))}
-      <button type="button" class="filtre-recherche" data-recherche-ouvrir aria-haspopup="dialog">Trouver une référence</button>
+      <button type="button" class="filtre-recherche" data-recherche-ouvrir aria-haspopup="dialog">Trouver les bonnes références</button>
     </nav>
   )}
 
@@ -288,6 +288,13 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   /* « Trouver une référence » : bouton dans la rangée de filtres + fenêtre de dialogue. */
   .filtres .filtre-recherche { color:#fff; border-color:rgba(255,255,255,.8); }
   .filtres .filtre-recherche:hover, .filtres .filtre-recherche:focus-visible { background:#fff; border-color:#fff; color:#0b0b0b; }
+  /* Grand écran + souris : filtres calés à gauche (comme la liste), bouton de recherche
+     à droite en blanc plein. */
+  @media (min-width: 1100px) and (hover:hover) and (pointer:fine) {
+    .filtres { width:100%; max-width:1240px; justify-content:flex-start; }
+    .filtres .filtre-recherche { margin-left:auto; background:#fff; border-color:#fff; color:#0b0b0b; }
+    .filtres .filtre-recherche:hover, .filtres .filtre-recherche:focus-visible { background:rgba(255,255,255,.8); border-color:rgba(255,255,255,.8); }
+  }
 
   .rech {
     box-sizing:border-box; width:min(92vw, 640px); max-height:88vh; overflow-y:auto;
