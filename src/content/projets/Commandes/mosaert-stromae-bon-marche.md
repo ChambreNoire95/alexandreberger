@@ -8,7 +8,6 @@ role: Producteur / Réalisateur / Monteur
 accroche: De la séance photo à la soirée d'inauguration, l'« Usine Fantastique »
   de Stromae et Mosaert racontée étape par étape.
 secteurs:
-  - Musique
   - Mode
 besoins:
   - Projet au long cours
