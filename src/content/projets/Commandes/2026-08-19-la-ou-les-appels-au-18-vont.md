@@ -6,7 +6,7 @@ brouillon: false
 role: Réalisateur / Monteur
 accroche: "Le CODIS du Val d'Oise fête ses 20 ans : retour sur son histoire et
   sur l'arrivée du futur système NexSIS."
-client: Les Sapeurs-Pompiers du Val d'Oise
+client: POMPIERS 95
 type: Documentaire
 date: 2025-05-20
 titreFilm: Écouter - Engager - Secourir
