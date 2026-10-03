@@ -1,0 +1,116 @@
+---
+/**
+ * LogoFormats — logo animé d'Alexandre Berger.
+ * Un cadre qui change de format (1:1, 4:3, 16:9, 2.39, 9:16) ; la composition
+ * du nom se refait à chaque format. Ancré en haut à gauche : le coin haut-gauche
+ * du cadre reste fixe, le cadre grandit vers la droite et le bas.
+ *
+ * Props :
+ *  - echelle : facteur d'échelle des compositions (0.46 = ~460 px au plus large)
+ *  - intervalle : durée de chaque format, en ms
+ */
+interface Props { echelle?: number; intervalle?: number; href?: string }
+const { echelle = 0.46, intervalle = 1690, href = "/" } = Astro.props;
+---
+<a class="logo-formats" href={href} data-logo-formats data-intervalle={intervalle}
+   style={`--s:${echelle}`} aria-label="Alexandre Berger, réalisateur — retour à l'accueil">
+  <div class="lf-cadre" style="--w:440px;--h:440px">
+      <div class="lf-compo is-active" data-w="440" data-h="440" data-label="1:1" style="width:440px;height:440px">
+        <div class="lf-texte" style="justify-content:flex-end;align-items:flex-start;gap:14px"><div style="font-size:80px;font-weight:850;font-stretch:62%;letter-spacing:-0.01em;line-height:1;line-height:0.88">ALEXANDRE<br>BERGER</div><div style="font-size:38px;font-weight:500;font-stretch:62%;letter-spacing:0.2em;line-height:1">RÉALISATEUR</div></div>
+      </div>
+      <div class="lf-compo" data-w="587" data-h="440" data-label="4:3" style="width:587px;height:440px">
+        <div class="lf-texte" style="justify-content:flex-end;align-items:flex-start;gap:16px"><div style="font-size:104px;font-weight:850;font-stretch:62%;letter-spacing:-0.01em;line-height:1;line-height:0.88">ALEXANDRE<br>BERGER</div><div style="font-size:47px;font-weight:500;font-stretch:62%;letter-spacing:0.2em;line-height:1">RÉALISATEUR</div></div>
+      </div>
+      <div class="lf-compo" data-w="782" data-h="440" data-label="16:9" style="width:782px;height:440px">
+        <div class="lf-texte" style="justify-content:center;align-items:flex-start;gap:16px"><div style="font-size:88px;font-weight:850;font-stretch:62%;letter-spacing:-0.01em;line-height:1;line-height:1">ALEXANDRE BERGER</div><div style="font-size:49px;font-weight:500;font-stretch:62%;letter-spacing:0.3em;line-height:1">RÉALISATEUR</div></div>
+      </div>
+      <div class="lf-compo" data-w="1000" data-h="418" data-label="2.39 SCOPE" style="width:1000px;height:418px">
+        <div class="lf-texte" style="justify-content:center;align-items:center;gap:18px"><div style="font-size:110px;font-weight:850;font-stretch:62%;letter-spacing:-0.01em;line-height:1;line-height:1">ALEXANDRE BERGER</div><div style="font-size:47px;font-weight:500;font-stretch:62%;letter-spacing:0.5em;line-height:1">RÉALISATEUR</div></div>
+      </div>
+      <div class="lf-compo" data-w="248" data-h="440" data-label="9:16" style="width:248px;height:440px">
+        <div class="lf-texte" style="justify-content:flex-end;align-items:flex-start;gap:14px"><div style="font-size:72px;font-weight:850;font-stretch:62%;letter-spacing:-0.01em;line-height:1;line-height:0.88">ALEX<br>ANDRE<br>BER<br>GER</div><div style="font-size:38px;font-weight:600;font-stretch:62%;letter-spacing:0.01em;line-height:1">RÉALISATEUR</div></div>
+      </div>
+  </div>
+  <div class="lf-format" aria-hidden="true">1:1</div>
+</a>
+
+<style>
+  @font-face {
+    font-family: 'Archivo';
+    font-style: normal;
+    font-weight: 100 900;
+    font-stretch: 62% 125%;
+    font-display: swap;
+    src: url('/fonts/Archivo-wdth.woff2') format('woff2');
+  }
+  .logo-formats {
+    --fg: #F1EEE8;
+    --rouge: #FF3B1F;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--fg);
+    font-family: 'Archivo', 'Inter', sans-serif;
+  }
+  .lf-cadre {
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    border: 1.5px solid var(--fg);
+    width: calc(var(--w) * var(--s));
+    height: calc(var(--h) * var(--s));
+    transition: width .42s cubic-bezier(.7,0,.2,1), height .42s cubic-bezier(.7,0,.2,1);
+  }
+  .lf-compo {
+    position: absolute; left: 0; top: 0;
+    transform: scale(var(--s)); transform-origin: 0 0;
+    display: none;
+  }
+  .lf-compo.is-active { display: block; }
+  .lf-texte {
+    position: absolute; inset: 30px;
+    display: flex; flex-direction: column;
+    white-space: nowrap; color: var(--fg);
+  }
+  .lf-format {
+    font-family: 'Archivo', 'Inter', sans-serif;
+    font-size: 16px; font-weight: 700; letter-spacing: .2em; line-height: 1;
+    color: var(--rouge); white-space: nowrap;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lf-cadre { transition: none; }
+  }
+</style>
+
+<script>
+  function initLogoFormats() {
+    document.querySelectorAll<HTMLElement>("[data-logo-formats]").forEach((el) => {
+      if (el.dataset.init) return;          // le header est persistant (transition:persist)
+      el.dataset.init = "1";
+      const compos = Array.from(el.querySelectorAll<HTMLElement>(".lf-compo"));
+      const cadre = el.querySelector<HTMLElement>(".lf-cadre")!;
+      const label = el.querySelector<HTMLElement>(".lf-format")!;
+      let k = 0;
+      const montrer = (i: number) => {
+        compos.forEach((c, j) => c.classList.toggle("is-active", j === i));
+        const c = compos[i];
+        cadre.style.setProperty("--w", c.dataset.w + "px");
+        cadre.style.setProperty("--h", c.dataset.h + "px");
+        label.textContent = c.dataset.label ?? "";
+      };
+      montrer(0);
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const duree = Number(el.dataset.intervalle) || 1690;
+      setInterval(() => {
+        k = (k + 1) % compos.length;
+        montrer(k);
+        // Signal pour caler d'autres animations (ex. la phrase d'accroche) sur le changement de format.
+        window.dispatchEvent(new CustomEvent("logo-formats:change", { detail: { index: k, label: compos[k].dataset.label } }));
+      }, duree);
+    });
+  }
+  initLogoFormats();
+  document.addEventListener("astro:page-load", initLogoFormats);
+</script>

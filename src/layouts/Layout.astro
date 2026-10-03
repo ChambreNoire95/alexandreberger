@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from "astro:transitions";
 import { getCollection } from "astro:content";
+import LogoFormats from "../components/LogoFormats.astro";
 
 interface Props {
   title: string;
@@ -80,10 +81,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   </head>
   <body>
     <header class="topbar" transition:persist>
-      <a class="logo" href="/" aria-label="Retour à l'accueil">
-        <span class="nom">Alexandre Berger</span>
-        <span class="role">Réalisateur</span>
-      </a>
+      <LogoFormats echelle={0.268125} intervalle={3420} />
       <div class="menu-wrap">
         <nav class="onglets-header" aria-label="Sections">
           <a href="/" data-nav aria-current={currentPath === "/" ? "page" : undefined}>Films</a>
@@ -320,10 +318,14 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
   }
   .topbar { position:relative; text-align:left; }
-  .logo { display:inline-block; text-decoration:none; transition:opacity 140ms ease; }
-  .logo:hover { opacity:.7; }
-  .topbar .nom { font-size:1.0rem; font-weight:400; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.85); }
-  .topbar .role { display:block; margin-top:.4rem; font-size:.65rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); }
+  /* Logo animé de l'en-tête (LogoFormats) : compteur de format et espacement réduits à son échelle,
+     et boîte réservée (largeur du cadre le plus large = 1000 px × échelle, hauteur du plus haut = 440 px × échelle)
+     pour que le coin haut-gauche et la page ne bougent pas quand le cadre change de format. */
+  .topbar .logo-formats { gap:10.725px; width:calc(1000px * var(--s)); min-height:calc(440px * var(--s) + 10.725px + 14.3px); transition:opacity 140ms ease; }
+  .topbar .logo-formats .lf-format { font-size:14.3px; }
+  .topbar .logo-formats:hover { opacity:.7; }
+  .topbar .nom { font-size:1.0rem; font-weight:400; letter-spacing:.22em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.85); }
+  .topbar .role { display:block; margin-top:.4rem; font-size:.65rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.5); }
   .menu-wrap { position:absolute; top:0; right:0; display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:1rem 1.5rem; text-align:left; }
   .booking-btn {
     display:flex; align-items:center; justify-content:center;

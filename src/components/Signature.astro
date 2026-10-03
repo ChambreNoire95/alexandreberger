@@ -24,14 +24,21 @@ const signatures = [
   }
 </style>
 
+  /* Grand écran : le header (logo animé) est plus haut, on remonte le bloc de phrases. */
+  @media (min-width: 801px) {
+    .signature { margin-top:-3rem; }
+  }
 <script>
   let timer: ReturnType<typeof setTimeout> | undefined;
 
   function setupSignature() {
+  let surLogo: ((e: Event) => void) | undefined;
     const phrases = document.querySelectorAll<HTMLElement>('#sig .phrase');
     if (timer) clearTimeout(timer);
     if (!phrases.length) return;
 
+    if (surLogo) window.removeEventListener('logo-formats:change', surLogo);
+    surLogo = undefined;
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (phrases.length > 1 && !reduce) {
       let i = 0;
@@ -49,7 +56,21 @@ const signatures = [
           planifierSuivante();
         }, 3500 + Math.random() * 3000);
       };
-      planifierSuivante();
+
+      if (document.querySelector('[data-logo-formats]')) {
+        // Le logo animé du header est présent : la phrase change en même temps que son format.
+        surLogo = changer;
+        window.addEventListener('logo-formats:change', surLogo);
+      } else {
+        // Sinon : ancien rythme, délai variable de 3,5 à 6,5 s.
+        const planifierSuivante = () => {
+          timer = setTimeout(() => {
+            changer();
+            planifierSuivante();
+          }, 3500 + Math.random() * 3000);
+        };
+        planifierSuivante();
+      }
     }
   }
 
