@@ -204,12 +204,12 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   .filtres button {
     font-family:'Archivo', 'Inter', sans-serif; font-weight:200;
     font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
-    color:rgba(255,255,255,.5); background:transparent; cursor:pointer;
-    border:1px solid rgba(255,255,255,.3); border-radius:2px; padding:.4rem .8rem;
+    color:rgba(var(--blanc-rgb),.5); background:transparent; cursor:pointer;
+    border:1px solid rgba(var(--blanc-rgb),.3); border-radius:2px; padding:.4rem .8rem;
     transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
   }
-  .filtres button:hover { color:#fff; border-color:rgba(255,255,255,.6); }
-  .filtres button[aria-pressed="true"] { background:#fff; color:#0b0b0b; border-color:#fff; }
+  .filtres button:hover { color:var(--blanc); border-color:rgba(var(--blanc-rgb),.6); }
+  .filtres button[aria-pressed="true"] { background:var(--blanc); color:#0b0b0b; border-color:var(--blanc); }
   .accroches { list-style:none; margin:4.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:3.575rem; }
   .accroches.sans-filtres { margin-top:5.5rem; }
   .accroches { overflow-anchor:none; }
@@ -221,9 +221,9 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   .accroche-titre {
     font-weight:700; font-size:clamp(1.109rem, 2.534vw, 1.584rem); line-height:1.2; /* +10 % */
     font-stretch:100%; /* largeur normale d'Archivo (le reste du site est resserré) */
-    color:#fff; white-space:nowrap; transition:color 140ms ease;
+    color:var(--blanc); white-space:nowrap; transition:color 140ms ease;
   }
-  .accroches a:hover .accroche-titre { color:rgba(255,255,255,.6); }
+  .accroches a:hover .accroche-titre { color:rgba(var(--blanc-rgb),.6); }
   @media (max-width: 700px) {
     .accroche-titre { white-space:normal; max-width:40ch; text-align:center; }
   }
@@ -263,12 +263,12 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     .apercu-pile { display:grid; }
     .apercu-item {
       grid-area:1 / 1; align-self:start; display:flex; flex-direction:column; gap:1rem;
-      box-sizing:border-box; padding:10px; border:1px solid rgba(255,255,255,.35); border-radius:2px;
+      box-sizing:border-box; padding:10px; border:1px solid rgba(var(--blanc-rgb),.35); border-radius:2px;
       opacity:0; visibility:hidden; transition:opacity 220ms ease, visibility 0s linear 220ms;
     }
     .apercu-item.actif { opacity:1; visibility:visible; transition-delay:0s; }
     .apercu-image {
-      display:block; width:100%; padding:0; border:0; border-bottom:1px solid #fff;
+      display:block; width:100%; padding:0; border:0; border-bottom:1px solid var(--blanc);
       aspect-ratio:16/9; overflow:hidden; border-radius:2px; background:#111;
     }
     .apercu-image :global(img) { width:100%; height:100%; object-fit:cover; display:block; }
@@ -279,7 +279,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     .apercu-titre-film { font-weight:700; font-size:1rem; line-height:1.3; color:#fff; text-transform:uppercase; }
     .apercu-duree {
       flex:none; margin-left:auto; font-weight:700; font-size:1rem; line-height:1.3;
-      text-transform:uppercase; color:#fff;
+      text-transform:uppercase; color:var(--blanc);
     }
     .apercu-duree :global(.duree-unite) { font-size:.5em; }
     .apercu-meta {
@@ -300,12 +300,12 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     .apercu-demo-ouvrir :global(img) { width:100%; height:100%; object-fit:cover; display:block; }
     .apercu-demo-play {
       position:absolute; top:50%; left:50%; width:64px; height:64px; margin:-32px 0 0 -32px;
-      border:1px solid #fff; border-radius:50%; background:rgba(0,0,0,.45);
+      border:1px solid var(--blanc); border-radius:50%; background:rgba(0,0,0,.45);
       transition:background 140ms ease, transform 140ms ease;
     }
     .apercu-demo-play::before {
       content:""; position:absolute; top:50%; left:50%; margin:-9px 0 0 -6px;
-      border-style:solid; border-width:9px 0 9px 16px; border-color:transparent transparent transparent #fff;
+      border-style:solid; border-width:9px 0 9px 16px; border-color:transparent transparent transparent var(--blanc);
     }
     /* Avec une image (souvent un titre au centre) : bouton lecture en bas à gauche. */
     .apercu-demo-ouvrir.avec-image .apercu-demo-play {
@@ -314,12 +314,12 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     .apercu-demo-ouvrir.avec-image .apercu-demo-play::before {
       margin:-7px 0 0 -4px; border-width:7px 0 7px 12px;
     }
-    .apercu-demo-ouvrir:hover .apercu-demo-play { background:rgba(255,255,255,.18); transform:scale(1.06); }
+    .apercu-demo-ouvrir:hover .apercu-demo-play { background:rgba(var(--blanc-rgb),.18); transform:scale(1.06); }
   }
 
   /* « Trouver une référence » : bouton dans la rangée de filtres + fenêtre de dialogue. */
-  .filtres .filtre-recherche { color:#fff; border-color:rgba(255,255,255,.8); }
-  .filtres .filtre-recherche:hover, .filtres .filtre-recherche:focus-visible { background:#fff; border-color:#fff; color:#0b0b0b; }
+  .filtres .filtre-recherche { color:var(--blanc); border-color:rgba(var(--blanc-rgb),.8); }
+  .filtres .filtre-recherche:hover, .filtres .filtre-recherche:focus-visible { background:var(--blanc); border-color:var(--blanc); color:#0b0b0b; }
   /* Grand écran + souris : filtres calés à gauche (comme la liste), bouton de recherche
      à droite en blanc plein. */
   @media (min-width: 1100px) and (hover:hover) and (pointer:fine) {
@@ -330,15 +330,15 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 
   .rech {
     box-sizing:border-box; width:min(92vw, 640px); max-height:88vh; overflow-y:auto;
-    padding:1.6rem; background:#0b0b0b; color:#fff; text-align:left;
-    border:1px solid rgba(255,255,255,.35); border-radius:2px;
+    padding:1.6rem; background:#0b0b0b; color:var(--blanc); text-align:left;
+    border:1px solid rgba(var(--blanc-rgb),.35); border-radius:2px;
   }
   .rech::backdrop { background:rgba(0,0,0,.85); }
   .rech-fermer {
     position:absolute; top:.6rem; right:.9rem; padding:0; font-size:1.8rem; line-height:1;
-    color:#fff; background:transparent; border:0; cursor:pointer;
+    color:var(--blanc); background:transparent; border:0; cursor:pointer;
   }
-  .rech-fermer:hover { color:rgba(255,255,255,.6); }
+  .rech-fermer:hover { color:rgba(var(--blanc-rgb),.6); }
   .rech-titre { margin:0 2rem .5rem 0; font-size:1.15rem; font-weight:700; text-transform:uppercase; line-height:1.3; }
   .rech-intro { margin:0 0 1.2rem; font-weight:300; font-size:.95rem; line-height:1.6; color:rgba(255,255,255,.8); }
   .rech-groupe {
@@ -349,10 +349,10 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   .rech-pastilles button {
     font-family:'Archivo', 'Inter', sans-serif; font-weight:200;
     font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
-    color:rgba(255,255,255,.7); background:transparent; cursor:pointer;
-    border:1px solid rgba(255,255,255,.3); border-radius:2px; padding:.4rem .8rem;
+    color:rgba(var(--blanc-rgb),.7); background:transparent; cursor:pointer;
+    border:1px solid rgba(var(--blanc-rgb),.3); border-radius:2px; padding:.4rem .8rem;
   }
-  .rech-pastilles button:hover { color:#fff; border-color:#fff; }
+  .rech-pastilles button:hover { color:var(--blanc); border-color:var(--blanc); }
   .rech-pastilles button:disabled { opacity:.3; cursor:not-allowed; border-style:dashed; }
   .rech-pastilles button:disabled:hover { color:rgba(255,255,255,.7); border-color:rgba(255,255,255,.3); }
   .rech-pastilles button[aria-pressed="true"] { background:#fff; color:#0b0b0b; border-color:#fff; }
@@ -360,22 +360,22 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   .rech-resultats { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.7rem; }
   .rech-resultats li[hidden] { display:none; }
   .rech-resultats a {
-    display:flex; align-items:center; gap:1rem; padding:10px; text-decoration:none; color:#fff;
-    border:1px solid rgba(255,255,255,.35); border-radius:2px; transition:border-color 140ms ease;
+    display:flex; align-items:center; gap:1rem; padding:10px; text-decoration:none; color:var(--blanc);
+    border:1px solid rgba(var(--blanc-rgb),.35); border-radius:2px; transition:border-color 140ms ease;
   }
-  .rech-resultats a:hover, .rech-resultats a:focus-visible { border-color:#fff; }
-  .rech-vignette { flex:none; width:112px; aspect-ratio:16/9; overflow:hidden; background:#111; border-bottom:1px solid #fff; }
+  .rech-resultats a:hover, .rech-resultats a:focus-visible { border-color:var(--blanc); }
+  .rech-vignette { flex:none; width:112px; aspect-ratio:16/9; overflow:hidden; background:#111; border-bottom:1px solid var(--blanc); }
   .rech-vignette :global(img) { width:100%; height:100%; object-fit:cover; display:block; }
   .rech-texte { flex:1; min-width:0; display:flex; flex-direction:column; gap:.25rem; }
   .rech-nom { font-weight:700; font-size:.95rem; line-height:1.3; }
   .rech-client {
     font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.68rem; letter-spacing:.1em;
-    text-transform:uppercase; color:rgba(255,255,255,.5);
+    text-transform:uppercase; color:rgba(var(--blanc-rgb),.5);
   }
   .rech-etiquette {
-    align-self:flex-start; padding:.1rem .4rem; border:1px solid rgba(255,255,255,.6); border-radius:2px;
+    align-self:flex-start; padding:.1rem .4rem; border:1px solid rgba(var(--blanc-rgb),.6); border-radius:2px;
     font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.62rem; letter-spacing:.14em;
-    text-transform:uppercase; color:#fff;
+    text-transform:uppercase; color:var(--blanc);
   }
   .rech-go { flex:none; font-size:1.3rem; line-height:1; transition:transform 140ms ease; }
   .rech-resultats a:hover .rech-go, .rech-resultats a:focus-visible .rech-go { transform:translateX(.3rem); }
@@ -383,7 +383,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     display:inline-block; margin-top:1.2rem; color:#fff; text-decoration:none; font-weight:700; font-size:.95rem;
     border-bottom:1px solid rgba(255,255,255,.5); padding-bottom:.15rem;
   }
-  .rech-contact:hover { border-bottom-color:#fff; }
+  .rech-contact:hover { border-bottom-color:var(--blanc); }
   /* Grand écran : fenêtre plus large et plus aérée, pour le confort. */
   @media (min-width: 900px) {
     .rech { width:min(92vw, 880px); max-height:92vh; padding:2.2rem 2.5rem; }
@@ -407,7 +407,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 
   /* Pop-up vidéo (ouverte depuis l'encart « bande démo »). */
   .demo-popup {
-    padding:0; border:0; background:transparent; color:#fff;
+    padding:0; border:0; background:transparent; color:var(--blanc);
     width:min(92vw, 1100px); max-width:none; max-height:none; overflow:visible;
   }
   .demo-popup::backdrop { background:rgba(0,0,0,.85); }
@@ -423,7 +423,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     position:absolute; top:-2.6rem; right:0; width:2.2rem; height:2.2rem; padding:0;
     font-size:1.8rem; line-height:1; color:#fff; background:transparent; border:0; cursor:pointer;
   }
-  .demo-fermer:hover { color:rgba(255,255,255,.6); }
+  .demo-fermer:hover { color:rgba(var(--blanc-rgb),.6); }
   @media (prefers-reduced-motion: reduce) {
     .apercu-item, .accroche-titre::before, .apercu-fleche, .demo-cadre :global(iframe), .rech-go { transition:none !important; }
   }

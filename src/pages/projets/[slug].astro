@@ -192,16 +192,16 @@ const jsonLd = {
   .corps :global(.galerie-169 img) { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; border-radius:2px; margin:0; }
   .liens-suivants {
     display:flex; flex-direction:column; gap:.75rem;
-    margin-top:3.5rem; padding-top:2rem; border-top:1px solid rgba(255,255,255,.14);
+    margin-top:3.5rem; padding-top:2rem; border-top:1px solid rgba(var(--blanc-rgb),.14);
   }
   .lien-suivant-intro {
     font-family:'Archivo', 'Inter', sans-serif; font-weight:200;
     font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
-    color:rgba(255,255,255,.45); margin-bottom:.25rem;
+    color:rgba(var(--blanc-rgb),.45); margin-bottom:.25rem;
   }
   .lien-suivant-titre {
     font-weight:700; font-size:clamp(1.3rem, 2.6vw, 1.7rem); line-height:1.2;
-    color:rgba(255,255,255,.7); text-decoration:none; transition:color 140ms ease;
+    color:rgba(var(--blanc-rgb),.7); text-decoration:none; transition:color 140ms ease;
   }
-  .lien-suivant-titre:hover { color:#fff; }
+  .lien-suivant-titre:hover { color:var(--blanc); }
 </style>

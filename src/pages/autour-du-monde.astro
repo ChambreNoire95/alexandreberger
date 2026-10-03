@@ -94,7 +94,7 @@ const description = "La carte des tournages d'Alexandre Berger, réalisateur fre
       .then((r) => r.json())
       .then((geo) => {
         L.geoJSON(geo, {
-          style: { color: "#ffffff", weight: 1, fillOpacity: 0 },
+          style: { color: "var(--blanc)", weight: 1, fillOpacity: 0 },
         }).addTo(map);
         markers.forEach((marker) => marker.bringToFront());
       });
@@ -127,7 +127,7 @@ const description = "La carte des tournages d'Alexandre Berger, réalisateur fre
   }
   .carte {
     width:100%; max-width:1100px; height:min(60vh, 560px);
-    border:1px solid rgba(255,255,255,.14); background:#0b0b0b;
+    border:1px solid rgba(var(--blanc-rgb),.14); background:#0b0b0b;
   }
   .carte-vide {
     margin-top:1rem; font-weight:300; font-size:.95rem; color:rgba(255,255,255,.5);
@@ -137,27 +137,27 @@ const description = "La carte des tournages d'Alexandre Berger, réalisateur fre
 <style is:global>
   .leaflet-container { background:#0b0b0b; font-family:'Archivo', 'Inter', sans-serif; }
   .leaflet-control-zoom a {
-    background:#0b0b0b !important; color:#fff !important; border-color:rgba(255,255,255,.3) !important;
+    background:#0b0b0b !important; color:var(--blanc) !important; border-color:rgba(var(--blanc-rgb),.3) !important;
   }
   .leaflet-control-zoom a:hover { background:#1a1a1a !important; }
   .leaflet-control-attribution {
-    background:rgba(11,11,11,.75) !important; color:rgba(255,255,255,.5) !important;
+    background:rgba(11,11,11,.75) !important; color:rgba(var(--blanc-rgb),.5) !important;
   }
-  .leaflet-control-attribution a { color:rgba(255,255,255,.7) !important; }
+  .leaflet-control-attribution a { color:rgba(var(--blanc-rgb),.7) !important; }
   .leaflet-container .leaflet-popup-content-wrapper,
   .leaflet-container .leaflet-popup-tip {
-    background:#0b0b0b !important; color:#fff !important; border:1px solid rgba(255,255,255,.2);
+    background:#0b0b0b !important; color:var(--blanc) !important; border:1px solid rgba(var(--blanc-rgb),.2);
     border-radius:2px; box-shadow:none;
   }
   .leaflet-container .leaflet-popup-content { margin:.9rem 1rem; }
-  .leaflet-container .leaflet-popup-close-button { color:rgba(255,255,255,.5) !important; }
+  .leaflet-container .leaflet-popup-close-button { color:rgba(var(--blanc-rgb),.5) !important; }
   .leaflet-container .popup-carte { font-family:'Archivo', 'Inter', sans-serif; }
   .leaflet-container .popup-lieu {
     margin:0 0 .5rem; font-family:'Archivo', 'Inter', sans-serif; font-weight:200;
     font-size:.65rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.5);
   }
   .leaflet-container .popup-liste { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.5rem; }
-  .leaflet-container .popup-liste li + li { padding-top:.5rem; border-top:1px solid rgba(255,255,255,.14); }
+  .leaflet-container .popup-liste li + li { padding-top:.5rem; border-top:1px solid rgba(var(--blanc-rgb),.14); }
   .leaflet-container .popup-carte a {
     font-weight:300; font-size:.95rem; color:#fff !important; text-decoration:none; transition:opacity 140ms ease;
   }
