@@ -222,18 +222,18 @@ const description = "Demande de tournage auprès d'Alexandre Berger, réalisateu
 
 <style>
   .booking { width:100%; max-width:640px; text-align:left; margin-top:0; }
-  .intro { font-weight:300; font-size:1rem; line-height:1.6; color:rgba(255,255,255,.65); margin:0 0 3rem; }
+  .intro { font-family:var(--police-texte); font-weight:400; font-size:1rem; line-height:1.6; color:rgba(var(--blanc-rgb),.65); margin:0 0 3rem; }
 
   form { display:flex; flex-direction:column; gap:1.75rem; }
   .ligne { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
   .champ { display:flex; flex-direction:column; gap:.6rem; }
   .champ span {
     font-family:'Archivo', 'Inter', sans-serif; font-weight:200;
-    font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.5);
+    font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.5);
   }
   .champ input, .champ select, .champ textarea {
-    font-family: 'Archivo', 'Inter', sans-serif; font-size:.95rem; font-weight:300; color:#fff;
-    background:transparent; border:1px solid rgba(255,255,255,.3); border-radius:2px;
+     font-size:.95rem; font-family:var(--police-texte); font-weight:400; color:var(--blanc);
+    background:transparent; border:1px solid rgba(var(--blanc-rgb),.3); border-radius:2px;
     padding:.85rem 1rem; transition:border-color 140ms ease;
   }
   .champ input:focus, .champ select:focus, .champ textarea:focus {
@@ -253,7 +253,7 @@ const description = "Demande de tournage auprès d'Alexandre Berger, réalisateu
   button[type="submit"]:hover { opacity:.85; }
 
   .references { gap:.7rem; }
-  .references-intro { margin:0; font-weight:300; font-size:.9rem; line-height:1.5; color:rgba(255,255,255,.65); }
+  .references-intro { margin:0; font-family:var(--police-texte); font-weight:400; font-size:.9rem; line-height:1.5; color:rgba(var(--blanc-rgb),.65); }
   .references-criteres {
     margin:0; font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.68rem;
     letter-spacing:.1em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.5);
@@ -263,7 +263,7 @@ const description = "Demande de tournage auprès d'Alexandre Berger, réalisateu
     display:flex; align-items:center; gap:.7rem; padding:.6rem .8rem;
     border:1px solid rgba(var(--blanc-rgb),.3); border-radius:2px;
   }
-  .references-liste :global(a) { flex:1; color:#fff; font-weight:700; font-size:.95rem; text-decoration:none; }
+  .references-liste :global(a) { flex:1; color:var(--blanc); font-weight:700; font-size:.95rem; text-decoration:none; }
   .references-liste :global(a:hover) { text-decoration:underline; }
   .references-liste :global(em) {
     font-style:normal; padding:.1rem .4rem; border:1px solid rgba(var(--blanc-rgb),.6); border-radius:2px;
@@ -271,11 +271,11 @@ const description = "Demande de tournage auprès d'Alexandre Berger, réalisateu
     text-transform:uppercase; color:var(--blanc);
   }
   .references-liste :global(.retirer) {
-    padding:0 .3rem; font-size:1.4rem; line-height:1; color:#fff; background:transparent; border:0; cursor:pointer;
+    padding:0 .3rem; font-size:1.4rem; line-height:1; color:var(--blanc); background:transparent; border:0; cursor:pointer;
   }
   .references-liste :global(.retirer:hover) { color:rgba(var(--blanc-rgb),.6); }
 
-  .statut { font-weight:300; font-size:.9rem; color:rgba(255,255,255,.6); margin:0; }
+  .statut { font-family:var(--police-texte); font-weight:400; font-size:.9rem; color:rgba(var(--blanc-rgb),.6); margin:0; }
   .statut-erreur { color:#e11d2e; }
   .piege {
     position:absolute; width:1px; height:1px; padding:0; margin:-1px;

@@ -53,17 +53,17 @@ const description = "Alexandre Berger, réalisateur freelance en Île-de-France 
 </Layout>
 
 <style>
-  .contenu { text-align:left; width:100%; max-width:640px; margin-top:0; font-weight:300; font-size:1.1rem; color:rgba(255,255,255,.72); }
+  .contenu { text-align:left; width:100%; max-width:640px; margin-top:0; font-family:var(--police-texte); font-weight:400; font-size:1.1rem; color:rgba(var(--blanc-rgb),.72); }
   .sous-titre {
     font-family:'Archivo', 'Inter', sans-serif;
     font-size:.75rem; letter-spacing:.15em; text-transform:uppercase;
-    color:rgba(255,255,255,.45); font-weight:400;
+    color:rgba(var(--blanc-rgb),.45); font-weight:400;
     margin:3rem 0 1.25rem;
   }
   .prix { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1.25rem; }
-  .prix-titre { font-weight:700; font-size:1rem; color:#fff; margin:0 0 .3rem; }
-  .prix-detail { font-weight:300; font-size:.9rem; line-height:1.5; color:rgba(255,255,255,.6); margin:0; }
-  .prix-film { font-weight:300; font-style:italic; font-size:.85rem; color:rgba(255,255,255,.45); margin:.3rem 0 0; }
+  .prix-titre { font-weight:700; font-size:1rem; color:var(--blanc); margin:0 0 .3rem; }
+  .prix-detail { font-family:var(--police-texte); font-weight:400; font-size:.9rem; line-height:1.5; color:rgba(var(--blanc-rgb),.6); margin:0; }
+  .prix-film { font-family:var(--police-texte); font-weight:400; font-style:italic; font-size:.85rem; color:rgba(var(--blanc-rgb),.45); margin:.3rem 0 0; }
 
   @media (min-width: 801px) {
     .sous-titre { margin-top:6rem; }

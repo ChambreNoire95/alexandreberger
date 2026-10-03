@@ -265,8 +265,8 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
 
   /* Archivo auto-hébergée (public/fonts/) : un seul fichier de police variable couvre toutes les
      graisses (100 à 900) et les largeurs (62 à 125 %). Pas d'italique fourni : le navigateur
-     incline la romaine si besoin (.prix-film). Inter n'est gardée que pour les flèches « → »,
-     absentes d'Archivo (sinon le navigateur piocherait une flèche de police système). */
+     incline la romaine si besoin (.prix-film). Inter sert aux textes courants (--police-texte) et aux
+     flèches « → », absentes d'Archivo. */
   @font-face {
     font-family: 'Archivo';
     font-style: normal;
@@ -328,7 +328,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   .booking-btn {
     display:flex; align-items:center; justify-content:center;
     height:2.25rem; padding:0 .9rem;
-    font-family:'Archivo', 'Inter', sans-serif; font-weight:200;
+    font-family:'Archivo', 'Inter', sans-serif; font-weight:700;
     font-size:.7rem; letter-spacing:.15em; text-transform:uppercase;
     color:#fff; text-decoration:none; white-space:nowrap;
     border:1px solid rgba(255,255,255,.5); border-radius:2px;
@@ -378,7 +378,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   .titre-page {
     font-family:'Archivo', 'Inter', sans-serif;
     font-size:1.3rem; letter-spacing:.22em; text-transform:uppercase;
-    color:#fff; font-weight:400; margin:0 0 3.5rem; text-align:center;
+    color:var(--blanc); font-weight:400; margin:0 0 3.5rem; text-align:center;
   }
   .retour-haut {
     position:fixed; right:1.25rem; bottom:1.25rem; z-index:20;
@@ -388,10 +388,10 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     transition: opacity 200ms ease, translate 200ms ease, background 140ms ease, color 140ms ease, border-color 140ms ease;
   }
   .retour-haut.visible { opacity:1; translate:0 0; pointer-events:auto; }
-  .retour-haut:hover { background:#fff; color:#0b0b0b; border-color:#fff; }
-  footer { border-top:1px solid rgba(255,255,255,.14); padding-top:3rem; margin-top:3rem; }
-  .refs-titre { font-size:.7rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.5); margin:0 0 1.25rem; }
-  .refs { font-size:.9rem; font-weight:300; line-height:1.8; color:rgba(255,255,255,.65); margin:0; }
+  .retour-haut:hover { background:var(--blanc); color:#0b0b0b; border-color:var(--blanc); }
+  footer { border-top:1px solid rgba(var(--blanc-rgb),.14); padding-top:3rem; margin-top:3rem; }
+  .refs-titre { font-size:.7rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.5); margin:0 0 1.25rem; }
+  .refs { font-size:.9rem; font-family:var(--police-texte); font-weight:400; line-height:1.8; color:rgba(var(--blanc-rgb),.65); margin:0; }
   .refs-desktop {
     display:flex; flex-wrap:wrap; justify-content:center;
     list-style:none; padding:0; max-width:900px; margin:0 auto;
@@ -410,21 +410,21 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     padding:3rem clamp(1.5rem, 4vw, 3rem);
     text-align:left;
   }
-  .bandeau-texte { border-right:1px solid rgba(255,255,255,.14); align-items:center; }
-  .bandeau-texte p { font-weight:300; font-size:1.05rem; line-height:1.7; color:rgba(255,255,255,.8); margin:0; max-width:30rem; text-align:center; }
+  .bandeau-texte { border-right:1px solid rgba(var(--blanc-rgb),.14); align-items:center; }
+  .bandeau-texte p { font-family:var(--police-texte); font-weight:400; font-size:1.05rem; line-height:1.7; color:rgba(var(--blanc-rgb),.8); margin:0; max-width:30rem; text-align:center; }
   .bandeau-carnet { align-items:center; text-align:center; }
   .carnet-apercu { display:flex; flex-direction:column; align-items:center; gap:.6rem; max-width:30rem; text-decoration:none; transition:opacity 140ms ease; }
   .carnet-apercu:hover { opacity:.7; }
-  .carnet-label { font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.65rem; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.45); }
-  .carnet-titre { font-weight:300; font-size:clamp(1.3rem, 2.2vw, 1.7rem); color:#fff; }
-  .carnet-date { font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.45); }
-  .carnet-extrait { font-weight:300; font-size:.95rem; color:rgba(255,255,255,.65); }
-  .carnet-vide { font-weight:300; font-size:.95rem; color:rgba(255,255,255,.5); margin:0; max-width:30rem; }
+  .carnet-label { font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.65rem; letter-spacing:.18em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.45); }
+  .carnet-titre { font-weight:300; font-size:clamp(1.3rem, 2.2vw, 1.7rem); color:var(--blanc); }
+  .carnet-date { font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.45); }
+  .carnet-extrait { font-family:var(--police-texte); font-weight:400; font-size:.95rem; color:rgba(var(--blanc-rgb),.65); }
+  .carnet-vide { font-family:var(--police-texte); font-weight:400; font-size:.95rem; color:rgba(var(--blanc-rgb),.5); margin:0; max-width:30rem; }
 
-  .cloture { border-top:1px solid rgba(255,255,255,.14); padding-top:3rem; margin-top:0; }
-  .copyright { font-size:.825rem; font-weight:300; color:rgba(255,255,255,.4); padding:0 clamp(1.5rem, 4vw, 3rem) 3rem; margin:0; text-align:center; }
-  .copyright a { color:rgba(255,255,255,.55); text-decoration:underline; text-underline-offset:3px; transition:color 140ms ease; }
-  .copyright a:hover { color:#fff; }
+  .cloture { border-top:1px solid rgba(var(--blanc-rgb),.14); padding-top:3rem; margin-top:0; }
+  .copyright { font-size:.825rem; font-family:var(--police-texte); font-weight:400; color:rgba(var(--blanc-rgb),.4); padding:0 clamp(1.5rem, 4vw, 3rem) 3rem; margin:0; text-align:center; }
+  .copyright a { color:rgba(var(--blanc-rgb),.55); text-decoration:underline; text-underline-offset:3px; transition:color 140ms ease; }
+  .copyright a:hover { color:var(--blanc); }
 
   @media (max-width: 720px) {
     .bandeau { flex-direction:column; min-height:0; }
@@ -436,7 +436,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   }
 
   @media (min-width: 801px) {
-    .copyright { color:#fff; font-size:.9075rem; }
+    .copyright { color:var(--blanc); font-size:.9075rem; }
   }
 
   @media (max-width: 800px) {

@@ -229,7 +229,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   }
   .accroche-meta {
     font-family:'Archivo', 'Inter', sans-serif; font-weight:200;
-    font-size:.77rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.45);
+    font-size:.77rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.45);
   }
   .saut-mobile { display:none; }
   @media (max-width: 800px) {
@@ -276,7 +276,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     .apercu-item:not(.charge) .apercu-image :global(picture) { display:none; }
     /* Titre du film (champ CMS) + durée, au-dessus de l'image. */
     .apercu-entete { margin:0; display:flex; align-items:baseline; justify-content:space-between; gap:1rem; }
-    .apercu-titre-film { font-weight:700; font-size:1rem; line-height:1.3; color:#fff; text-transform:uppercase; }
+    .apercu-titre-film { font-weight:700; font-size:1rem; line-height:1.3; color:var(--blanc); text-transform:uppercase; }
     .apercu-duree {
       flex:none; margin-left:auto; font-weight:700; font-size:1rem; line-height:1.3;
       text-transform:uppercase; color:var(--blanc);
@@ -284,9 +284,9 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     .apercu-duree :global(.duree-unite) { font-size:.5em; }
     .apercu-meta {
       margin:0; font-family:'Archivo', 'Inter', sans-serif; font-weight:200;
-      font-size:.77rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.45);
+      font-size:.77rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.45);
     }
-    .apercu-accroche { margin:0; font-weight:300; font-size:1rem; line-height:1.6; color:rgba(255,255,255,.8); }
+    .apercu-accroche { margin:0; font-family:var(--police-texte); font-weight:400; font-size:1rem; line-height:1.6; color:rgba(var(--blanc-rgb),.8); }
 
     /* Flèche vers la fiche, en bas à droite du cadre. */
     .apercu-fleche {
@@ -324,8 +324,8 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
      à droite en blanc plein. */
   @media (min-width: 1100px) and (hover:hover) and (pointer:fine) {
     .filtres { width:100%; max-width:1240px; justify-content:flex-start; }
-    .filtres .filtre-recherche { margin-left:auto; box-sizing:border-box; width:420px; text-align:center; font-weight:700; background:#fff; border-color:#fff; color:#0b0b0b; }
-    .filtres .filtre-recherche:hover, .filtres .filtre-recherche:focus-visible { background:rgba(255,255,255,.8); border-color:rgba(255,255,255,.8); }
+    .filtres .filtre-recherche { margin-left:auto; box-sizing:border-box; width:420px; text-align:center; font-weight:700; background:var(--blanc); border-color:var(--blanc); color:#0b0b0b; }
+    .filtres .filtre-recherche:hover, .filtres .filtre-recherche:focus-visible { background:rgba(var(--blanc-rgb),.8); border-color:rgba(var(--blanc-rgb),.8); }
   }
 
   .rech {
@@ -340,10 +340,10 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   }
   .rech-fermer:hover { color:rgba(var(--blanc-rgb),.6); }
   .rech-titre { margin:0 2rem .5rem 0; font-size:1.15rem; font-weight:700; text-transform:uppercase; line-height:1.3; }
-  .rech-intro { margin:0 0 1.2rem; font-weight:300; font-size:.95rem; line-height:1.6; color:rgba(255,255,255,.8); }
+  .rech-intro { margin:0 0 1.2rem; font-family:var(--police-texte); font-weight:400; font-size:.95rem; line-height:1.6; color:rgba(var(--blanc-rgb),.8); }
   .rech-groupe {
     margin:0 0 .5rem; font-family:'Archivo', 'Inter', sans-serif; font-size:.68rem;
-    letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:#fff;
+    letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--blanc);
   }
   .rech-pastilles { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1rem; }
   .rech-pastilles button {
@@ -354,9 +354,9 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   }
   .rech-pastilles button:hover { color:var(--blanc); border-color:var(--blanc); }
   .rech-pastilles button:disabled { opacity:.3; cursor:not-allowed; border-style:dashed; }
-  .rech-pastilles button:disabled:hover { color:rgba(255,255,255,.7); border-color:rgba(255,255,255,.3); }
-  .rech-pastilles button[aria-pressed="true"] { background:#fff; color:#0b0b0b; border-color:#fff; }
-  .rech-etat { min-height:1.4em; margin:.9rem 0 .6rem; font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.55); }
+  .rech-pastilles button:disabled:hover { color:rgba(var(--blanc-rgb),.7); border-color:rgba(var(--blanc-rgb),.3); }
+  .rech-pastilles button[aria-pressed="true"] { background:var(--blanc); color:#0b0b0b; border-color:var(--blanc); }
+  .rech-etat { min-height:1.4em; margin:.9rem 0 .6rem; font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.55); }
   .rech-resultats { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.7rem; }
   .rech-resultats li[hidden] { display:none; }
   .rech-resultats a {
@@ -380,8 +380,8 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   .rech-go { flex:none; font-size:1.3rem; line-height:1; transition:transform 140ms ease; }
   .rech-resultats a:hover .rech-go, .rech-resultats a:focus-visible .rech-go { transform:translateX(.3rem); }
   .rech-contact {
-    display:inline-block; margin-top:1.2rem; color:#fff; text-decoration:none; font-weight:700; font-size:.95rem;
-    border-bottom:1px solid rgba(255,255,255,.5); padding-bottom:.15rem;
+    display:inline-block; margin-top:1.2rem; color:var(--blanc); text-decoration:none; font-weight:700; font-size:.95rem;
+    border-bottom:1px solid rgba(var(--blanc-rgb),.5); padding-bottom:.15rem;
   }
   .rech-contact:hover { border-bottom-color:var(--blanc); }
   /* Grand écran : fenêtre plus large et plus aérée, pour le confort. */
@@ -421,7 +421,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   .demo-cadre :global(iframe.pret) { opacity:1; }
   .demo-fermer {
     position:absolute; top:-2.6rem; right:0; width:2.2rem; height:2.2rem; padding:0;
-    font-size:1.8rem; line-height:1; color:#fff; background:transparent; border:0; cursor:pointer;
+    font-size:1.8rem; line-height:1; color:var(--blanc); background:transparent; border:0; cursor:pointer;
   }
   .demo-fermer:hover { color:rgba(var(--blanc-rgb),.6); }
   @media (prefers-reduced-motion: reduce) {
