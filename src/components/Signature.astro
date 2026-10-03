@@ -24,39 +24,36 @@ const signatures = [
   @media (max-width: 800px) {
     .phrase { font-size:1.9rem; }
   }
-</style>
-
   /* Grand écran : le header (logo animé) est plus haut, on remonte le bloc de phrases. */
   @media (min-width: 801px) {
     .signature { margin-top:-3rem; }
   }
+</style>
+
 <script>
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let surLogo: ((e: Event) => void) | undefined;
 
   function setupSignature() {
-  let surLogo: ((e: Event) => void) | undefined;
     const phrases = document.querySelectorAll<HTMLElement>('#sig .phrase');
     if (timer) clearTimeout(timer);
-    if (!phrases.length) return;
-
     if (surLogo) window.removeEventListener('logo-formats:change', surLogo);
     surLogo = undefined;
+    if (!phrases.length) return;
+
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (phrases.length > 1 && !reduce) {
       let i = 0;
-      // Délai variable (3,5 à 6,5 s) et prochaine phrase tirée au sort (jamais
-      // la même deux fois de suite) : évite le cycle 1-2-3-4 trop prévisible.
-      const planifierSuivante = () => {
-        timer = setTimeout(() => {
-          phrases[i].style.opacity = '0';
-          let suivant = i;
-          while (suivant === i) {
-            suivant = Math.floor(Math.random() * phrases.length);
-          }
-          i = suivant;
-          phrases[i].style.opacity = '1';
-          planifierSuivante();
-        }, 3500 + Math.random() * 3000);
+      // Prochaine phrase tirée au sort, jamais la même deux fois de suite
+      // (évite le cycle 1-2-3-4 trop prévisible).
+      const changer = () => {
+        phrases[i].style.opacity = '0';
+        let suivant = i;
+        while (suivant === i) {
+          suivant = Math.floor(Math.random() * phrases.length);
+        }
+        i = suivant;
+        phrases[i].style.opacity = '1';
       };
 
       if (document.querySelector('[data-logo-formats]')) {
