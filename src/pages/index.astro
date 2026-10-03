@@ -187,7 +187,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
         </li>
       ))}
     </ul>
-    <a class="rech-contact" href="/booking">Parlons de votre projet →</a>
+    <a class="rech-contact" href="/booking">Parlons de votre projet <span class="fleche">→</span></a>
     <script is:inline type="application/json" id="rech-data" set:html={JSON.stringify(fichesRecherche).replace(/</g, "\\u003c")}></script>
   </dialog>
 
@@ -252,7 +252,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     /* Flèche « → » (comme le lien « Voir toute la playlist ») : suspendue dans
        la marge gauche au survol/focus, donc sans décalage du titre. */
     .accroche-titre::before {
-      content:"→"; position:absolute; left:-1.7em; top:0;
+      content:"→"; position:absolute; left:-1.7em; top:0; color:var(--rouge);
       opacity:0; transform:translateX(-.4em);
       transition:opacity 160ms ease, transform 160ms ease;
     }
@@ -291,9 +291,9 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     /* Flèche vers la fiche, en bas à droite du cadre. */
     .apercu-fleche {
       align-self:flex-end; margin-top:-.2rem; text-decoration:none;
-      font-size:1.4rem; line-height:1; color:#fff; transition:transform 140ms ease, color 140ms ease;
+      font-size:1.4rem; line-height:1; color:var(--rouge); transition:transform 140ms ease;
     }
-    .apercu-fleche:hover, .apercu-fleche:focus-visible { transform:translateX(.3rem); color:rgba(255,255,255,.7); }
+    .apercu-fleche:hover, .apercu-fleche:focus-visible { transform:translateX(.3rem); }
 
     /* Encart « bande démo » : même gabarit qu'une fiche projet. */
     .apercu-demo-ouvrir { position:relative; cursor:pointer; background:linear-gradient(135deg,#1c1c1c,#0b0b0b); }
@@ -377,7 +377,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.62rem; letter-spacing:.14em;
     text-transform:uppercase; color:var(--blanc);
   }
-  .rech-go { flex:none; font-size:1.3rem; line-height:1; transition:transform 140ms ease; }
+  .rech-go { flex:none; font-size:1.3rem; line-height:1; color:var(--rouge); transition:transform 140ms ease; }
   .rech-resultats a:hover .rech-go, .rech-resultats a:focus-visible .rech-go { transform:translateX(.3rem); }
   .rech-contact {
     display:inline-block; margin-top:1.2rem; color:var(--blanc); text-decoration:none; font-weight:700; font-size:.95rem;

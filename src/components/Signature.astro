@@ -9,7 +9,7 @@ const signatures = [
 
 <div class="signature" id="sig" aria-label={signatures[0]}>
   {signatures.map((s, i) => (
-    <span class="phrase" style={`position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);opacity:${i === 0 ? 1 : 0};transition:opacity 800ms ease`}>{s}</span>
+    <span class="phrase" style={`position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);opacity:${i === 0 ? 1 : 0};transition:opacity 800ms ease`}>{s}<span class="point" aria-hidden="true">.</span></span>
   ))}
 </div>
 
@@ -19,6 +19,8 @@ const signatures = [
     font-weight:700; font-size:clamp(1.32rem, 3.12vw, 2.57rem);
     color:var(--blanc);
   }
+  /* Point final rouge (rouge du logo), très gras, comme une ponctuation. */
+  .point { color:var(--rouge); font-weight:900; }
   @media (max-width: 800px) {
     .phrase { font-size:1.9rem; }
   }

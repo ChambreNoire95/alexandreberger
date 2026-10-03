@@ -95,7 +95,7 @@ const jsonLd = {
 
 <Layout title={titre} description={description} currentPath={currentPath} jsonLd={jsonLd} image={imagePartage}>
   <article class="projet">
-    <a class="lien-retour" href={currentPath}>← {labelRetour}</a>
+    <a class="lien-retour" href={currentPath}><span class="fleche">←</span> {labelRetour}</a>
     {projet.data.couverture && (
       <OptimizedImage class="couverture" src={projet.data.couverture} alt={projet.data.couvertureAlt || projet.data.titre} loading="eager" fetchpriority="high" sizes="(min-width: 801px) 910px, 100vw" />
     )}
@@ -149,12 +149,29 @@ const jsonLd = {
       <div class="liens-suivants">
         <span class="lien-suivant-intro">Découvrez d'autres réalisations</span>
         {suivants.map((s) => (
-          <a class="lien-suivant-titre" href={`/projets/${s.id}`}>{s.data.titre} →</a>
+          <a class="lien-suivant-titre" href={`/projets/${s.id}`}>{s.data.titre} <span class="fleche">→</span></a>
         ))}
       </div>
     )}
   </article>
 </Layout>
+
+<script>
+  // Les liens du texte qui commencent par « → » (ex. « → Voir toute la playlist ») :
+  // la flèche passe en rouge, sans rien changer au texte saisi dans le CMS.
+  function colorierFlechesDuTexte() {
+    document.querySelectorAll<HTMLAnchorElement>('.corps a').forEach((lien) => {
+      const debut = lien.firstChild;
+      if (debut?.nodeType !== Node.TEXT_NODE || !debut.textContent?.startsWith('→')) return;
+      const fleche = document.createElement('span');
+      fleche.className = 'fleche';
+      fleche.textContent = '→';
+      debut.textContent = debut.textContent.slice(1);
+      lien.insertBefore(fleche, debut);
+    });
+  }
+  document.addEventListener('astro:page-load', colorierFlechesDuTexte);
+</script>
 
 <style>
   .projet { text-align:left; width:100%; max-width:910px; margin-top:3.5rem; }
