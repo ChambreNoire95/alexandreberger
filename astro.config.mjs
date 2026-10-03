@@ -2,6 +2,8 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
+import { satteri } from '@astrojs/markdown-satteri';
+import galerieImages from './src/lib/rehype-galerie.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -21,4 +23,6 @@ export default defineConfig({
   // au lieu d'un <link> séparé : une requête bloquante de moins dans la
   // chaîne critique (signalé par Lighthouse).
   build: { inlineStylesheets: 'auto' },
+  // Suites de 3 images ou plus dans un texte : mises en grille automatiquement (voir src/lib/rehype-galerie.mjs).
+  markdown: { processor: satteri({ hastPlugins: [galerieImages] }) },
 });
