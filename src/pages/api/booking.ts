@@ -16,7 +16,7 @@ interface DonneesBooking {
   entreprise: string;
   nom: string;
   prenom: string;
-  fonction?: string;
+  fonction: string;
   email: string;
   telephone: string;
   type?: string;
@@ -31,7 +31,7 @@ interface DonneesBooking {
   lang?: string; // langue de la page d'où part la demande ("fr" ou "en") : langue de l'e-mail de confirmation
 }
 
-const CHAMPS_REQUIS: (keyof DonneesBooking)[] = ["entreprise", "nom", "prenom", "email", "telephone", "description"];
+const CHAMPS_REQUIS: (keyof DonneesBooking)[] = ["entreprise", "nom", "prenom", "fonction", "email", "telephone", "description"];
 
 const LABELS: Record<string, string> = {
   entreprise: "Entreprise / Institution / Structure",
