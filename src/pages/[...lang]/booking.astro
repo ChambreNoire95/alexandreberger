@@ -140,7 +140,7 @@ const textesRappel = {
    </div>
 
     <section class="rappel" aria-labelledby="titre-rappel">
-      <h2 class="titre-rappel" id="titre-rappel">{t(lang, "rappel.titre")}</h2>
+      <h2 class="titre-rappel" id="titre-rappel"><span class="fleche" aria-hidden="true">→</span> {t(lang, "rappel.titre")}</h2>
 
       <form id="form-rappel" data-textes={JSON.stringify(textesRappel)}>
         <input type="text" name="site" class="piege" tabindex="-1" autocomplete="off" aria-hidden="true" />
@@ -320,6 +320,23 @@ const textesRappel = {
     const bouton = form.querySelector<HTMLButtonElement>('button[type="submit"]');
     const statut = form.querySelector<HTMLElement>(".statut");
 
+    // Desktop (deux colonnes) : la première case de réponse du petit formulaire est alignée exactement sur celle du
+    // grand formulaire (les rangées suivantes suivent, elles ont le même pas). On mesure puis on ajuste l'espace sous le titre.
+    const titre = document.getElementById("titre-rappel");
+    const alignerRappel = () => {
+      const premier = document.querySelector<HTMLElement>('#form-booking .champ input:not(.piege), #form-booking .champ select');
+      const mien = form.querySelector<HTMLElement>(".champ input");
+      if (!titre || !premier || !mien) return;
+      titre.style.setProperty("--decalage", "0px");
+      if (!window.matchMedia("(min-width: 901px)").matches) return;
+      const ecart = premier.getBoundingClientRect().top - mien.getBoundingClientRect().top;
+      // borné : on ne peut pas réduire l'espace de base (1.25rem) en dessous de ~4 px
+      titre.style.setProperty("--decalage", `${Math.max(ecart, -16)}px`);
+    };
+    alignerRappel();
+    window.addEventListener("resize", alignerRappel);
+    document.fonts?.ready.then(alignerRappel);
+
     // Pas de créneau dans le passé.
     const dateEl = form.querySelector<HTMLInputElement>('input[name="date"]');
     if (dateEl) {
@@ -399,7 +416,7 @@ const textesRappel = {
 
   /* Second formulaire (rappel) : encadré, fond noir à 90 %. Sous le premier sur mobile / petite fenêtre. */
   .rappel {
-    margin-top:4rem; padding:2.25rem 2rem 2.5rem;
+    margin-top:4rem; padding:2rem 2rem 2.5rem;
     background:rgba(0,0,0,.9); border:1px solid rgba(var(--blanc-rgb),.3); border-radius:2px;
   }
   /* Desktop : page en deux colonnes, 2/3 pour la demande détaillée, 1/3 pour le rappel, alignés en haut. */
@@ -410,8 +427,12 @@ const textesRappel = {
   }
   .titre-rappel {
     font-family:'Archivo', 'Inter', sans-serif; font-weight:700; font-size:1.35rem;
-    letter-spacing:.02em; color:var(--blanc); margin:0 0 2rem; text-align:center; text-wrap:balance;
+    letter-spacing:.02em; color:var(--blanc); text-align:center; text-wrap:balance;
+    /* Espace sous le titre : base + --decalage (px), calculé par le script pour que les cases de réponse
+       s'alignent exactement sur celles du grand formulaire (voir alignerRappel). */
+    margin:0 0 calc(1.25rem + var(--decalage, 0px));
   }
+  .titre-rappel :global(.fleche) { font-family:'Inter', sans-serif; font-weight:400; }
 
   /* Bouton d'envoi : toujours en gras ; au survol, rouge du site avec texte blanc. */
   button[type="submit"] {
