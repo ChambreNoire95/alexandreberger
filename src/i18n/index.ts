@@ -125,6 +125,15 @@ export function libelle(lang: Lang, categorie: "type" | "genre" | "univers" | "c
   return TABLES[categorie]?.[valeur] ?? valeur;
 }
 
+/** Libellés de tous les critères de recherche (Univers, Critères, Format/Durée, Ton) dans la langue donnée : valeur du CMS → libellé affiché. */
+export function libellesRecherche(lang: Lang): Record<string, string> {
+  const sortie: Record<string, string> = {};
+  for (const categorie of ["univers", "critere", "format", "ton"] as const) {
+    for (const valeur of Object.keys(TABLES[categorie] ?? {})) sortie[valeur] = libelle(lang, categorie, valeur);
+  }
+  return sortie;
+}
+
 /** « Réalisateur / Monteur » → « Director / Editor » (les mots inconnus restent tels quels). */
 export function roleAffiche(lang: Lang, role: string | undefined): string | undefined {
   if (!role || lang === "fr") return role;

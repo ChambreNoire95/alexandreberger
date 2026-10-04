@@ -614,7 +614,9 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
           formats.size && `${T.groupes?.format ?? 'Format/Durée'} : ${[...formats].map(lib).join(', ')}`,
           tons.size && `${T.groupes?.ton ?? 'Ton'} : ${[...tons].map(lib).join(', ')}`,
         ].filter(Boolean).join(' · ');
-        if (references.length) sessionStorage.setItem('references-booking', JSON.stringify({ references, criteres }));
+        // `selection` : valeurs brutes (clés du CMS), pour que la page Booking reconstruise la ligne de critères dans SA langue.
+        const selection = { univers: secteur, criteres: [...besoins], format: [...formats], ton: [...tons] };
+        if (references.length) sessionStorage.setItem('references-booking', JSON.stringify({ references, criteres, selection }));
         else sessionStorage.removeItem('references-booking');
       } catch {
         /* stockage indisponible : le formulaire s'affichera simplement sans références */
