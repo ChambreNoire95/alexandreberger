@@ -45,6 +45,15 @@ const textesRappel = {
   <h1 class="titre-page">{t(lang, "booking.titre")}</h1>
 
   <div class="booking">
+    {/* Mobile / petites fenêtres : étape de choix avant d'afficher un des deux formulaires (sur desktop, les deux sont côte à côte). */}
+    <div class="choix">
+      <button type="button" class="choix-bouton" data-choix="complet"><span>{t(lang, "booking.choix.complet")}</span><span class="fleche" aria-hidden="true">→</span></button>
+      <p class="choix-ou">{t(lang, "booking.choix.ou")}</p>
+      <button type="button" class="choix-bouton" data-choix="rappel"><span>{t(lang, "booking.choix.rappel")}</span><span class="fleche" aria-hidden="true">→</span></button>
+    </div>
+    <button type="button" class="changer"><span class="fleche" aria-hidden="true">←</span> {t(lang, "booking.choix.changer")}</button>
+    <noscript><style is:inline>@media (max-width:900px){.booking .choix,.booking .changer{display:none!important}.booking .principal,.booking .rappel{display:block!important}}</style></noscript>
+
    <div class="principal">
     <p class="intro">{t(lang, "booking.intro")}</p>
 
@@ -256,6 +265,23 @@ const textesRappel = {
       references = [];
     }
     afficherReferences();
+
+    // Mobile : étape de choix. Qui arrive avec une sélection de références (recherche d'accueil) va directement au formulaire complet ;
+    // #rappel dans l'adresse ouvre directement le rappel.
+    const booking = document.querySelector<HTMLElement>(".booking");
+    if (booking) {
+      booking.dataset.mode = location.hash === "#rappel" ? "rappel" : references.length ? "complet" : "choix";
+      booking.querySelectorAll<HTMLButtonElement>("[data-choix]").forEach((b) =>
+        b.addEventListener("click", () => {
+          booking.dataset.mode = b.dataset.choix ?? "choix";
+          booking.scrollIntoView({ block: "start", behavior: "smooth" });
+        })
+      );
+      booking.querySelector(".changer")?.addEventListener("click", () => {
+        booking.dataset.mode = "choix";
+        booking.scrollIntoView({ block: "start", behavior: "smooth" });
+      });
+    }
 
     const bouton = form.querySelector<HTMLButtonElement>('button[type="submit"]');
     const statut = form.querySelector<HTMLElement>(".statut");
@@ -477,5 +503,35 @@ const textesRappel = {
 
   @media (max-width: 600px) {
     .ligne { grid-template-columns:1fr; }
+  }
+
+  /* Étape de choix (mobile / petites fenêtres : sous 901 px, là où les deux formulaires s'empilent).
+     Par défaut (avant le script) on affiche le choix ; le script pose data-mode = choix | complet | rappel. */
+  .choix, .changer { display:none; }
+  .choix { flex-direction:column; align-items:stretch; gap:1rem; }
+  .choix-bouton {
+    display:flex; align-items:center; justify-content:space-between; gap:1rem; text-align:left;
+    padding:1.4rem 1.25rem; cursor:pointer;
+    font-family:'Archivo', 'Inter', sans-serif; font-weight:700; font-size:.85rem; letter-spacing:.14em; text-transform:uppercase; line-height:1.5;
+    color:var(--blanc); background:transparent; border:1px solid rgba(var(--blanc-rgb),.5); border-radius:2px;
+    transition:background 140ms ease, color 140ms ease, border-color 140ms ease;
+  }
+  .choix-bouton :global(.fleche), .choix-bouton .fleche { font-family:'Inter', sans-serif; font-weight:400; font-size:1.1rem; letter-spacing:0; transition:color 140ms ease; }
+  .choix-bouton:hover, .choix-bouton:active { background:var(--rouge); border-color:var(--rouge); }
+  .choix-bouton:hover .fleche, .choix-bouton:active .fleche { color:var(--blanc); }
+  .choix-ou { margin:0; text-align:center; font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.75rem; letter-spacing:.2em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.5); }
+  .changer {
+    margin:0 0 2rem; padding:0; background:transparent; border:0; cursor:pointer; text-align:left;
+    font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.75rem; letter-spacing:.18em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.7);
+  }
+  .changer .fleche { font-family:'Inter', sans-serif; }
+  .changer:hover { color:var(--blanc); }
+  @media (max-width: 900px) {
+    .booking:not([data-mode]) .choix, .booking[data-mode="choix"] .choix { display:flex; }
+    .booking:not([data-mode]) .principal, .booking:not([data-mode]) .rappel,
+    .booking[data-mode="choix"] .principal, .booking[data-mode="choix"] .rappel { display:none; }
+    .booking[data-mode="complet"] .rappel, .booking[data-mode="rappel"] .principal { display:none; }
+    .booking[data-mode="complet"] .changer, .booking[data-mode="rappel"] .changer { display:block; }
+    .booking[data-mode="rappel"] .rappel { margin-top:0; }
   }
 </style>
