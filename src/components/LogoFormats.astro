@@ -112,23 +112,32 @@ const { echelle = 0.46, intervalle = 1690, href = "/" } = Astro.props;
         return;
       }
       montrer(0);
+      // Événement « figer » : le logo s'arrête, sur le format demandé (detail.label) ou sinon sur celui affiché,
+      // et s'en souvient pour la session.
+      const figerSur = (detail?: { label?: string }) => {
+        const demande = detail?.label ? compos.findIndex((c) => c.dataset.label === detail.label) : -1;
+        if (demande >= 0) {
+          k = demande;
+          montrer(k);
+        }
+        try { sessionStorage.setItem("logo-fige-index", String(k)); } catch { /* sans effet */ }
+      };
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        window.addEventListener("logo-formats:figer", () => {
-          try { sessionStorage.setItem("logo-fige-index", String(k)); } catch { /* sans effet */ }
-        });
+        window.addEventListener("logo-formats:figer", (e) => figerSur((e as CustomEvent).detail));
         return;
       }
-      const duree = Number(el.dataset.intervalle) || 1690;
+      // Écran d'accueil mobile (html.splash) : défilement plus rapide que dans le header.
+      const surEcranAccueil = document.documentElement.classList.contains("splash");
+      const duree = surEcranAccueil ? 1500 : Number(el.dataset.intervalle) || 1690;
       const minuteur = setInterval(() => {
         k = (k + 1) % compos.length;
         montrer(k);
         // Signal pour caler d'autres animations (ex. la phrase d'accroche) sur le changement de format.
         window.dispatchEvent(new CustomEvent("logo-formats:change", { detail: { index: k, label: compos[k].dataset.label } }));
       }, duree);
-      // Événement « figer » : le logo s'arrête sur le format affiché et s'en souvient pour la session.
-      window.addEventListener("logo-formats:figer", () => {
+      window.addEventListener("logo-formats:figer", (e) => {
         clearInterval(minuteur);
-        try { sessionStorage.setItem("logo-fige-index", String(k)); } catch { /* sans effet */ }
+        figerSur((e as CustomEvent).detail);
       });
     });
   }

@@ -221,7 +221,8 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
           if (!html.classList.contains("splash")) return;
           event.preventDefault();
           event.stopPropagation();
-          window.dispatchEvent(new CustomEvent("logo-formats:figer"));
+          // Le logo se fige en version « 2.39 SCOPE », sans cadre ni compteur (voir le CSS html.logo-fige).
+          window.dispatchEvent(new CustomEvent("logo-formats:figer", { detail: { label: "2.39 SCOPE" } }));
           html.classList.remove("splash");
           html.classList.add("logo-fige", "entree");
           setTimeout(() => html.classList.remove("entree"), 700);
@@ -510,7 +511,12 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     html.splash .topbar .lf-format { align-self:center; }
     /* Logo figé : boîte réduite au cadre (donc cadre bien centré), plus de hauteur réservée. */
     html.logo-fige .topbar .logo-formats { width:auto; min-height:0; margin-bottom:.9rem; }
-    html.logo-fige .topbar .lf-format { align-self:center; }
+    /* Une fois sur la page : version « 2.39 SCOPE » sans liseré blanc ni compteur rouge. */
+    html.logo-fige .topbar .lf-cadre { border-color:transparent; }
+    html.logo-fige .topbar .lf-format { display:none; }
+    /* Le header est centré sur mobile : sans ceci, le texte du logo en hérite (« BERGER » et le format
+       9:16 se centrent). On garde le calage à gauche de l'original. */
+    .topbar .logo-formats { text-align:left; }
     /* Apparition douce de la page au sortir de l'écran d'accueil. */
     html.entree main, html.entree .menu-wrap { animation: apparition .5s ease both; }
     @keyframes apparition { from { opacity:0; } to { opacity:1; } }
