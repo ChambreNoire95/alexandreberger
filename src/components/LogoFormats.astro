@@ -18,19 +18,19 @@ const libelle = lang === "en" ? "Alexandre Berger, director — back to home" : 
    style={`--s:${echelle}`} aria-label={libelle}>
   <div class="lf-cadre" style="--w:440px;--h:440px">
       <div class="lf-compo is-active" data-w="440" data-h="440" data-label="1:1" style="width:440px;height:440px">
-        <div class="lf-texte" style="justify-content:flex-end;align-items:flex-start;gap:14px"><div style="font-size:80px;font-weight:850;font-stretch:62%;letter-spacing:-0.01em;line-height:1;line-height:0.88">ALEXANDRE<br>BERGER</div><div style="font-size:38px;font-weight:500;font-stretch:62%;letter-spacing:0.2em;line-height:1">{mot}</div></div>
+        <div class="lf-texte" style="justify-content:flex-end;align-items:flex-start;gap:14px"><div style="font-size:80px;font-weight:850;font-stretch:62%;letter-spacing:-0.01em;line-height:1;line-height:0.88">ALEXANDRE<br>BERGER</div><div style="font-size:38px;font-weight:500;font-stretch:62%;letter-spacing:0.2em;line-height:1">{mot}<span class="lf-plus" aria-hidden="true"></span></div></div>
       </div>
       <div class="lf-compo" data-w="587" data-h="440" data-label="4:3" style="width:587px;height:440px">
-        <div class="lf-texte" style="justify-content:flex-end;align-items:flex-start;gap:16px"><div style="font-size:104px;font-weight:850;font-stretch:62%;letter-spacing:-0.01em;line-height:1;line-height:0.88">ALEXANDRE<br>BERGER</div><div style="font-size:47px;font-weight:500;font-stretch:62%;letter-spacing:0.2em;line-height:1">{mot}</div></div>
+        <div class="lf-texte" style="justify-content:flex-end;align-items:flex-start;gap:16px"><div style="font-size:104px;font-weight:850;font-stretch:62%;letter-spacing:-0.01em;line-height:1;line-height:0.88">ALEXANDRE<br>BERGER</div><div style="font-size:47px;font-weight:500;font-stretch:62%;letter-spacing:0.2em;line-height:1">{mot}<span class="lf-plus" aria-hidden="true"></span></div></div>
       </div>
       <div class="lf-compo" data-w="782" data-h="440" data-label="16:9" style="width:782px;height:440px">
-        <div class="lf-texte" style="justify-content:center;align-items:flex-start;gap:16px"><div style="font-size:88px;font-weight:850;font-stretch:62%;letter-spacing:-0.01em;line-height:1;line-height:1">ALEXANDRE BERGER</div><div style="font-size:49px;font-weight:500;font-stretch:62%;letter-spacing:0.3em;line-height:1">{mot}</div></div>
+        <div class="lf-texte" style="justify-content:center;align-items:flex-start;gap:16px"><div style="font-size:88px;font-weight:850;font-stretch:62%;letter-spacing:-0.01em;line-height:1;line-height:1">ALEXANDRE BERGER</div><div style="font-size:49px;font-weight:500;font-stretch:62%;letter-spacing:0.3em;line-height:1">{mot}<span class="lf-plus" aria-hidden="true"></span></div></div>
       </div>
       <div class="lf-compo" data-w="1000" data-h="418" data-label="2.39 SCOPE" style="width:1000px;height:418px">
-        <div class="lf-texte" style="justify-content:center;align-items:center;gap:18px"><div style="font-size:110px;font-weight:850;font-stretch:62%;letter-spacing:-0.01em;line-height:1;line-height:1">ALEXANDRE BERGER</div><div style="font-size:47px;font-weight:500;font-stretch:62%;letter-spacing:0.5em;line-height:1">{mot}</div></div>
+        <div class="lf-texte" style="justify-content:center;align-items:center;gap:18px"><div style="font-size:110px;font-weight:850;font-stretch:62%;letter-spacing:-0.01em;line-height:1;line-height:1">ALEXANDRE BERGER</div><div style="font-size:47px;font-weight:500;font-stretch:62%;letter-spacing:0.5em;line-height:1">{mot}<span class="lf-plus" aria-hidden="true"></span></div></div>
       </div>
       <div class="lf-compo" data-w="248" data-h="440" data-label="9:16" style="width:248px;height:440px">
-        <div class="lf-texte" style="justify-content:flex-end;align-items:flex-start;gap:14px"><div style="font-size:72px;font-weight:850;font-stretch:62%;letter-spacing:-0.01em;line-height:1;line-height:0.88">ALEX<br>ANDRE<br>BER<br>GER</div><div style="font-size:38px;font-weight:600;font-stretch:62%;letter-spacing:0.01em;line-height:1">{mot}</div></div>
+        <div class="lf-texte" style="justify-content:flex-end;align-items:flex-start;gap:14px"><div style="font-size:72px;font-weight:850;font-stretch:62%;letter-spacing:-0.01em;line-height:1;line-height:0.88">ALEX<br>ANDRE<br>BER<br>GER</div><div style="font-size:38px;font-weight:600;font-stretch:62%;letter-spacing:0.01em;line-height:1">{mot}<span class="lf-plus" aria-hidden="true"></span></div></div>
       </div>
   </div>
   <div class="lf-format" aria-hidden="true">1:1</div>
@@ -55,6 +55,17 @@ const libelle = lang === "en" ? "Alexandre Berger, director — back to home" : 
     color: var(--fg);
     font-family: 'Archivo', 'Inter', sans-serif;
   }
+  /* « + » rouge après le mot RÉALISATEUR / DIRECTOR : dessiné en CSS (le « + » de la police est bien plus petit que les
+     capitales). Hauteur = hauteur des capitales, trait = épaisseur des lettres, le tout en em : il suit la taille de
+     chaque composition. Posé sur la ligne de base ; l'espacement est celui des lettres (letter-spacing du mot). */
+  .lf-plus {
+    position: relative; display: inline-block; vertical-align: baseline;
+    width: .55em; height: .687em; margin-left: .1em;
+    --trait: .095em;
+  }
+  .lf-plus::before, .lf-plus::after { content: ""; position: absolute; background: var(--rouge, #AD1100); }
+  .lf-plus::before { left: 0; right: 0; top: calc(50% - var(--trait) / 2); height: var(--trait); }
+  .lf-plus::after { top: 0; bottom: 0; left: calc(50% - var(--trait) / 2); width: var(--trait); }
   .lf-cadre {
     position: relative;
     overflow: hidden;
