@@ -100,15 +100,36 @@ const { echelle = 0.46, intervalle = 1690, href = "/" } = Astro.props;
         cadre.style.setProperty("--h", c.dataset.h + "px");
         label.textContent = c.dataset.label ?? "";
       };
+      // Logo figé (écran d'accueil mobile : voir Layout.astro) : on reprend le format sur lequel il s'est arrêté.
+      let fige: number | null = null;
+      try {
+        const brut = sessionStorage.getItem("logo-fige-index");
+        if (brut !== null && Number(brut) >= 0 && Number(brut) < compos.length) fige = Number(brut);
+      } catch { /* stockage indisponible : le logo tourne normalement */ }
+      if (fige !== null) {
+        k = fige;
+        montrer(k);
+        return;
+      }
       montrer(0);
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        window.addEventListener("logo-formats:figer", () => {
+          try { sessionStorage.setItem("logo-fige-index", String(k)); } catch { /* sans effet */ }
+        });
+        return;
+      }
       const duree = Number(el.dataset.intervalle) || 1690;
-      setInterval(() => {
+      const minuteur = setInterval(() => {
         k = (k + 1) % compos.length;
         montrer(k);
         // Signal pour caler d'autres animations (ex. la phrase d'accroche) sur le changement de format.
         window.dispatchEvent(new CustomEvent("logo-formats:change", { detail: { index: k, label: compos[k].dataset.label } }));
       }, duree);
+      // Événement « figer » : le logo s'arrête sur le format affiché et s'en souvient pour la session.
+      window.addEventListener("logo-formats:figer", () => {
+        clearInterval(minuteur);
+        try { sessionStorage.setItem("logo-fige-index", String(k)); } catch { /* sans effet */ }
+      });
     });
   }
   initLogoFormats();

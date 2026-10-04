@@ -77,6 +77,18 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     {blocsJsonLd.map((bloc) => (
       <script type="application/ld+json" set:html={JSON.stringify(bloc)} />
     ))}
+    {/* Mobile : écran d'accueil (logo animé centré) à l'arrivée sur « / » ; une fois passé, le logo reste
+       figé sur son dernier format. Posé ici, avant le premier affichage, pour éviter tout flash. */}
+    <script is:inline>
+      (function () {
+        try {
+          if (!matchMedia("(max-width: 800px)").matches) return;
+          var h = document.documentElement;
+          if (sessionStorage.getItem("logo-fige-index") !== null) h.classList.add("logo-fige");
+          else if (location.pathname === "/") h.classList.add("splash");
+        } catch (e) {}
+      })();
+    </script>
     <ClientRouter />
   </head>
   <body>
@@ -198,6 +210,35 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       }
       document.addEventListener("astro:page-load", setupRetourHaut);
       document.addEventListener("scroll", majVisibiliteRetourHaut, { passive: true });
+    </script>
+    <script>
+      // Écran d'accueil mobile (voir le CSS « html.splash ») : un toucher n'importe où entre sur la page,
+      // fige le logo sur son format du moment et le laisse centré en haut de page.
+      document.addEventListener(
+        "click",
+        (event) => {
+          const html = document.documentElement;
+          if (!html.classList.contains("splash")) return;
+          event.preventDefault();
+          event.stopPropagation();
+          window.dispatchEvent(new CustomEvent("logo-formats:figer"));
+          html.classList.remove("splash");
+          html.classList.add("logo-fige", "entree");
+          setTimeout(() => html.classList.remove("entree"), 700);
+        },
+        true
+      );
+
+      // ClientRouter remplace les attributs de <html> à chaque navigation : on remet l'état « logo figé ».
+      document.addEventListener("astro:after-swap", () => {
+        try {
+          if (matchMedia("(max-width: 800px)").matches && sessionStorage.getItem("logo-fige-index") !== null) {
+            document.documentElement.classList.add("logo-fige");
+          }
+        } catch {
+          /* stockage indisponible */
+        }
+      });
     </script>
     <main>
       <slot />
@@ -456,6 +497,23 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
 
     .topbar .nom { font-size:1.3rem; }
     .topbar .role { font-size:.8rem; }
+
+    /* Écran d'accueil mobile : seul le logo animé, centré en plein écran. Un toucher n'importe où
+       (voir le script plus bas) lève cet écran et fige le logo sur son format du moment. */
+    html.splash body { overflow:hidden; height:100svh; }
+    html.splash main, html.splash footer, html.splash .retour-haut { visibility:hidden; }
+    html.splash .menu-wrap { display:none; }
+    html.splash .topbar { position:fixed; inset:0; z-index:200; min-height:0; margin:0; background:#000; justify-content:center; cursor:pointer; }
+    html.splash .topbar .logo-formats { --s:.33 !important; gap:14px; min-height:calc(440px * .33 + 14px + 14px); }
+    html.splash .topbar .logo-formats .lf-format { font-size:14px; }
+    html.splash .topbar .lf-cadre { align-self:center; margin-block:auto; }
+    html.splash .topbar .lf-format { align-self:center; }
+    /* Logo figé : boîte réduite au cadre (donc cadre bien centré), plus de hauteur réservée. */
+    html.logo-fige .topbar .logo-formats { width:auto; min-height:0; margin-bottom:.9rem; }
+    html.logo-fige .topbar .lf-format { align-self:center; }
+    /* Apparition douce de la page au sortir de l'écran d'accueil. */
+    html.entree main, html.entree .menu-wrap { animation: apparition .5s ease both; }
+    @keyframes apparition { from { opacity:0; } to { opacity:1; } }
 
     /* Films de commande / Créations rejoignent le menu déroulant : la barre
        du haut ne garde que Booking + le hamburger. */
