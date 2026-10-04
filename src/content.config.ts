@@ -77,6 +77,47 @@ const carnet = defineCollection({
     }),
 });
 
+// ---- Version anglaise ----
+// Une fiche anglaise par fiche française, avec le MÊME NOM DE FICHIER (c'est ce qui les relie), dans
+// src/content/projets-en/{Commandes,Créations}/. Seuls les textes à traduire figurent ici ; tout le reste
+// (images, date, client, secteurs, critères…) est lu dans la fiche française. Si la fiche anglaise
+// manque ou si un champ est vide, le site retombe sur le texte français (voir src/lib/contenu.ts).
+const projetsEn = defineCollection({
+  loader: glob({
+    pattern: "**/*.md",
+    base: "./src/content/projets-en",
+    generateId: ({ entry }) => basename(entry, extname(entry)),
+  }),
+  schema: () =>
+    z.object({
+      titre: z.string().optional(),
+      titreFilm: z.string().optional(),
+      accroche: z.string().optional(),
+      description: z.string().optional(),
+      carrouselTitre: z.string().optional(),
+      couvertureAlt: z.string().optional(),
+      carrouselImageAlt: z.string().optional(),
+      image1Alt: z.string().optional(),
+      image2Alt: z.string().optional(),
+      image3Alt: z.string().optional(),
+    }),
+});
+
+// Carnet en anglais : même nom de fichier que l'entrée française.
+const carnetEn = defineCollection({
+  loader: glob({
+    pattern: "**/*.md",
+    base: "./src/content/carnet-en",
+    generateId: ({ entry }) => basename(entry, extname(entry)),
+  }),
+  schema: () =>
+    z.object({
+      titre: z.string().optional(),
+      extrait: z.string().optional(),
+      couvertureAlt: z.string().optional(),
+    }),
+});
+
 // Les blocs de la page sommaire "Projets Satellites" : chacun mène à sa
 // propre page fille (même principe que le Carnet). Nouveau bloc = nouvelle
 // entrée dans le CMS, sans toucher au code.
@@ -93,4 +134,4 @@ const projetsSatellites = defineCollection({
     }),
 });
 
-export const collections = { projets, carnet, projetsSatellites };
+export const collections = { projets, carnet, projetsSatellites, projetsEn, carnetEn };
