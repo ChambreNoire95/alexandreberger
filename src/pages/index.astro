@@ -208,8 +208,8 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     border:1px solid rgba(var(--blanc-rgb),.3); border-radius:2px; padding:.4rem .8rem;
     transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
   }
-  .filtres button:hover { color:var(--blanc); border-color:rgba(var(--blanc-rgb),.6); }
-  .filtres button[aria-pressed="true"] { background:var(--blanc); color:#0b0b0b; border-color:var(--blanc); }
+  .filtres button:hover { color:var(--blanc); border-color:var(--rouge); }
+  .filtres button[aria-pressed="true"] { background:var(--blanc); color:#0b0b0b; border-color:var(--blanc); font-weight:700; }
   .accroches { list-style:none; margin:4.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:3.575rem; }
   .accroches.sans-filtres { margin-top:5.5rem; }
   .accroches { overflow-anchor:none; }
@@ -320,7 +320,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   /* « Trouver une référence » : bouton dans la rangée de filtres + fenêtre de dialogue. */
   /* Bouton plein blanc, texte noir et gras, sur tous les écrans. */
   .filtres .filtre-recherche { font-weight:700; background:var(--blanc); border-color:var(--blanc); color:#0b0b0b; text-wrap:balance; line-height:1.4; }
-  .filtres .filtre-recherche:hover, .filtres .filtre-recherche:focus-visible { background:rgba(var(--blanc-rgb),.8); border-color:rgba(var(--blanc-rgb),.8); }
+  .filtres .filtre-recherche:hover, .filtres .filtre-recherche:focus-visible { background:var(--rouge); border-color:var(--rouge); color:var(--blanc); }
   /* Grand écran + souris : filtres calés à gauche (comme la liste), bouton de recherche
      à droite en blanc plein. */
   @media (min-width: 1100px) and (hover:hover) and (pointer:fine) {
