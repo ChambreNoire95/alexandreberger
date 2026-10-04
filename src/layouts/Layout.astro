@@ -2,7 +2,7 @@
 import { ClientRouter } from "astro:transitions";
 import { getCollection } from "astro:content";
 import LogoFormats from "../components/LogoFormats.astro";
-import { url, sansLangue, t, dateFormatee, type Lang } from "../i18n";
+import { url, sansLangue, autreLangue, t, dateFormatee, type Lang } from "../i18n";
 import { getCarnet } from "../lib/contenu";
 
 interface Props {
@@ -112,36 +112,35 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     <header class="topbar" transition:persist>
       <LogoFormats echelle={0.268125} intervalle={3420} href={url(lang, "/")} lang={lang} />
       <div class="menu-wrap">
-        <nav class="langues" aria-label={t(lang, "langue.libelle")}>
+        <div class="barre">
+          <nav class="onglets-header" aria-label={t(lang, "menu.sections")}>
+            <a href={url(lang, "/")} data-nav aria-current={currentPath === "/" ? "page" : undefined}>{t(lang, "nav.films")}</a>
+          </nav>
           {/* Changement de langue = rechargement complet (data-astro-reload) : l'en-tête est persistant
-              (transition:persist) et garderait sinon les textes de l'ancienne langue. */}
-          <a href={url("fr", cheminNormalise)} lang="fr" hreflang="fr" data-astro-reload data-langue="fr" aria-current={lang === "fr" ? "true" : undefined} aria-label={t(lang, "langue.fr")}>FR</a>
-          <span aria-hidden="true">/</span>
-          <a href={url("en", cheminNormalise)} lang="en" hreflang="en" data-astro-reload data-langue="en" aria-current={lang === "en" ? "true" : undefined} aria-label={t(lang, "langue.en")}>EN</a>
-        </nav>
-        <nav class="onglets-header" aria-label={t(lang, "menu.sections")}>
-          <a href={url(lang, "/")} data-nav aria-current={currentPath === "/" ? "page" : undefined}>{t(lang, "nav.films")}</a>
-        </nav>
+              (transition:persist) et garderait sinon les textes de l'ancienne langue. Le bouton affiche la langue
+              vers laquelle on bascule. */}
+          <a class="langue-btn" href={url(autreLangue(lang), cheminNormalise)} lang={autreLangue(lang)} hreflang={autreLangue(lang)} data-astro-reload data-langue={autreLangue(lang)} aria-label={t(lang, autreLangue(lang) === "en" ? "langue.en" : "langue.fr")}>{autreLangue(lang).toUpperCase()}</a>
+          <button
+            type="button"
+            class="menu-toggle"
+            id="menu-toggle"
+            aria-expanded="false"
+            aria-controls="menu-secondaire"
+            aria-label={t(lang, "menu.ouvrir")}
+          >
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </button>
+          <nav id="menu-secondaire" class="menu-secondaire" aria-label={t(lang, "menu.secondaire")} hidden>
+            <a class="onglet-mobile" href={url(lang, "/")} data-nav aria-current={currentPath === "/" ? "page" : undefined}>{t(lang, "menu.commandes")}</a>
+            <a class="onglet-mobile" href={url(lang, "/creations")} data-nav aria-current={currentPath === "/creations" ? "page" : undefined}>{t(lang, "menu.creations")}</a>
+            <a href={url(lang, "/carnet")} data-nav data-nav-prefix aria-current={currentPath.startsWith("/carnet") ? "page" : undefined}>{t(lang, "menu.carnet")}</a>
+            <a href={url(lang, "/autour-du-monde")} data-nav aria-current={currentPath === "/autour-du-monde" ? "page" : undefined}>{t(lang, "menu.autour")}</a>
+            <a href={url(lang, "/a-propos")} data-nav aria-current={currentPath === "/a-propos" ? "page" : undefined}>{t(lang, "menu.apropos")}</a>
+          </nav>
+        </div>
         <a class="booking-btn" href={url(lang, "/booking")} data-nav aria-current={currentPath === "/booking" ? "page" : undefined}>{t(lang, "nav.booking")}</a>
-        <button
-          type="button"
-          class="menu-toggle"
-          id="menu-toggle"
-          aria-expanded="false"
-          aria-controls="menu-secondaire"
-          aria-label={t(lang, "menu.ouvrir")}
-        >
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </button>
-        <nav id="menu-secondaire" class="menu-secondaire" aria-label={t(lang, "menu.secondaire")} hidden>
-          <a class="onglet-mobile" href={url(lang, "/")} data-nav aria-current={currentPath === "/" ? "page" : undefined}>{t(lang, "menu.commandes")}</a>
-          <a class="onglet-mobile" href={url(lang, "/creations")} data-nav aria-current={currentPath === "/creations" ? "page" : undefined}>{t(lang, "menu.creations")}</a>
-          <a href={url(lang, "/carnet")} data-nav data-nav-prefix aria-current={currentPath.startsWith("/carnet") ? "page" : undefined}>{t(lang, "menu.carnet")}</a>
-          <a href={url(lang, "/autour-du-monde")} data-nav aria-current={currentPath === "/autour-du-monde" ? "page" : undefined}>{t(lang, "menu.autour")}</a>
-          <a href={url(lang, "/a-propos")} data-nav aria-current={currentPath === "/a-propos" ? "page" : undefined}>{t(lang, "menu.apropos")}</a>
-        </nav>
       </div>
     </header>
     <script>
@@ -221,10 +220,9 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       // on recalcule ses liens à chaque navigation.
       function majLangues() {
         const sans = location.pathname.replace(/^\/en(\/|$)/, "/").replace(/\/$/, "") || "/";
-        const fr = document.querySelector<HTMLAnchorElement>('a[data-langue="fr"]');
-        const en = document.querySelector<HTMLAnchorElement>('a[data-langue="en"]');
-        if (fr) fr.href = sans;
-        if (en) en.href = sans === "/" ? "/en/" : `/en${sans}`;
+        const lien = document.querySelector<HTMLAnchorElement>("a.langue-btn");
+        if (!lien) return;
+        lien.href = lien.dataset.langue === "en" ? (sans === "/" ? "/en/" : `/en${sans}`) : sans;
       }
       document.addEventListener("astro:page-load", majLangues);
 
@@ -403,11 +401,18 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   .topbar .nom { font-size:1.0rem; font-weight:400; letter-spacing:.22em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.85); }
   .topbar .role { display:block; margin-top:.4rem; font-size:.65rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.5); }
   .menu-wrap { position:absolute; top:0; right:0; display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:1rem 1.5rem; text-align:left; }
-  /* Sélecteur de langue FR / EN (la langue courante en gras et en blanc). */
-  .langues { display:flex; align-items:center; gap:.45rem; font-family:'Archivo', 'Inter', sans-serif; font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.35); }
-  .langues a { color:rgba(var(--blanc-rgb),.6); text-decoration:none; font-weight:300; transition:color 140ms ease; }
-  .langues a:hover { color:var(--blanc); }
-  .langues a[aria-current="true"] { color:var(--blanc); font-weight:700; }
+  /* Barre segmentée : Films | langue | burger dans un seul cadre, Booking reste à part (bouton rouge). */
+  .barre { display:flex; align-items:stretch; height:2.25rem; border:1px solid rgba(var(--blanc-rgb),.5); border-radius:2px; position:relative; }
+  .langue-btn, .menu-toggle { border-left:1px solid rgba(var(--blanc-rgb),.3); }
+  /* Sélecteur de langue : affiche la langue vers laquelle on bascule. */
+  .langue-btn {
+    display:flex; align-items:center; justify-content:center;
+    width:2.25rem;
+    font-family:'Archivo', 'Inter', sans-serif; font-weight:700; font-size:.7rem; letter-spacing:.1em; text-indent:.1em;
+    color:var(--blanc); text-decoration:none;
+    transition: background 140ms ease, color 140ms ease;
+  }
+  .langue-btn:hover { background:var(--blanc); color:#0b0b0b; }
   .booking-btn {
     display:flex; align-items:center; justify-content:center;
     height:2.25rem; padding:0 .9rem;
@@ -420,12 +425,12 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   .booking-btn:hover { background:transparent; color:var(--rouge); border-color:var(--rouge); }
   .menu-toggle {
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
-    width:2.25rem; height:2.25rem; padding:0;
-    background:transparent; border:1px solid rgba(var(--blanc-rgb),.5); border-radius:2px;
-    cursor:pointer; transition: background 140ms ease, border-color 140ms ease;
+    width:2.25rem; padding:0;
+    background:transparent; border:0; border-left:1px solid rgba(var(--blanc-rgb),.3); border-radius:0;
+    cursor:pointer; transition: background 140ms ease;
   }
   .menu-toggle span { display:block; width:14px; height:1px; background:var(--blanc); transition: background 140ms ease; }
-  .menu-toggle:hover { background:var(--blanc); border-color:var(--blanc); }
+  .menu-toggle:hover { background:var(--blanc); }
   .menu-toggle:hover span { background:#0b0b0b; }
   .youtube-link {
     display:flex; align-items:center; justify-content:center;
@@ -437,7 +442,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   .menu-secondaire {
     position:absolute; top:calc(100% + .6rem); right:0; z-index:10;
     display:flex; flex-direction:column; align-items:flex-end; gap:.9rem;
-    min-width:160px; background:#0b0b0b; border:1px solid rgba(var(--blanc-rgb),.14); padding:1.25rem 1.5rem;
+    width:max-content; min-width:160px; background:#0b0b0b; border:1px solid rgba(var(--blanc-rgb),.14); padding:1.25rem 1.5rem;
   }
   .menu-secondaire[hidden] { display:none; }
   .menu-secondaire a {
@@ -447,15 +452,15 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   }
   .menu-secondaire a:hover { color:var(--blanc); }
   .menu-secondaire a[aria-current="page"] { color:var(--blanc); text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
-  .onglets-header { display:flex; flex-wrap:wrap; align-items:center; gap:1.25rem; }
+  .onglets-header { display:flex; align-items:stretch; }
   .onglets-header a {
-    font-family:'Archivo', 'Inter', sans-serif; font-weight:200;
-    font-size:.8rem; letter-spacing:.16em; text-transform:uppercase;
-    color:rgba(var(--blanc-rgb),.9); text-decoration:none; transition:color 140ms ease;
+    display:flex; align-items:center; padding:0 .95rem;
+    font-family:'Archivo', 'Inter', sans-serif; font-weight:500;
+    font-size:.7rem; letter-spacing:.15em; text-transform:uppercase;
+    color:var(--blanc); text-decoration:none; transition: background 140ms ease, color 140ms ease;
     white-space:nowrap;
   }
-  .onglets-header a:hover { color:var(--blanc); }
-  .onglets-header a[aria-current="page"] { color:var(--blanc); text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
+  .onglets-header a:hover { background:var(--blanc); color:#0b0b0b; }
   .onglet-mobile { display:none; }
   main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:7rem 0 2rem; }
   .titre-page {
@@ -502,6 +507,11 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   .carnet-titre { font-weight:300; font-size:clamp(1.3rem, 2.2vw, 1.7rem); color:var(--blanc); }
   .carnet-date { font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.45); }
   .carnet-extrait { font-family:var(--police-texte); font-weight:400; font-size:.95rem; color:rgba(var(--blanc-rgb),.65); }
+  /* Desktop : titre « Ils m'ont fait confiance… » (.7rem) et « Dernière entrée du carnet » (.65rem) agrandis de 15 %. */
+  @media (min-width: 801px) {
+    .refs-titre { font-size:.805rem; }
+    .carnet-label { font-size:.7475rem; }
+  }
   .carnet-vide { font-family:var(--police-texte); font-weight:400; font-size:.95rem; color:rgba(var(--blanc-rgb),.5); margin:0; max-width:30rem; }
 
   .cloture { border-top:1px solid rgba(var(--blanc-rgb),.14); padding-top:3rem; margin-top:0; }
@@ -564,6 +574,8 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     /* Films de commande / Créations rejoignent le menu déroulant : la barre
        du haut ne garde que Booking + le hamburger. */
     .onglets-header { display:none; }
+    /* Booking à gauche, barre (langue + burger) à droite : le menu déroulant reste dans l'écran. */
+    .booking-btn { order:-1; }
     .onglet-mobile { display:block; }
 
     /* Plus de découpage en lignes équilibrées : un seul bloc de texte qui
