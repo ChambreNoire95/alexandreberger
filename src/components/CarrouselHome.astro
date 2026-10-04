@@ -39,8 +39,8 @@ const { items, lang = "fr" } = Astro.props;
         </li>
       ))}
     </ul>
-    <button type="button" class="carrousel-fleche carrousel-prev" aria-label={t(lang, "carrousel.precedent")}>←</button>
-    <button type="button" class="carrousel-fleche carrousel-next" aria-label={t(lang, "carrousel.suivant")}>→</button>
+    <button type="button" class="carrousel-fleche carrousel-prev" aria-label={t(lang, "carrousel.precedent")}></button>
+    <button type="button" class="carrousel-fleche carrousel-next" aria-label={t(lang, "carrousel.suivant")}></button>
   </div>
 )}
 
@@ -93,6 +93,10 @@ const { items, lang = "fr" } = Astro.props;
     transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
   }
   .carrousel-fleche:hover { background:var(--blanc); color:#0b0b0b; border-color:var(--blanc); }
+  /* « + » dessiné en CSS (plus net et plus régulier qu'un glyphe), à la place des flèches ← →. */
+  .carrousel-fleche::before, .carrousel-fleche::after { content:""; position:absolute; left:50%; top:50%; background:currentColor; translate:-50% -50%; }
+  .carrousel-fleche::before { width:.8rem; height:1.5px; }
+  .carrousel-fleche::after { width:1.5px; height:.8rem; }
   .carrousel-prev { left:.75rem; }
   .carrousel-next { right:.75rem; }
 
