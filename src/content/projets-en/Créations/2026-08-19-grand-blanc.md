@@ -1,0 +1,4 @@
+---
+description: 'A longing for the mountains, a wish to shoot in my favourite ski resort: “Grand Blanc” (Great White) was born from that hunch, a self-produced short film written with Alexandre Ribeaud about three friends gathered in Tignes, one of whom has forgotten everything since an accident. The shoot felt like a holiday camp, right up to the last scene filmed at dawn, at the summit, above the clouds, one of the most striking memories of the adventure.'
+---
+A longing for the mountains, a wish to shoot in my favourite ski resort: “Grand Blanc” (Great White) was born from that hunch, a self-produced short film written with Alexandre Ribeaud about three friends gathered in Tignes, one of whom has forgotten everything since an accident. The shoot felt like a holiday camp, right up to the last scene filmed at dawn, at the summit, above the clouds, one of the most striking memories of the adventure.

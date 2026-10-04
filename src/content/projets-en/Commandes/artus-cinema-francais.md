@@ -1,0 +1,6 @@
+---
+titre: Artus left a lasting mark on French cinema
+accroche: Several weeks in the Vercors on the shoot of “Un p’tit truc en plus” (A Little Something Extra), up close with the “pensionnaires” (residents).
+carrouselTitre: ARTUS AND HIS LITTLE SOMETHING EXTRA
+---
+For several weeks, I followed the shoot of “Un p’tit truc en plus” in the Vercors, in particular the team of “pensionnaires” (residents), the actors with disabilities at the heart of the film, in a warm and singular on-set atmosphere. This making-of is available as a bonus on the DVD and Blu-ray, and a short version was shown in cinemas after the film; the excerpts and clips drawn from the shoot have totalled several tens of millions of views on social media. A large part of my footage also ended up in “Un p’tit truc en plus, bien plus qu’un film” (More Than a Film), Emmanuel Le Ber’s documentary broadcast on M6, which follows the actors’ paths after the film’s success (11 million admissions). Once the film was released, I kept following this team at several events, including a visit to the Élysée and the Garden Party held to celebrate this success, while my colleague Jacques Safarian followed them at the Cannes Film Festival and at the film’s premiere on the Champs-Élysées.

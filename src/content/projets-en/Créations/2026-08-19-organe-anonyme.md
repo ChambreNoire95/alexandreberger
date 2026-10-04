@@ -1,0 +1,4 @@
+---
+description: 'For this latest entry in the 48 Hour Film Project Paris, we wrote, shot and edited this comedy in 48 hours. Co-directed with Cécile Mille and Alexandre Ribeaud, the story is set in a group therapy session where the actors play organs of the human body, telling the slice of life of one of them, sometimes neglected: the clitoris. The film won the award for 2nd Best Film of the 2017 edition.'
+---
+For this latest entry in the 48 Hour Film Project Paris, we wrote, shot and edited this comedy in 48 hours. Co-directed with Cécile Mille and Alexandre Ribeaud, the story is set in a group therapy session where the actors play organs of the human body, telling the slice of life of one of them, sometimes neglected: the clitoris. The film won the award for 2nd Best Film of the 2017 edition.

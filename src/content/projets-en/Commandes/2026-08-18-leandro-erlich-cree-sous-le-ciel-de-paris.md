@@ -1,0 +1,7 @@
+---
+titre: Leandro Erlich creates Under the Paris Sky
+accroche: 'Clouds float in the windows and beneath the Bon Marché glass roof: Leandro Erlich turns the Paris sky into an installation.'
+carrouselTitre: LEANDRO ERLICH’S UNDER THE SKY
+couvertureAlt: Leandro Erlich looks up at a cloud from his installation “Under the Sky” at Le Bon Marché Rive Gauche
+---
+From 12 January to 18 February 2018, Le Bon Marché Rive Gauche, the famous Parisian department store, gives carte blanche to Argentine artist Leandro Erlich. “Sous le ciel” (Under the Sky), his exhibition, pays tribute to the famous Paris sky and invites visitors to look at their surroundings differently. With his extraordinary installations, created exclusively for Le Bon Marché Rive Gauche, he succeeds in changing the perception of the spaces of Paris’s most legendary store. A romance he writes in his own way, in several chapters: first in the store’s windows, where light, cottony shapes float in suspension like real clouds. Then inside the store, where the course of nimbus and cumulus clouds continues across the top of the central glass roof. And, as if out of a fantasy tale, the emblematic escalator of Le Bon Marché Rive Gauche leads the customers who ride it to an area where reality and dream blur. Finally, if visitors prefer to take the lifts, Leandro Erlich sows confusion there too, playing on appearances that are sometimes deceptive.

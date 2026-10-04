@@ -1,0 +1,7 @@
+---
+description: In Lesotho, with the support of The Ivory Foundation, this documentary follows the journey of young deaf and hard-of-hearing people trained at the Saint Paul school in Hlotse. Since 2015, the Farming Our Future programme has taught them market gardening, livestock farming, permaculture and agroforestry, alongside craft skills such as carpentry and metalwork. Now independent, former students have founded their own association, entirely run by deaf and hard-of-hearing people, and today farm several hectares at Levi’s Nek, where they live and work in full autonomy.
+image1Alt: Entrance sign of the Saint Paul School for the Deaf in Hlotse, Lesotho, documentary Farming Our Future
+image2Alt: Deaf and hard-of-hearing pupils of the Saint Paul school in Hlotse walking through the Lesotho countryside, documentary Farming Our Future
+image3Alt: Former pupils working in the vegetable garden of the Levi’s Nek farm, documentary Farming Our Future
+---
+In Lesotho, with the support of The Ivory Foundation, this documentary follows the journey of young deaf and hard-of-hearing people trained at the Saint Paul school in Hlotse. Since 2015, the Farming Our Future programme has taught them market gardening, livestock farming, permaculture and agroforestry, alongside craft skills such as carpentry and metalwork. Now independent, former students have founded their own association, entirely run by deaf and hard-of-hearing people, and today farm several hectares at Levi’s Nek, where they live and work in full autonomy.

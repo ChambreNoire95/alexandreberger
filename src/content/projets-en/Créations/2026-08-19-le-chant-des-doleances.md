@@ -1,0 +1,4 @@
+---
+description: Inspired by citizens’ grievance books (the “cahiers de doléances”), with their anger, hopes and aspirations, this song sets to music the words gathered in the field in Seine-Saint-Denis. Composed by Hadrien de Blignières with the participation of Fiona Lévy, it was recorded during a seminar at Villarceaux, with the support of the association Les Cahiers pour Décider et Agir and the Fondation Charles Léopold Mayer pour le progrès de l’Homme.
+---
+Inspired by citizens’ grievance books (the “cahiers de doléances”), with their anger, hopes and aspirations, this song sets to music the words gathered in the field in Seine-Saint-Denis. Composed by Hadrien de Blignières with the participation of Fiona Lévy, it was recorded during a seminar at Villarceaux, with the support of the association Les Cahiers pour Décider et Agir and the Fondation Charles Léopold Mayer pour le progrès de l’Homme.

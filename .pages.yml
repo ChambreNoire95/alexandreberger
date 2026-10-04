@@ -64,6 +64,24 @@ content:
       - { name: longitude, label: Longitude, type: number, options: { min: -180, max: 180 }, description: "Optionnel : idem, à remplir avec Latitude." }
       - { name: body, label: Contenu, type: rich-text }
 
+  - name: projets-commandes-en
+    label: "Projets — Commandes (EN)"
+    type: collection
+    path: src/content/projets-en/Commandes
+    view:
+      fields: [titre]
+    fields:
+      - { name: titre, label: "Titre (EN)", type: string, description: "Titre de la fiche en anglais. Si vide, le titre français est utilisé." }
+      - { name: titreFilm, label: "Titre du film (EN)", type: string, description: "À remplir seulement si le film porte un titre différent en anglais. Si vide, le titre d'origine est conservé." }
+      - { name: accroche, label: "Phrase d'accroche (EN)", type: text, description: "Aperçu au survol d'un titre sur la page d'accueil (idéalement 100 à 140 caractères)." }
+      - { name: carrouselTitre, label: "Titre pour le carrousel (EN)", type: string }
+      - { name: couvertureAlt, label: "Texte alternatif (couverture, EN)", type: string }
+      - { name: carrouselImageAlt, label: "Texte alternatif (visuel carrousel, EN)", type: string }
+      - { name: image1Alt, label: "Texte alternatif (photo 1, EN)", type: string }
+      - { name: image2Alt, label: "Texte alternatif (photo 2, EN)", type: string }
+      - { name: image3Alt, label: "Texte alternatif (photo 3, EN)", type: string }
+      - { name: body, label: "Contenu (EN)", type: rich-text }
+
   - name: projets-creations
     label: "Projets — Créations"
     type: collection
@@ -101,6 +119,23 @@ content:
       - { name: image3, label: "Image 3", type: image }
       - { name: image3Alt, label: "Texte alternatif (image 3)", type: string }
 
+  - name: projets-creations-en
+    label: "Projets — Créations (EN)"
+    type: collection
+    path: "src/content/projets-en/Créations"
+    view:
+      fields: [titre]
+    fields:
+      - { name: titre, label: "Titre (EN)", type: string, description: "Titre de la fiche en anglais. Si vide, le titre français est utilisé." }
+      - { name: description, label: "Description (EN)", type: text, description: "Affichée sur la page Créations, sous les images." }
+      - { name: carrouselTitre, label: "Titre pour le carrousel (EN)", type: string }
+      - { name: couvertureAlt, label: "Texte alternatif (couverture, EN)", type: string }
+      - { name: carrouselImageAlt, label: "Texte alternatif (visuel carrousel, EN)", type: string }
+      - { name: image1Alt, label: "Texte alternatif (photo 1, EN)", type: string }
+      - { name: image2Alt, label: "Texte alternatif (photo 2, EN)", type: string }
+      - { name: image3Alt, label: "Texte alternatif (photo 3, EN)", type: string }
+      - { name: body, label: "Contenu (EN)", type: rich-text }
+
   - name: carnet
     label: Carnet
     type: collection
@@ -115,6 +150,18 @@ content:
       - { name: couvertureAlt, label: "Texte alternatif (couverture)", type: string, description: "Décrit l'image pour le SEO et l'accessibilité. Si vide, le titre de l'entrée est utilisé à la place." }
       - { name: brouillon, label: Brouillon, type: boolean, default: false }
       - { name: body, label: Article, type: rich-text }
+
+  - name: carnet-en
+    label: "Carnet (EN)"
+    type: collection
+    path: src/content/carnet-en
+    view:
+      fields: [titre]
+    fields:
+      - { name: titre, label: "Titre (EN)", type: string }
+      - { name: extrait, label: "Extrait (EN)", type: text }
+      - { name: couvertureAlt, label: "Texte alternatif (couverture, EN)", type: string }
+      - { name: body, label: "Article (EN)", type: rich-text }
 
   - name: projets-satellites
     label: "Projets Satellites"
