@@ -1,10 +1,11 @@
 ---
-const signatures = [
-  "Raconter des histoires",
-  "Fabriquer des images",
-  "Réaliser des films",
-  "Gérer des productions",
-];
+import { t, type Lang } from "../i18n";
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = "fr" } = Astro.props;
+const signatures = [1, 2, 3, 4].map((n) => t(lang, `signature.${n}`));
 ---
 
 <div class="signature" id="sig" aria-label={signatures[0]}>

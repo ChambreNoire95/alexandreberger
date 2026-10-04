@@ -2,17 +2,22 @@
 import { ClientRouter } from "astro:transitions";
 import { getCollection } from "astro:content";
 import LogoFormats from "../components/LogoFormats.astro";
+import { url, sansLangue, t, dateFormatee, type Lang } from "../i18n";
+import { getCarnet } from "../lib/contenu";
 
 interface Props {
   title: string;
   description: string;
+  /** Chemin de la page SANS préfixe de langue (ex. "/creations") : sert à la navigation active. */
   currentPath: string;
+  /** Langue de la page (français par défaut). */
+  lang?: Lang;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   /** Chemin public de l'image de partage (og:image). Défaut : /og-default.jpg */
   image?: string;
 }
 
-const { title, description, currentPath, jsonLd, image } = Astro.props;
+const { title, description, currentPath, jsonLd, image, lang = "fr" } = Astro.props;
 const imagePartage = new URL(image || "/og-default.jpg", Astro.site).toString();
 
 // Fiche d'identité affichée sur toutes les pages (données structurées
@@ -22,8 +27,8 @@ const personneJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: "Alexandre Berger",
-  jobTitle: "Réalisateur",
-  description: "Réalisateur freelance basé en Île-de-France : documentaire, fiction et film de marque.",
+  jobTitle: t(lang, "json.metier"),
+  description: t(lang, "json.description"),
   url: Astro.site?.toString(),
 };
 const blocsJsonLd = [personneJsonLd, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [])];
@@ -41,25 +46,37 @@ const clients = [
   "Le Syndicat du Cru Minervois", "TUI", "Mediaposte",
 ].sort((a, b) => a.localeCompare(b, "fr"));
 
-const presentation = "Réalisateur freelance basé en Île-de-France, je fabrique principalement des films basés sur le réel. Seul, caméra à la main, ou avec une équipe de professionnels à mes côtés, je m'adapte à vos besoins pour mener à bien l'ensemble de vos projets de communication audiovisuelle et servir votre stratégie globale.";
+const presentation = t(lang, "bandeau.presentation");
 
-const entreesCarnet = await getCollection("carnet", ({ data }) => !data.brouillon);
+// Même page dans l'autre langue (pour <link rel="alternate" hreflang> et le sélecteur FR | EN).
+const cheminNormalise = sansLangue(Astro.url.pathname).replace(/\/$/, "") || "/";
+const alternates = {
+  fr: new URL(url("fr", cheminNormalise), Astro.site).toString(),
+  en: new URL(url("en", cheminNormalise), Astro.site).toString(),
+};
+const urlCanonique = alternates[lang];
+
+const entreesCarnet = await getCarnet(lang, ({ data }) => !data.brouillon);
 const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())[0];
 ---
 
 <!doctype html>
-<html lang="fr">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="canonical" href={urlCanonique} />
+    <link rel="alternate" hreflang="fr" href={alternates.fr} />
+    <link rel="alternate" hreflang="en" href={alternates.en} />
+    <link rel="alternate" hreflang="x-default" href={alternates.fr} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content="fr_FR" />
-    <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:locale" content={lang === "en" ? "en_GB" : "fr_FR"} />
+    <meta property="og:locale:alternate" content={lang === "en" ? "fr_FR" : "en_GB"} />
+    <meta property="og:url" content={urlCanonique} />
     <meta property="og:image" content={imagePartage} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
@@ -85,7 +102,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
           if (!matchMedia("(max-width: 800px)").matches) return;
           var h = document.documentElement;
           if (sessionStorage.getItem("logo-fige-index") !== null) h.classList.add("logo-fige");
-          else if (location.pathname === "/") h.classList.add("splash");
+          else if (location.pathname === "/" || location.pathname === "/en" || location.pathname === "/en/") h.classList.add("splash");
         } catch (e) {}
       })();
     </script>
@@ -93,30 +110,37 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   </head>
   <body>
     <header class="topbar" transition:persist>
-      <LogoFormats echelle={0.268125} intervalle={3420} />
+      <LogoFormats echelle={0.268125} intervalle={3420} href={url(lang, "/")} lang={lang} />
       <div class="menu-wrap">
-        <nav class="onglets-header" aria-label="Sections">
-          <a href="/" data-nav aria-current={currentPath === "/" ? "page" : undefined}>Films</a>
+        <nav class="langues" aria-label={t(lang, "langue.libelle")}>
+          {/* Changement de langue = rechargement complet (data-astro-reload) : l'en-tête est persistant
+              (transition:persist) et garderait sinon les textes de l'ancienne langue. */}
+          <a href={url("fr", cheminNormalise)} lang="fr" hreflang="fr" data-astro-reload data-langue="fr" aria-current={lang === "fr" ? "true" : undefined} aria-label={t(lang, "langue.fr")}>FR</a>
+          <span aria-hidden="true">/</span>
+          <a href={url("en", cheminNormalise)} lang="en" hreflang="en" data-astro-reload data-langue="en" aria-current={lang === "en" ? "true" : undefined} aria-label={t(lang, "langue.en")}>EN</a>
         </nav>
-        <a class="booking-btn" href="/booking" data-nav aria-current={currentPath === "/booking" ? "page" : undefined}>Booking</a>
+        <nav class="onglets-header" aria-label={t(lang, "menu.sections")}>
+          <a href={url(lang, "/")} data-nav aria-current={currentPath === "/" ? "page" : undefined}>{t(lang, "nav.films")}</a>
+        </nav>
+        <a class="booking-btn" href={url(lang, "/booking")} data-nav aria-current={currentPath === "/booking" ? "page" : undefined}>{t(lang, "nav.booking")}</a>
         <button
           type="button"
           class="menu-toggle"
           id="menu-toggle"
           aria-expanded="false"
           aria-controls="menu-secondaire"
-          aria-label="Ouvrir le menu"
+          aria-label={t(lang, "menu.ouvrir")}
         >
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
         </button>
-        <nav id="menu-secondaire" class="menu-secondaire" aria-label="Menu secondaire" hidden>
-          <a class="onglet-mobile" href="/" data-nav aria-current={currentPath === "/" ? "page" : undefined}>Films de commande</a>
-          <a class="onglet-mobile" href="/creations" data-nav aria-current={currentPath === "/creations" ? "page" : undefined}>Créations</a>
-          <a href="/carnet" data-nav data-nav-prefix aria-current={currentPath.startsWith("/carnet") ? "page" : undefined}>Carnet</a>
-          <a href="/autour-du-monde" data-nav aria-current={currentPath === "/autour-du-monde" ? "page" : undefined}>Autour du monde</a>
-          <a href="/a-propos" data-nav aria-current={currentPath === "/a-propos" ? "page" : undefined}>À propos</a>
+        <nav id="menu-secondaire" class="menu-secondaire" aria-label={t(lang, "menu.secondaire")} hidden>
+          <a class="onglet-mobile" href={url(lang, "/")} data-nav aria-current={currentPath === "/" ? "page" : undefined}>{t(lang, "menu.commandes")}</a>
+          <a class="onglet-mobile" href={url(lang, "/creations")} data-nav aria-current={currentPath === "/creations" ? "page" : undefined}>{t(lang, "menu.creations")}</a>
+          <a href={url(lang, "/carnet")} data-nav data-nav-prefix aria-current={currentPath.startsWith("/carnet") ? "page" : undefined}>{t(lang, "menu.carnet")}</a>
+          <a href={url(lang, "/autour-du-monde")} data-nav aria-current={currentPath === "/autour-du-monde" ? "page" : undefined}>{t(lang, "menu.autour")}</a>
+          <a href={url(lang, "/a-propos")} data-nav aria-current={currentPath === "/a-propos" ? "page" : undefined}>{t(lang, "menu.apropos")}</a>
         </nav>
       </div>
     </header>
@@ -193,6 +217,17 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       }
       document.addEventListener("astro:page-load", majNavActive);
 
+      // Le sélecteur FR | EN pointe vers la MÊME page dans l'autre langue : l'en-tête étant persistant,
+      // on recalcule ses liens à chaque navigation.
+      function majLangues() {
+        const sans = location.pathname.replace(/^\/en(\/|$)/, "/").replace(/\/$/, "") || "/";
+        const fr = document.querySelector<HTMLAnchorElement>('a[data-langue="fr"]');
+        const en = document.querySelector<HTMLAnchorElement>('a[data-langue="en"]');
+        if (fr) fr.href = sans;
+        if (en) en.href = sans === "/" ? "/en/" : `/en${sans}`;
+      }
+      document.addEventListener("astro:page-load", majLangues);
+
       // Le bouton n'est pas transition:persist (il n'existe que sur "/" et
       // "/creations") : on le recherche à chaque page-load plutôt que de
       // garder une référence, pour survivre à son absence/réapparition au
@@ -250,10 +285,10 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       // les pages en mode "directory" (ex. "/creations/"), contrairement au
       // serveur de dev qui sert "/creations" sans slash — on normalise avant
       // de comparer pour que le bouton s'affiche dans les deux cas.
-      const chemin = Astro.url.pathname.replace(/\/$/, "") || "/";
+      const chemin = sansLangue(Astro.url.pathname).replace(/\/$/, "") || "/";
       return chemin === "/" || chemin === "/creations";
     })() && (
-      <button type="button" id="retour-haut" class="retour-haut" aria-label="Remonter en haut de page">
+      <button type="button" id="retour-haut" class="retour-haut" aria-label={t(lang, "retour.haut")}>
         <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
           <path fill="currentColor" d="M12 5l-7 7h4v7h6v-7h4z" />
         </svg>
@@ -262,7 +297,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
 
     {currentPath !== "/creations" && (
       <footer transition:persist>
-        <p class="refs-titre">Ils m'ont fait confiance pour fabriquer leurs films</p>
+        <p class="refs-titre">{t(lang, "footer.titre")}</p>
         <ul class="refs refs-desktop">
           {clients.map((client) => (
             <li class="refs-item">{client}</li>
@@ -278,21 +313,21 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       </div>
       <div class="bandeau-carnet">
         {derniereEntree ? (
-          <a class="carnet-apercu" href="/carnet">
-            <span class="carnet-label">Dernière entrée du carnet</span>
+          <a class="carnet-apercu" href={url(lang, "/carnet")}>
+            <span class="carnet-label">{t(lang, "carnet.derniere")}</span>
             <span class="carnet-titre">{derniereEntree.data.titre}</span>
-            <span class="carnet-date">{derniereEntree.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}</span>
+            <span class="carnet-date">{dateFormatee(lang, derniereEntree.data.date, { year: "numeric", month: "long", day: "numeric" })}</span>
             {derniereEntree.data.extrait && <span class="carnet-extrait">{derniereEntree.data.extrait}</span>}
           </a>
         ) : (
-          <p class="carnet-vide">De nouvelles entrées du carnet arrivent bientôt.</p>
+          <p class="carnet-vide">{t(lang, "carnet.vide")}</p>
         )}
       </div>
     </section>
 
     <div class="cloture" transition:persist>
       <p class="copyright">
-        © Alexandre Berger, Réalisateur Freelance / {new Date().getFullYear()} - <a href="/mentions-legales">Mentions Légales</a>
+        {t(lang, "copyright")} / {new Date().getFullYear()} - <a href={url(lang, "/mentions-legales")}>{t(lang, "mentions")}</a>
       </p>
     </div>
   </body>
@@ -368,6 +403,11 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   .topbar .nom { font-size:1.0rem; font-weight:400; letter-spacing:.22em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.85); }
   .topbar .role { display:block; margin-top:.4rem; font-size:.65rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.5); }
   .menu-wrap { position:absolute; top:0; right:0; display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:1rem 1.5rem; text-align:left; }
+  /* Sélecteur de langue FR / EN (la langue courante en gras et en blanc). */
+  .langues { display:flex; align-items:center; gap:.45rem; font-family:'Archivo', 'Inter', sans-serif; font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.35); }
+  .langues a { color:rgba(var(--blanc-rgb),.6); text-decoration:none; font-weight:300; transition:color 140ms ease; }
+  .langues a:hover { color:var(--blanc); }
+  .langues a[aria-current="true"] { color:var(--blanc); font-weight:700; }
   .booking-btn {
     display:flex; align-items:center; justify-content:center;
     height:2.25rem; padding:0 .9rem;

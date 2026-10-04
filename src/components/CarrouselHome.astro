@@ -8,11 +8,14 @@ interface Item {
   titre: string;
 }
 
+import { t, type Lang } from "../i18n";
+
 interface Props {
   items: Item[];
+  lang?: Lang;
 }
 
-const { items } = Astro.props;
+const { items, lang = "fr" } = Astro.props;
 ---
 
 {items.length > 0 && (
@@ -36,8 +39,8 @@ const { items } = Astro.props;
         </li>
       ))}
     </ul>
-    <button type="button" class="carrousel-fleche carrousel-prev" aria-label="Précédent">←</button>
-    <button type="button" class="carrousel-fleche carrousel-next" aria-label="Suivant">→</button>
+    <button type="button" class="carrousel-fleche carrousel-prev" aria-label={t(lang, "carrousel.precedent")}>←</button>
+    <button type="button" class="carrousel-fleche carrousel-next" aria-label={t(lang, "carrousel.suivant")}>→</button>
   </div>
 )}
 

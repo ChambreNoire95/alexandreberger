@@ -1,21 +1,24 @@
 ---
+import { t, url, type Lang } from "../i18n";
+
 interface Props {
   actif: "commandes" | "creations";
+  lang?: Lang;
 }
-const { actif } = Astro.props;
+const { actif, lang = "fr" } = Astro.props;
 ---
 
 <div class="titre-switch">
   {actif === "commandes" ? (
-    <h1 class="titre-page">Films de commande</h1>
+    <h1 class="titre-page">{t(lang, "commandes")}</h1>
   ) : (
-    <a href="/" class="titre-inactif">Films de commande</a>
+    <a href={url(lang, "/")} class="titre-inactif">{t(lang, "commandes")}</a>
   )}
   <span class="separateur" aria-hidden="true"></span>
   {actif === "creations" ? (
-    <h1 class="titre-page">Créations</h1>
+    <h1 class="titre-page">{t(lang, "creations")}</h1>
   ) : (
-    <a href="/creations" class="titre-inactif">Créations</a>
+    <a href={url(lang, "/creations")} class="titre-inactif">{t(lang, "creations")}</a>
   )}
 </div>
 

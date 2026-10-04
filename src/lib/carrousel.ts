@@ -1,4 +1,5 @@
-import { getCollection } from "astro:content";
+import { getProjets } from "./contenu";
+import { url, type Lang } from "../i18n";
 import { basename, extname } from "node:path";
 import carrouselOrdre from "../content/settings/carrousel.json";
 
@@ -19,16 +20,16 @@ function position(p: { id: string; filePath?: string; data: { ordreCarrousel?: n
   return parFichier ?? parSlug ?? 10000 + (p.data.ordreCarrousel ?? Infinity);
 }
 
-export async function getItemsCarrousel() {
-  const projets = await getCollection(
-    "projets",
+export async function getItemsCarrousel(lang: Lang = "fr") {
+  const projets = await getProjets(
+    lang,
     ({ data }) => !!data.carrousel && !data.brouillon && !!(data.carrouselImage || data.couverture)
   );
 
   projets.sort((a, b) => position(a) - position(b));
 
   return projets.map((p) => ({
-    href: `/projets/${p.id}`,
+    href: url(lang, `/projets/${p.id}`),
     src: (p.data.carrouselImage || p.data.couverture) as string,
     alt: p.data.carrouselImageAlt || p.data.couvertureAlt || p.data.titre,
     titre: p.data.carrouselTitre || p.data.titre,
