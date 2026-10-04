@@ -1,18 +1,36 @@
 ---
 export const prerender = true;
-import Layout from "../layouts/Layout.astro";
+import Layout from "../../layouts/Layout.astro";
+import { cheminsLangues, langDe, t } from "../../i18n";
 
-const titre = "Booking — Alexandre Berger, réalisateur freelance";
-const description = "Demande de tournage auprès d'Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.";
+export function getStaticPaths() {
+  return cheminsLangues();
+}
+const lang = langDe(Astro.params);
+
+const titre = t(lang, "booking.titre.page");
+const description = t(lang, "booking.description");
+
+// Textes nécessaires au script (messages d'envoi, étiquettes de références) : passés en JSON au formulaire.
+const textesScript = {
+  lang,
+  creation: t(lang, "booking.creation"),
+  retirer: t(lang, "booking.references.retirer"),
+  envoyer: t(lang, "booking.envoyer"),
+  envoi: t(lang, "booking.envoi"),
+  ok: t(lang, "booking.ok"),
+  erreur: t(lang, "booking.erreur"),
+  erreurReseau: t(lang, "booking.erreur.reseau"),
+};
 ---
 
-<Layout title={titre} description={description} currentPath="/booking">
-  <h1 class="titre-page">Booking</h1>
+<Layout title={titre} description={description} currentPath="/booking" lang={lang}>
+  <h1 class="titre-page">{t(lang, "booking.titre")}</h1>
 
   <div class="booking">
-    <p class="intro">Décrivez votre projet dans le formulaire ci-dessous. Je reviendrai vers vous dans les plus brefs délais.</p>
+    <p class="intro">{t(lang, "booking.intro")}</p>
 
-    <form id="form-booking">
+    <form id="form-booking" data-textes={JSON.stringify(textesScript)}>
       <input
         type="text"
         name="site"
@@ -23,82 +41,82 @@ const description = "Demande de tournage auprès d'Alexandre Berger, réalisateu
       />
 
       <label class="champ">
-        <span>Entreprise / Institution / Structure *</span>
+        <span>{t(lang, "booking.entreprise")}</span>
         <input type="text" name="entreprise" required />
       </label>
 
       <div class="ligne">
         <label class="champ">
-          <span>Nom *</span>
+          <span>{t(lang, "booking.nom")}</span>
           <input type="text" name="nom" required />
         </label>
         <label class="champ">
-          <span>Prénom *</span>
+          <span>{t(lang, "booking.prenom")}</span>
           <input type="text" name="prenom" required />
         </label>
       </div>
 
       <label class="champ">
-        <span>Fonction / Service</span>
+        <span>{t(lang, "booking.fonction")}</span>
         <input type="text" name="fonction" />
       </label>
 
       <div class="ligne">
         <label class="champ">
-          <span>Email *</span>
+          <span>{t(lang, "booking.email")}</span>
           <input type="email" name="email" required />
         </label>
         <label class="champ">
-          <span>Téléphone *</span>
+          <span>{t(lang, "booking.telephone")}</span>
           <input type="tel" name="telephone" required />
         </label>
       </div>
 
       <div class="ligne">
         <label class="champ">
-          <span>Type de projet</span>
+          <span>{t(lang, "booking.type")}</span>
           <select name="type">
-            <option value="Documentaire">Documentaire</option>
-            <option value="Fiction">Fiction</option>
-            <option value="Film de marque">Film de marque</option>
-            <option value="Autre">Autre</option>
+            <option value="Documentaire">{t(lang, "booking.type.documentaire")}</option>
+            <option value="Fiction">{t(lang, "booking.type.fiction")}</option>
+            <option value="Film de marque">{t(lang, "booking.type.marque")}</option>
+            <option value="Autre">{t(lang, "booking.type.autre")}</option>
           </select>
         </label>
         <label class="champ">
-          <span>Durée du tournage</span>
+          <span>{t(lang, "booking.duree")}</span>
           <input type="text" name="duree" />
         </label>
       </div>
 
       <div class="ligne">
         <label class="champ">
-          <span>Date de début souhaitée</span>
+          <span>{t(lang, "booking.date")}</span>
           <input type="date" name="date" />
         </label>
         <label class="champ">
-          <span>Lieu</span>
+          <span>{t(lang, "booking.lieu")}</span>
           <input type="text" name="lieu" />
         </label>
       </div>
 
       <label class="champ">
-        <span>Budget estimé</span>
+        <span>{t(lang, "booking.budget")}</span>
         <input type="text" name="budget" />
       </label>
 
       <section class="champ references" id="references-booking" hidden>
-        <span>Références</span>
-        <p class="references-intro">Les références que vous avez sélectionnées sur la page d'accueil. Retirez celles qui ne vous intéressent pas.</p>
+        <span>{t(lang, "booking.references")}</span>
+        <p class="references-intro">{t(lang, "booking.references.intro")}</p>
         <p class="references-criteres"></p>
         <ul class="references-liste"></ul>
       </section>
 
       <label class="champ">
-        <span>Description du projet *</span>
-        <textarea name="description" rows="6" placeholder="Sujet, intention, contraintes, références…" required></textarea>
+        <span>{t(lang, "booking.description")}</span>
+        <textarea name="description" rows="6" placeholder={t(lang, "booking.description.placeholder")} required></textarea>
       </label>
 
-      <button type="submit">Envoyer la demande</button>
+      <button type="submit">{t(lang, "booking.envoyer")}</button>
       <p class="statut" role="status" hidden></p>
     </form>
   </div>
@@ -109,6 +127,8 @@ const description = "Demande de tournage auprès d'Alexandre Berger, réalisateu
     const form = document.getElementById("form-booking") as HTMLFormElement | null;
     if (!form) return;
 
+    // Textes de la langue de la page (messages, étiquettes), posés par le serveur sur le formulaire.
+    const T = JSON.parse(form.dataset.textes ?? "{}") as Record<string, string>;
     const bloc = document.getElementById("references-booking");
     const liste = bloc?.querySelector<HTMLUListElement>(".references-liste");
     const criteresEl = bloc?.querySelector<HTMLElement>(".references-criteres");
@@ -128,13 +148,13 @@ const description = "Demande de tournage auprès d'Alexandre Berger, réalisateu
         li.append(lien);
         if (ref.creation) {
           const etiquette = document.createElement("em");
-          etiquette.textContent = "Création";
+          etiquette.textContent = T.creation ?? "Création";
           li.append(etiquette);
         }
         const retirer = document.createElement("button");
         retirer.type = "button";
         retirer.className = "retirer";
-        retirer.setAttribute("aria-label", `Retirer ${ref.titre}`);
+        retirer.setAttribute("aria-label", `${T.retirer ?? "Retirer"} ${ref.titre}`);
         retirer.textContent = "×";
         retirer.addEventListener("click", () => {
           references.splice(index, 1);
@@ -177,13 +197,14 @@ const description = "Demande de tournage auprès d'Alexandre Berger, réalisateu
       event.preventDefault();
       if (bouton) {
         bouton.disabled = true;
-        bouton.textContent = "Envoi en cours…";
+        bouton.textContent = T.envoi ?? "Envoi en cours…";
       }
 
       const donnees: Record<string, FormDataEntryValue> = Object.fromEntries(new FormData(form).entries());
+      donnees.lang = T.lang ?? "fr"; // langue des e-mails envoyés (voir src/pages/api/booking.ts)
       if (references.length) {
         donnees.references = references
-          .map((r) => `- ${r.titre}${r.creation ? " (création)" : ""} : ${location.origin}${r.chemin}`)
+          .map((r) => `- ${r.titre}${r.creation ? ` (${(T.creation ?? "création").toLowerCase()})` : ""} : ${location.origin}${r.chemin}`)
           .join("\n");
         if (criteres) donnees.criteres = criteres;
       }
@@ -197,21 +218,21 @@ const description = "Demande de tournage auprès d'Alexandre Berger, réalisateu
         const resultat = await reponse.json();
 
         if (reponse.ok && resultat.ok) {
-          afficherStatut("Votre demande a bien été envoyée. Vous allez recevoir un email de confirmation, je reviens vers vous rapidement.", true);
+          afficherStatut(T.ok ?? "Votre demande a bien été envoyée.", true);
           form.reset();
           references = [];
           criteres = "";
           afficherReferences();
           try { sessionStorage.removeItem("references-booking"); } catch { /* sans effet */ }
         } else {
-          afficherStatut(resultat.erreur || "Une erreur est survenue. Merci de réessayer.", false);
+          afficherStatut(resultat.erreur || T.erreur || "Une erreur est survenue. Merci de réessayer.", false);
         }
       } catch {
-        afficherStatut("Une erreur est survenue. Vérifiez votre connexion et réessayez.", false);
+        afficherStatut(T.erreurReseau ?? "Une erreur est survenue. Vérifiez votre connexion et réessayez.", false);
       } finally {
         if (bouton) {
           bouton.disabled = false;
-          bouton.textContent = "Envoyer la demande";
+          bouton.textContent = T.envoyer ?? "Envoyer la demande";
         }
       }
     });

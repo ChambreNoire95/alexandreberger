@@ -1,11 +1,17 @@
 ---
 export const prerender = true;
-import Layout from "../layouts/Layout.astro";
-import { getCollection } from "astro:content";
-import { geocoder } from "../lib/geocode";
+import Layout from "../../layouts/Layout.astro";
+import { getProjets } from "../../lib/contenu";
+import { geocoder } from "../../lib/geocode";
+import { cheminsLangues, langDe, t, url } from "../../i18n";
 
-const candidats = await getCollection(
-  "projets",
+export function getStaticPaths() {
+  return cheminsLangues();
+}
+const lang = langDe(Astro.params);
+
+const candidats = await getProjets(
+  lang,
   ({ data }) => !!data.lieu || (data.latitude != null && data.longitude != null)
 );
 
@@ -24,21 +30,21 @@ for (const p of candidats) {
   if (!lieux.has(cle)) {
     lieux.set(cle, { lat: coords.lat, lng: coords.lng, nom: p.data.lieu, projets: [] });
   }
-  lieux.get(cle).projets.push({ id: p.id, titre: p.data.titre });
+  lieux.get(cle).projets.push({ href: url(lang, `/projets/${p.id}`), titre: p.data.titre });
 }
 const points = Array.from(lieux.values());
 
-const titre = "Autour du monde — Alexandre Berger, réalisateur";
-const description = "La carte des tournages d'Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque, en France et à l'étranger.";
+const titre = t(lang, "autour.titre.page");
+const description = t(lang, "autour.description");
 ---
 
-<Layout title={titre} description={description} currentPath="/autour-du-monde">
-  <h1 class="titre-page">Autour du monde</h1>
-  <p class="carte-intro">Les points rouges marquent les lieux de tournage. Cliquez dessus pour découvrir le(s) projet(s).</p>
+<Layout title={titre} description={description} currentPath="/autour-du-monde" lang={lang}>
+  <h1 class="titre-page">{t(lang, "autour.titre")}</h1>
+  <p class="carte-intro">{t(lang, "autour.intro")}</p>
   {points.length > 0 ? (
-    <div id="carte-monde" class="carte" data-points={JSON.stringify(points)}></div>
+    <div id="carte-monde" class="carte" data-points={JSON.stringify(points)} data-geocodage={t(lang, "autour.geocodage")}></div>
   ) : (
-    <p class="carte-vide">Aucun lieu de tournage n'est encore renseigné.</p>
+    <p class="carte-vide">{t(lang, "autour.vide")}</p>
   )}
 </Layout>
 
@@ -69,7 +75,7 @@ const description = "La carte des tournages d'Alexandre Berger, réalisateur fre
     carteActuelle = map;
 
     map.attributionControl.setPrefix('<a href="https://leafletjs.com">Leaflet</a>');
-    map.attributionControl.addAttribution('Géocodage <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>');
+    map.attributionControl.addAttribution(`${el.dataset.geocodage ?? "Géocodage"} <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>`);
 
     const markers = points.map((point) => {
       const marker = L.circleMarker([point.lat, point.lng], {
@@ -81,7 +87,7 @@ const description = "La carte des tournages d'Alexandre Berger, réalisateur fre
       }).addTo(map);
 
       const items = point.projets
-        .map((p) => `<li><a href="/projets/${p.id}">${p.titre}</a></li>`)
+        .map((p) => `<li><a href="${p.href}">${p.titre}</a></li>`)
         .join("");
       const nomLieu = point.nom ? `<p class="popup-lieu">${point.nom}</p>` : "";
       marker.bindPopup(`<div class="popup-carte">${nomLieu}<ul class="popup-liste">${items}</ul></div>`, {

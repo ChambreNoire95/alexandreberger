@@ -1,55 +1,64 @@
 ---
 export const prerender = true;
-import { getCollection, render } from "astro:content";
-import Layout from "../../layouts/Layout.astro";
-import OptimizedImage from "../../components/OptimizedImage.astro";
-import { descriptionDepuisTexte } from "../../lib/meta";
-import { urlEmbed } from "../../lib/video";
+import { render } from "astro:content";
+import Layout from "../../../layouts/Layout.astro";
+import OptimizedImage from "../../../components/OptimizedImage.astro";
+import { descriptionDepuisTexte } from "../../../lib/meta";
+import { urlEmbed } from "../../../lib/video";
+import { getProjets, type Projet } from "../../../lib/contenu";
+import { LANGUES, LANGUE_PAR_DEFAUT, langDe, t, url, libelle, roleAffiche, dateFormatee } from "../../../i18n";
 
 export async function getStaticPaths() {
-  const tousLesProjets = await getCollection("projets", ({ data }) => !data.brouillon);
+  const resultats = [];
 
-  // Même ordre que sur les pages de liste (Commandes : date desc, Créations :
-  // année desc), pour que "le projet suivant" corresponde à ce que le
-  // visiteur aurait cliqué juste après sur la liste. Boucle au dernier.
-  const commandes = tousLesProjets
-    .filter((p) => p.data.categorie === "commandes")
-    .sort((a, b) => (b.data.date?.valueOf() ?? -Infinity) - (a.data.date?.valueOf() ?? -Infinity));
-  const creations = tousLesProjets
-    .filter((p) => p.data.categorie === "creations")
-    .sort((a, b) => (b.data.annee ?? -Infinity) - (a.data.annee ?? -Infinity));
+  for (const lang of LANGUES) {
+    const tousLesProjets = await getProjets(lang, ({ data }) => !data.brouillon);
 
-  // Jusqu'à 3 suggestions après le projet courant (boucle sur la liste),
-  // pour laisser le choix au visiteur plutôt qu'un seul "projet suivant" imposé.
-  function suivantsDe(liste: typeof tousLesProjets, index: number, count: number) {
-    const resultats: typeof tousLesProjets = [];
-    for (let i = 1; i <= Math.min(count, liste.length - 1); i++) {
-      resultats.push(liste[(index + i) % liste.length]);
+    // Même ordre que sur les pages de liste (Commandes : date desc, Créations :
+    // année desc), pour que "le projet suivant" corresponde à ce que le
+    // visiteur aurait cliqué juste après sur la liste. Boucle au dernier.
+    const commandes = tousLesProjets
+      .filter((p) => p.data.categorie === "commandes")
+      .sort((a, b) => (b.data.date?.valueOf() ?? -Infinity) - (a.data.date?.valueOf() ?? -Infinity));
+    const creations = tousLesProjets
+      .filter((p) => p.data.categorie === "creations")
+      .sort((a, b) => (b.data.annee ?? -Infinity) - (a.data.annee ?? -Infinity));
+
+    // Jusqu'à 3 suggestions après le projet courant (boucle sur la liste),
+    // pour laisser le choix au visiteur plutôt qu'un seul "projet suivant" imposé.
+    const suivantsDe = (liste: Projet[], index: number, count: number) => {
+      const suivants: Projet[] = [];
+      for (let i = 1; i <= Math.min(count, liste.length - 1); i++) {
+        suivants.push(liste[(index + i) % liste.length]);
+      }
+      return suivants;
+    };
+
+    for (const p of tousLesProjets) {
+      const liste = p.data.categorie === "commandes" ? commandes : creations;
+      const index = liste.findIndex((x) => x.id === p.id);
+      resultats.push({
+        params: { lang: lang === LANGUE_PAR_DEFAUT ? undefined : lang, slug: p.id },
+        props: { projet: p, suivants: suivantsDe(liste, index, 3) },
+      });
     }
-    return resultats;
   }
 
-  return tousLesProjets.map((p) => {
-    const liste = p.data.categorie === "commandes" ? commandes : creations;
-    const index = liste.findIndex((x) => x.id === p.id);
-    return {
-      params: { slug: p.id },
-      props: { projet: p, suivants: suivantsDe(liste, index, 3) },
-    };
-  });
+  return resultats;
 }
 
+const lang = langDe(Astro.params);
 const { projet, suivants } = Astro.props;
-const { Content } = await render(projet);
+const { Content } = await render(projet.source);
 
 const currentPath =
   projet.data.categorie === "commandes" ? "/" : `/${projet.data.categorie}`;
-const labelRetour = projet.data.categorie === "commandes" ? "Films de commande" : "Créations";
+const labelRetour = projet.data.categorie === "commandes" ? t(lang, "commandes") : t(lang, "creations");
 
-const titre = `${projet.data.titre} — Alexandre Berger, réalisateur`;
+const titre = `${projet.data.titre} — ${t(lang, "fiche.titre.suffixe")}`;
 const extrait = descriptionDepuisTexte(projet.data.description) ?? descriptionDepuisTexte(projet.body);
 const description = extrait
-  ?? `${projet.data.titre}. Un projet réalisé par Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.`;
+  ?? `${projet.data.titre}. ${t(lang, "fiche.description.defaut")}`;
 const imagePartage = projet.data.couverture || projet.data.image1;
 
 const galerie = [
@@ -64,10 +73,11 @@ const anneeAffichee = projet.data.annee
       : String(projet.data.annee))
   : null;
 
-const roleLabel = projet.data.role ? "Rôle" : "Client";
-const roleValeur = projet.data.role && projet.data.client
-  ? `${projet.data.role} pour ${projet.data.client}`
-  : projet.data.role || projet.data.client || null;
+const roleLabel = projet.data.role ? t(lang, "fiche.role") : t(lang, "fiche.client");
+const roleTraduit = roleAffiche(lang, projet.data.role);
+const roleValeur = roleTraduit && projet.data.client
+  ? `${roleTraduit} ${t(lang, "pour")} ${projet.data.client}`
+  : roleTraduit || projet.data.client || null;
 
 const urlAbsolue = new URL(Astro.url.pathname, Astro.site).toString();
 const imageAbsolue = projet.data.couverture ? new URL(projet.data.couverture, Astro.site).toString() : undefined;
@@ -83,26 +93,26 @@ const jsonLd = {
   ...(projet.data.video && { embedUrl: urlEmbed(projet.data.video) }),
   ...(dateIso && { datePublished: dateIso, uploadDate: dateIso }),
   ...(!dateIso && projet.data.annee && { datePublished: String(projet.data.annee) }),
-  ...((projet.data.genre || projet.data.type) && { genre: projet.data.genre || projet.data.type }),
+  ...((projet.data.genre || projet.data.type) && { genre: libelle(lang, "genre", (projet.data.genre || projet.data.type) as string) }),
   creator: {
     "@type": "Person",
     name: "Alexandre Berger",
-    ...(projet.data.role && { jobTitle: projet.data.role }),
+    ...(roleTraduit && { jobTitle: roleTraduit }),
   },
   ...(projet.data.client && { sponsor: { "@type": "Organization", name: projet.data.client } }),
 };
 ---
 
-<Layout title={titre} description={description} currentPath={currentPath} jsonLd={jsonLd} image={imagePartage}>
+<Layout title={titre} description={description} currentPath={currentPath} jsonLd={jsonLd} image={imagePartage} lang={lang}>
   <article class="projet">
-    <a class="lien-retour" href={currentPath}><span class="fleche">←</span> {labelRetour}</a>
+    <a class="lien-retour" href={url(lang, currentPath)}><span class="fleche">←</span> {labelRetour}</a>
     {projet.data.couverture && (
       <OptimizedImage class="couverture" src={projet.data.couverture} alt={projet.data.couvertureAlt || projet.data.titre} loading="eager" fetchpriority="high" sizes="(min-width: 801px) 910px, 100vw" />
     )}
     <h1>{projet.data.titre}</h1>
     {projet.data.enChantier && (
       <p class="note-chantier">
-        Cette page est en cours de refonte, n'hésitez pas à <a href="/booking">me contacter</a> si vous avez des questions.
+        {t(lang, "fiche.chantier.avant")}<a href={url(lang, "/booking")}>{t(lang, "fiche.chantier.lien")}</a>{t(lang, "fiche.chantier.apres")}
       </p>
     )}
     {(roleValeur || projet.data.date || projet.data.annee || projet.data.genre || projet.data.duree) && (
@@ -111,16 +121,16 @@ const jsonLd = {
           <div><dt>{roleLabel}</dt><dd>{roleValeur}</dd></div>
         )}
         {projet.data.date && (
-          <div><dt>Date</dt><dd>{projet.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long" })}</dd></div>
+          <div><dt>{t(lang, "fiche.date")}</dt><dd>{dateFormatee(lang, projet.data.date, { year: "numeric", month: "long" })}</dd></div>
         )}
         {!projet.data.date && anneeAffichee && (
-          <div><dt>Année</dt><dd>{anneeAffichee}</dd></div>
+          <div><dt>{t(lang, "fiche.annee")}</dt><dd>{anneeAffichee}</dd></div>
         )}
         {projet.data.genre && (
-          <div><dt>Genre</dt><dd>{projet.data.genre}</dd></div>
+          <div><dt>{t(lang, "fiche.genre")}</dt><dd>{libelle(lang, "genre", projet.data.genre)}</dd></div>
         )}
         {projet.data.duree && (
-          <div><dt>Durée</dt><dd>{projet.data.duree}</dd></div>
+          <div><dt>{t(lang, "fiche.duree")}</dt><dd>{projet.data.duree}</dd></div>
         )}
       </dl>
     )}
@@ -128,7 +138,7 @@ const jsonLd = {
       <div class="video-embed">
         <iframe
           src={urlEmbed(projet.data.video)}
-          title={`Vidéo — ${projet.data.titre}`}
+          title={`${t(lang, "fiche.video")} — ${projet.data.titre}`}
           loading="lazy"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowfullscreen
@@ -147,9 +157,9 @@ const jsonLd = {
     )}
     {suivants.length > 0 && (
       <div class="liens-suivants">
-        <span class="lien-suivant-intro">Découvrez d'autres réalisations</span>
+        <span class="lien-suivant-intro">{t(lang, "fiche.suivants")}</span>
         {suivants.map((s) => (
-          <a class="lien-suivant-titre" href={`/projets/${s.id}`}>{s.data.titre} <span class="fleche">→</span></a>
+          <a class="lien-suivant-titre" href={url(lang, `/projets/${s.id}`)}>{s.data.titre} <span class="fleche">→</span></a>
         ))}
       </div>
     )}

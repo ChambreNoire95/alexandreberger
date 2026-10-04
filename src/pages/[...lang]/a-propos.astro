@@ -1,53 +1,88 @@
 ---
 export const prerender = true;
-import Layout from "../layouts/Layout.astro";
+import Layout from "../../layouts/Layout.astro";
+import { cheminsLangues, langDe, t } from "../../i18n";
 
-const titre = "À propos — Alexandre Berger, réalisateur freelance";
-const description = "Alexandre Berger, réalisateur freelance en Île-de-France : parcours, démarche et champs d'expertise en documentaire, fiction et film de marque.";
+export function getStaticPaths() {
+  return cheminsLangues();
+}
+const lang = langDe(Astro.params);
+
+const titre = t(lang, "apropos.titre.page");
+const description = t(lang, "apropos.description");
+
+// Récompenses : le nom du festival et du film restent tels quels, seul le palmarès est traduit.
+const texte = {
+  fr: {
+    titre: "À propos",
+    intro:
+      "Réalisateur basé en Île-de-France, je navigue entre documentaire, film de marque et récit institutionnel, du brief à la livraison : écriture, production, réalisation, montage. Ce travail m'a amené à tourner en France, en Europe, en Afrique australe et au Japon, seul ou au sein d'équipes de production plus importantes.",
+    prix: "Récompenses et Sélections",
+  },
+  en: {
+    titre: "About",
+    intro:
+      "Director based in the Paris region, I move between documentary, branded film and institutional storytelling, from brief to delivery: writing, production, directing, editing. This work has taken me to shoot in France, Europe, southern Africa and Japan, alone or as part of larger production teams.",
+    prix: "Awards and Selections",
+  },
+}[lang];
+
+const prix = [
+  {
+    titre: "Grand Prix Stratégies de l'innovation Média 2023",
+    detail: {
+      fr: "Meilleur dispositif de Communication, Meilleur événement, Opération Spéciale, Influence — Or",
+      en: "Best Communication Campaign, Best Event, Special Operation, Influence — Gold",
+    },
+    film: { fr: "StudyCase Parallèles pour Disney+", en: "Parallèles case study for Disney+" },
+  },
+  {
+    titre: "Festival Caméras des Champs 2019",
+    detail: { fr: "3ème Prix du Jury & Prix des Beaux Villages Lorrains", en: "3rd Jury Prize & Beaux Villages Lorrains Prize" },
+    film: { fr: "Le Pays Aux Pieds d'Argile", en: "Le Pays Aux Pieds d'Argile" },
+  },
+  {
+    titre: "48h Film Project Paris 2017",
+    detail: { fr: "Prix du 2ème Meilleur Film", en: "2nd Best Film Award" },
+    film: { fr: "Organe Anonyme", en: "Organe Anonyme" },
+  },
+  {
+    titre: "Challenge Sony / Le Repaire 2013",
+    detail: { fr: "Lauréat", en: "Winner" },
+    film: { fr: "Club", en: "Club" },
+  },
+  {
+    titre: "Mobile Film Festival 2013",
+    detail: { fr: "Finaliste", en: "Finalist" },
+    film: { fr: "Contre La Montre", en: "Contre La Montre" },
+  },
+  {
+    titre: "Uppsala Short Film Festival 2013",
+    detail: { fr: "Sélection Docurama", en: "Docurama selection" },
+    film: { fr: "Hiroshima, The Next Days", en: "Hiroshima, The Next Days" },
+  },
+  {
+    titre: "Nikon Film Festival 2011",
+    detail: { fr: "Finaliste", en: "Finalist" },
+    film: { fr: "Le Choix", en: "Le Choix" },
+  },
+];
 ---
 
-<Layout title={titre} description={description} currentPath="/a-propos">
-  <h1 class="titre-page">À propos</h1>
+<Layout title={titre} description={description} currentPath="/a-propos" lang={lang}>
+  <h1 class="titre-page">{texte.titre}</h1>
   <div class="contenu">
-    <p>Réalisateur basé en Île-de-France, je navigue entre documentaire, film de marque et récit institutionnel, du brief à la livraison : écriture, production, réalisation, montage. Ce travail m'a amené à tourner en France, en Europe, en Afrique australe et au Japon, seul ou au sein d'équipes de production plus importantes.</p>
+    <p>{texte.intro}</p>
 
-    <h2 class="sous-titre">Récompenses et Sélections</h2>
+    <h2 class="sous-titre">{texte.prix}</h2>
     <ul class="prix">
-      <li>
-        <p class="prix-titre">Grand Prix Stratégies de l'innovation Média 2023</p>
-        <p class="prix-detail">Meilleur dispositif de Communication, Meilleur événement, Opération Spéciale, Influence — Or</p>
-        <p class="prix-film">StudyCase Parallèles pour Disney+</p>
-      </li>
-      <li>
-        <p class="prix-titre">Festival Caméras des Champs 2019</p>
-        <p class="prix-detail">3ème Prix du Jury & Prix des Beaux Villages Lorrains</p>
-        <p class="prix-film">Le Pays Aux Pieds d'Argile</p>
-      </li>
-      <li>
-        <p class="prix-titre">48h Film Project Paris 2017</p>
-        <p class="prix-detail">Prix du 2ème Meilleur Film</p>
-        <p class="prix-film">Organe Anonyme</p>
-      </li>
-      <li>
-        <p class="prix-titre">Challenge Sony / Le Repaire 2013</p>
-        <p class="prix-detail">Lauréat</p>
-        <p class="prix-film">Club</p>
-      </li>
-      <li>
-        <p class="prix-titre">Mobile Film Festival 2013</p>
-        <p class="prix-detail">Finaliste</p>
-        <p class="prix-film">Contre La Montre</p>
-      </li>
-      <li>
-        <p class="prix-titre">Uppsala Short Film Festival 2013</p>
-        <p class="prix-detail">Sélection Docurama</p>
-        <p class="prix-film">Hiroshima, The Next Days</p>
-      </li>
-      <li>
-        <p class="prix-titre">Nikon Film Festival 2011</p>
-        <p class="prix-detail">Finaliste</p>
-        <p class="prix-film">Le Choix</p>
-      </li>
+      {prix.map((p) => (
+        <li>
+          <p class="prix-titre">{p.titre}</p>
+          <p class="prix-detail">{p.detail[lang]}</p>
+          <p class="prix-film">{p.film[lang]}</p>
+        </li>
+      ))}
     </ul>
   </div>
 </Layout>

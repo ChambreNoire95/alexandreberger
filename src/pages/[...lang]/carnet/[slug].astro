@@ -1,22 +1,33 @@
 ---
 export const prerender = true;
-import { getCollection, render } from "astro:content";
-import Layout from "../../layouts/Layout.astro";
-import OptimizedImage from "../../components/OptimizedImage.astro";
+import { render } from "astro:content";
+import Layout from "../../../layouts/Layout.astro";
+import OptimizedImage from "../../../components/OptimizedImage.astro";
+import { getCarnet } from "../../../lib/contenu";
+import { LANGUES, LANGUE_PAR_DEFAUT, langDe, dateFormatee } from "../../../i18n";
 
 export async function getStaticPaths() {
-  const entrees = await getCollection("carnet", ({ data }) => !data.brouillon);
-  return entrees.map((e) => ({
-    params: { slug: e.id },
-    props: { entree: e },
-  }));
+  const chemins = [];
+  for (const lang of LANGUES) {
+    const entrees = await getCarnet(lang, ({ data }) => !data.brouillon);
+    for (const e of entrees) {
+      chemins.push({
+        params: { lang: lang === LANGUE_PAR_DEFAUT ? undefined : lang, slug: e.id },
+        props: { entree: e },
+      });
+    }
+  }
+  return chemins;
 }
 
+const lang = langDe(Astro.params);
 const { entree } = Astro.props;
-const { Content } = await render(entree);
+const { Content } = await render(entree.source);
 
-const titre = `${entree.data.titre} — Carnet, Alexandre Berger`;
-const description = entree.data.extrait ?? `${entree.data.titre}. Notes de tournage et réflexions d'Alexandre Berger, réalisateur freelance en Île-de-France.`;
+const titre = lang === "en" ? `${entree.data.titre} — Journal, Alexandre Berger` : `${entree.data.titre} — Carnet, Alexandre Berger`;
+const description = entree.data.extrait ?? (lang === "en"
+  ? `${entree.data.titre}. Shooting notes and thoughts from Alexandre Berger, freelance director in the Paris region.`
+  : `${entree.data.titre}. Notes de tournage et réflexions d'Alexandre Berger, réalisateur freelance en Île-de-France.`);
 
 const urlAbsolue = new URL(Astro.url.pathname, Astro.site).toString();
 const imageAbsolue = entree.data.couverture ? new URL(entree.data.couverture, Astro.site).toString() : undefined;
@@ -33,12 +44,12 @@ const jsonLd = {
 };
 ---
 
-<Layout title={titre} description={description} currentPath="/carnet" jsonLd={jsonLd} image={entree.data.couverture}>
+<Layout title={titre} description={description} currentPath="/carnet" jsonLd={jsonLd} image={entree.data.couverture} lang={lang}>
   <article class="entree">
     {entree.data.couverture && (
       <OptimizedImage class="couverture" src={entree.data.couverture} alt={entree.data.couvertureAlt || entree.data.titre} loading="eager" fetchpriority="high" sizes="(min-width: 801px) 700px, 100vw" />
     )}
-    <p class="date">{entree.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}</p>
+    <p class="date">{dateFormatee(lang, entree.data.date, { year: "numeric", month: "long", day: "numeric" })}</p>
     <h1>{entree.data.titre}</h1>
     <div class="corps">
       <Content />

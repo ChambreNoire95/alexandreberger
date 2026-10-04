@@ -1,23 +1,29 @@
 ---
 export const prerender = true;
-import Layout from "../layouts/Layout.astro";
-import Signature from "../components/Signature.astro";
-import TitreSwitch from "../components/TitreSwitch.astro";
-import CarrouselHome from "../components/CarrouselHome.astro";
-import OptimizedImage from "../components/OptimizedImage.astro";
-import { getCollection } from "astro:content";
-import { getItemsCarrousel } from "../lib/carrousel";
-import { descriptionDepuisTexte } from "../lib/meta";
-import { urlEmbed } from "../lib/video";
-import bandeDemo from "../content/settings/bande-demo.json";
+import Layout from "../../layouts/Layout.astro";
+import Signature from "../../components/Signature.astro";
+import TitreSwitch from "../../components/TitreSwitch.astro";
+import CarrouselHome from "../../components/CarrouselHome.astro";
+import OptimizedImage from "../../components/OptimizedImage.astro";
+import { getProjets } from "../../lib/contenu";
+import { getItemsCarrousel } from "../../lib/carrousel";
+import { descriptionDepuisTexte } from "../../lib/meta";
+import { urlEmbed } from "../../lib/video";
+import bandeDemo from "../../content/settings/bande-demo.json";
+import { cheminsLangues, langDe, t, url, libelle, roleAffiche, roleCreation, dateFormatee } from "../../i18n";
 
-const projets = (await getCollection("projets", ({ data }) => data.categorie === "commandes" && !data.brouillon)).sort(
+export function getStaticPaths() {
+  return cheminsLangues();
+}
+const lang = langDe(Astro.params);
+
+const projets = (await getProjets(lang, ({ data }) => data.categorie === "commandes" && !data.brouillon)).sort(
   // Plus récente en premier, plus ancienne en bas (comme sur Créations).
   (a, b) => (b.data.date?.valueOf() ?? -Infinity) - (a.data.date?.valueOf() ?? -Infinity)
 );
 
 // Créations : ne servent qu'à la recherche de références (pas à la liste ni aux aperçus).
-const creations = (await getCollection("projets", ({ data }) => data.categorie === "creations" && !data.brouillon)).sort(
+const creations = (await getProjets(lang, ({ data }) => data.categorie === "creations" && !data.brouillon)).sort(
   (a, b) => (b.data.annee ?? -Infinity) - (a.data.annee ?? -Infinity)
 );
 // Commandes d'abord : à critères égaux, elles passent devant les Créations dans les résultats.
@@ -39,10 +45,10 @@ const apercus = projets
   .filter(({ p }) => p.data.couverture || p.data.image1)
   .map(({ p, index }) => ({
     index,
-    href: `/projets/${p.id}`,
+    href: url(lang, `/projets/${p.id}`),
     titre: p.data.titre,
     image: (p.data.couverture || p.data.image1) as string,
-    date: p.data.date?.toLocaleDateString("fr-FR", { month: "long", year: "numeric" }),
+    date: p.data.date ? dateFormatee(lang, p.data.date, { month: "long", year: "numeric" }) : undefined,
     client: p.data.client,
     accroche: p.data.accroche ?? descriptionDepuisTexte(p.body, 140),
     titreFilm: p.data.titreFilm?.trim() || undefined,
@@ -66,32 +72,59 @@ const formatsRecherche = FORMATS.filter((x) => fichesRecherche.some((f) => f.fo.
 const besoinsRecherche = BESOINS.filter((x) => fichesRecherche.some((f) => f.be.includes(x)));
 const indexAvecApercu = new Set(apercus.map((a) => a.index));
 
-const itemsCarrousel = await getItemsCarrousel();
+const itemsCarrousel = await getItemsCarrousel(lang);
 
-const titre = "Alexandre Berger — Réalisateur documentaire, fiction & film de marque";
-const description = "Alexandre Berger, réalisateur freelance en Île-de-France. Je fabrique des films — documentaire, fiction et film de marque, souvent dans des contextes hors du commun.";
+const titre = t(lang, "accueil.titre");
+const description = t(lang, "accueil.description");
+
+// Textes et libellés pour le script de la fenêtre de recherche (la langue de la page s'applique aussi aux messages).
+const toutesValeurs = {
+  univers: SECTEURS,
+  critere: BESOINS,
+  format: FORMATS,
+  ton: TONS,
+};
+const libelles: Record<string, string> = {};
+for (const [categorie, valeurs] of Object.entries(toutesValeurs)) {
+  for (const v of valeurs) libelles[v] = libelle(lang, categorie as "univers" | "critere" | "format" | "ton", v);
+}
+const textesRecherche = {
+  rien: t(lang, "recherche.rien"),
+  exacts: t(lang, "recherche.exacts"),
+  proches: t(lang, "recherche.proches"),
+  univers: t(lang, "recherche.univers.etat"),
+  reference: t(lang, "recherche.reference"),
+  references: t(lang, "recherche.references"),
+  groupes: {
+    univers: t(lang, "recherche.univers"),
+    criteres: t(lang, "recherche.criteres"),
+    format: t(lang, "recherche.format"),
+    ton: t(lang, "recherche.ton"),
+  },
+  libelles,
+};
 
 // N'affiche dans le filtre que les types réellement utilisés par au moins un projet.
 const ORDRE_TYPES = ["Making-of", "Documentaire", "Activation / Aftermovie", "Institutionnel", "Brand Content", "RSE", "Fiction"];
 const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type === t));
 ---
 
-<Layout title={titre} description={description} currentPath="/">
-  <p class="sr-only">Alexandre Berger, réalisateur freelance en Île-de-France — documentaire, fiction, film de marque</p>
+<Layout title={titre} description={description} currentPath="/" lang={lang}>
+  <p class="sr-only">{t(lang, "accueil.sr")}</p>
 
-  <Signature />
+  <Signature lang={lang} />
 
-  <CarrouselHome items={itemsCarrousel} />
+  <CarrouselHome items={itemsCarrousel} lang={lang} />
 
-  <TitreSwitch actif="commandes" />
+  <TitreSwitch actif="commandes" lang={lang} />
 
   {typesPresents.length > 0 && (
-    <nav class="filtres" id="filtres" aria-label="Filtrer par type de film">
-      <button type="button" data-type="all" aria-pressed="true">Tous</button>
-      {typesPresents.map((t) => (
-        <button type="button" data-type={t} aria-pressed="false">{t}</button>
+    <nav class="filtres" id="filtres" aria-label={t(lang, "filtre.aria.type")}>
+      <button type="button" data-type="all" aria-pressed="true">{t(lang, "filtre.tous")}</button>
+      {typesPresents.map((ty) => (
+        <button type="button" data-type={ty} aria-pressed="false">{libelle(lang, "type", ty)}</button>
       ))}
-      <button type="button" class="filtre-recherche" data-recherche-ouvrir aria-haspopup="dialog">Trouvez les références adaptées à vos besoins</button>
+      <button type="button" class="filtre-recherche" data-recherche-ouvrir aria-haspopup="dialog">{t(lang, "recherche.bouton")}</button>
     </nav>
   )}
 
@@ -100,12 +133,12 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     {projets.map((p, index) => {
       return (
         <li data-type={p.data.type || ""} data-apercu={indexAvecApercu.has(index) ? index : undefined}>
-          <a href={`/projets/${p.id}`}>
+          <a href={url(lang, `/projets/${p.id}`)}>
             <span class="accroche-titre">{p.data.titre}</span>
             {p.data.role && p.data.client ? (
-              <span class="accroche-meta">{p.data.role} <br class="saut-mobile" />pour {p.data.client}</span>
+              <span class="accroche-meta">{roleAffiche(lang, p.data.role)} <br class="saut-mobile" />{t(lang, "pour")} {p.data.client}</span>
             ) : (
-              (p.data.role || p.data.client) && <span class="accroche-meta">{p.data.role || p.data.client}</span>
+              (p.data.role || p.data.client) && <span class="accroche-meta">{p.data.role ? roleAffiche(lang, p.data.role) : p.data.client}</span>
             )}
           </a>
         </li>
@@ -113,16 +146,16 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     })}
   </ul>
 
-  <aside class="apercu" aria-label="Aperçu du projet">
+  <aside class="apercu" aria-label={t(lang, "apercu.aria")}>
     <div class="apercu-pile">
       {demoUrl && (
         <article class="apercu-item apercu-demo" data-index="-1" data-demo>
           <p class="apercu-entete"><span class="apercu-titre-film">DEMOREEL</span>{bandeDemo.duree?.trim() && <span class="apercu-duree" set:html={dureeHtml(bandeDemo.duree.trim())} />}</p>
-          <button type="button" class:list={["apercu-image", "apercu-demo-ouvrir", { "avec-image": !!bandeDemo.image }]} data-demo-ouvrir aria-haspopup="dialog" aria-label="Voir la demoreel">
+          <button type="button" class:list={["apercu-image", "apercu-demo-ouvrir", { "avec-image": !!bandeDemo.image }]} data-demo-ouvrir aria-haspopup="dialog" aria-label={t(lang, "apercu.demo.voir")}>
             {bandeDemo.image && <OptimizedImage src={bandeDemo.image} alt="" sizes="420px" />}
             <span class="apercu-demo-play" aria-hidden="true"></span>
           </button>
-          <p class="apercu-accroche">Mon travail en quelques images : documentaire, fiction et films de marque.</p>
+          <p class="apercu-accroche">{t(lang, "apercu.demo.texte")}</p>
         </article>
       )}
       {apercus.map((a) => (
@@ -140,46 +173,46 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
             <p class="apercu-meta">{[a.date, a.client].filter(Boolean).join(" · ")}</p>
           )}
           {a.accroche && <p class="apercu-accroche">{a.accroche}</p>}
-          <a class="apercu-fleche" href={a.href} aria-label={`En savoir plus : ${a.titre}`}>→</a>
+          <a class="apercu-fleche" href={a.href} aria-label={`${t(lang, "apercu.savoir")} : ${a.titre}`}>→</a>
         </article>
       ))}
     </div>
   </aside>
   </div>
 
-  <dialog class="rech" id="rech" aria-labelledby="rech-titre">
-    <button type="button" class="rech-fermer" data-rech-fermer aria-label="Fermer">×</button>
-    <h2 class="rech-titre" id="rech-titre">Trouvez les références adaptées à vos besoins</h2>
-    <p class="rech-intro">Choisissez vos critères : je vous montre les références les plus proches.</p>
-    <p class="rech-groupe">Univers</p>
-    <div class="rech-pastilles" role="group" aria-label="Univers">
-      {secteursRecherche.map((m) => <button type="button" data-groupe="secteur" data-pastille={m} aria-pressed="false">{m}</button>)}
+  <dialog class="rech" id="rech" aria-labelledby="rech-titre" data-textes={JSON.stringify(textesRecherche)}>
+    <button type="button" class="rech-fermer" data-rech-fermer aria-label={t(lang, "fermer")}>×</button>
+    <h2 class="rech-titre" id="rech-titre">{t(lang, "recherche.titre")}</h2>
+    <p class="rech-intro">{t(lang, "recherche.intro")}</p>
+    <p class="rech-groupe">{t(lang, "recherche.univers")}</p>
+    <div class="rech-pastilles" role="group" aria-label={t(lang, "recherche.univers")}>
+      {secteursRecherche.map((m) => <button type="button" data-groupe="secteur" data-pastille={m} aria-pressed="false">{libelle(lang, "univers", m)}</button>)}
     </div>
-    <p class="rech-groupe">Vos critères</p>
-    <div class="rech-pastilles" role="group" aria-label="Vos critères">
-      {besoinsRecherche.map((m) => <button type="button" data-groupe="besoin" data-pastille={m} aria-pressed="false">{m}</button>)}
+    <p class="rech-groupe">{t(lang, "recherche.criteres")}</p>
+    <div class="rech-pastilles" role="group" aria-label={t(lang, "recherche.criteres")}>
+      {besoinsRecherche.map((m) => <button type="button" data-groupe="besoin" data-pastille={m} aria-pressed="false">{libelle(lang, "critere", m)}</button>)}
     </div>
-    <p class="rech-groupe">Format/Durée</p>
-    <div class="rech-pastilles" role="group" aria-label="Format/Durée">
-      {formatsRecherche.map((m) => <button type="button" data-groupe="format" data-pastille={m} aria-pressed="false">{m}</button>)}
+    <p class="rech-groupe">{t(lang, "recherche.format")}</p>
+    <div class="rech-pastilles" role="group" aria-label={t(lang, "recherche.format")}>
+      {formatsRecherche.map((m) => <button type="button" data-groupe="format" data-pastille={m} aria-pressed="false">{libelle(lang, "format", m)}</button>)}
     </div>
-    <p class="rech-groupe">Ton</p>
-    <div class="rech-pastilles" role="group" aria-label="Ton">
-      {tonsRecherche.map((m) => <button type="button" data-groupe="ton" data-pastille={m} aria-pressed="false">{m}</button>)}
+    <p class="rech-groupe">{t(lang, "recherche.ton")}</p>
+    <div class="rech-pastilles" role="group" aria-label={t(lang, "recherche.ton")}>
+      {tonsRecherche.map((m) => <button type="button" data-groupe="ton" data-pastille={m} aria-pressed="false">{libelle(lang, "ton", m)}</button>)}
     </div>
     <p class="rech-etat" id="rech-etat" aria-live="polite"></p>
     <ul class="rech-resultats" id="rech-resultats">
       {elementsRecherche.map(({ p, creation }, index) => (
         <li data-index={index} hidden>
-          <a href={`/projets/${p.id}`}>
+          <a href={url(lang, `/projets/${p.id}`)}>
             <span class="rech-vignette">
               {(p.data.couverture || p.data.image1) && <OptimizedImage src={(p.data.couverture || p.data.image1) as string} alt="" sizes="140px" />}
             </span>
             <span class="rech-texte">
-              {creation && <span class="rech-etiquette">Création</span>}
+              {creation && <span class="rech-etiquette">{t(lang, "recherche.creation")}</span>}
               <span class="rech-nom">{p.data.titre}</span>
               {creation
-                ? (p.data.genre || p.data.annee) && <span class="rech-client">{[p.data.genre, p.data.annee].filter(Boolean).join(" · ")}</span>
+                ? (p.data.genre || p.data.annee) && <span class="rech-client">{[p.data.genre ? libelle(lang, "genre", p.data.genre) : undefined, p.data.annee].filter(Boolean).join(" · ")}</span>
                 : p.data.client && <span class="rech-client">{p.data.client}</span>}
             </span>
             <span class="rech-go" aria-hidden="true">→</span>
@@ -187,13 +220,13 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
         </li>
       ))}
     </ul>
-    <a class="rech-contact" href="/booking">Parlons de votre projet <span class="fleche">→</span></a>
+    <a class="rech-contact" href={url(lang, "/booking")}>{t(lang, "recherche.contact")} <span class="fleche">→</span></a>
     <script is:inline type="application/json" id="rech-data" set:html={JSON.stringify(fichesRecherche).replace(/</g, "\\u003c")}></script>
   </dialog>
 
   {demoUrl && (
-    <dialog class="demo-popup" id="demo-popup" aria-label="Demoreel" data-src={demoUrl}>
-      <button type="button" class="demo-fermer" data-demo-fermer aria-label="Fermer">×</button>
+    <dialog class="demo-popup" id="demo-popup" aria-label={t(lang, "demo.titre")} data-src={demoUrl}>
+      <button type="button" class="demo-fermer" data-demo-fermer aria-label={t(lang, "fermer")}>×</button>
       <div class="demo-cadre"></div>
     </dialog>
   )}
@@ -430,7 +463,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 </style>
 
 <script>
-  import { scrollerVersTitre } from "../lib/positionTitre";
+  import { scrollerVersTitre } from "../../lib/positionTitre";
   
   function setupFiltres() {
     const nav = document.getElementById('filtres');
@@ -499,6 +532,10 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     const lis = [...liste.querySelectorAll<HTMLLIElement>('li')];
     const pastilles = [...dialogue.querySelectorAll<HTMLButtonElement>('[data-pastille]')];
 
+    // Textes de la langue de la page (messages, libellés), posés par le serveur sur la fenêtre.
+    const T = JSON.parse(dialogue.dataset.textes ?? '{}');
+    const lib = (valeur: string) => (T.libelles?.[valeur] as string | undefined) ?? valeur;
+
     // Un seul secteur ; plusieurs besoins possibles (les films qui en couvrent le plus remontent en premier).
     let secteur = '';
     const besoins = new Set<string>();
@@ -542,15 +579,15 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 
       const retenus = candidats.slice(0, 5);
       if (!retenus.length) {
-        etat.textContent = "Rien qui croise ces critères pour l'instant. Essayez d'autres critères, ou parlons de votre projet.";
+        etat.textContent = T.rien ?? "Rien qui croise ces critères pour l'instant. Essayez d'autres critères, ou parlons de votre projet.";
         return;
       }
       // « 5/8 » quand il y a plus de correspondances que de résultats affichés.
       const tronque = candidats.length > retenus.length;
       const compte = tronque ? `${retenus.length}/${candidats.length}` : `${retenus.length}`;
       etat.textContent = !besoins.size
-        ? `${secteur ? `Univers ${secteur} · ` : ''}${compte} référence${retenus.length > 1 ? 's' : ''}`
-        : `${retenus[0].couverts === besoins.size ? 'Les références qui répondent à vos critères' : 'Les références les plus proches de vos critères'}${tronque ? ` · ${compte}` : ''}`;
+        ? `${secteur ? `${T.univers ?? 'Univers'} ${lib(secteur)} · ` : ''}${compte} ${retenus.length > 1 ? (T.references ?? 'références') : (T.reference ?? 'référence')}`
+        : `${retenus[0].couverts === besoins.size ? (T.exacts ?? 'Les références qui répondent à vos critères') : (T.proches ?? 'Les références les plus proches de vos critères')}${tronque ? ` · ${compte}` : ''}`;
 
       retenus.forEach((r) => {
         const li = lis[r.index];
@@ -572,10 +609,10 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
           }))
           .filter((r) => r.titre && r.chemin);
         const criteres = [
-          secteur && `Univers : ${secteur}`,
-          besoins.size && `Critères : ${[...besoins].join(', ')}`,
-          formats.size && `Format/Durée : ${[...formats].join(', ')}`,
-          tons.size && `Ton : ${[...tons].join(', ')}`,
+          secteur && `${T.groupes?.univers ?? 'Univers'} : ${lib(secteur)}`,
+          besoins.size && `${T.groupes?.criteres ?? 'Critères'} : ${[...besoins].map(lib).join(', ')}`,
+          formats.size && `${T.groupes?.format ?? 'Format/Durée'} : ${[...formats].map(lib).join(', ')}`,
+          tons.size && `${T.groupes?.ton ?? 'Ton'} : ${[...tons].map(lib).join(', ')}`,
         ].filter(Boolean).join(' · ');
         if (references.length) sessionStorage.setItem('references-booking', JSON.stringify({ references, criteres }));
         else sessionStorage.removeItem('references-booking');

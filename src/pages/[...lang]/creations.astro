@@ -1,14 +1,20 @@
 ---
 export const prerender = true;
-import Layout from "../layouts/Layout.astro";
-import Signature from "../components/Signature.astro";
-import TitreSwitch from "../components/TitreSwitch.astro";
-import CarrouselHome from "../components/CarrouselHome.astro";
-import OptimizedImage from "../components/OptimizedImage.astro";
-import { getCollection } from "astro:content";
-import { getItemsCarrousel } from "../lib/carrousel";
+import Layout from "../../layouts/Layout.astro";
+import Signature from "../../components/Signature.astro";
+import TitreSwitch from "../../components/TitreSwitch.astro";
+import CarrouselHome from "../../components/CarrouselHome.astro";
+import OptimizedImage from "../../components/OptimizedImage.astro";
+import { getProjets } from "../../lib/contenu";
+import { getItemsCarrousel } from "../../lib/carrousel";
+import { cheminsLangues, langDe, t, libelle, roleCreation } from "../../i18n";
 
-const projets = (await getCollection("projets", ({ data }) => data.categorie === "creations" && !data.brouillon)).sort(
+export function getStaticPaths() {
+  return cheminsLangues();
+}
+const lang = langDe(Astro.params);
+
+const projets = (await getProjets(lang, ({ data }) => data.categorie === "creations" && !data.brouillon)).sort(
   // Plus récente en premier, plus ancienne en bas. Les créations sans année
   // renseignée passent en dernier plutôt que de perturber le classement.
   (a, b) => (b.data.annee ?? -Infinity) - (a.data.annee ?? -Infinity)
@@ -17,10 +23,10 @@ const projets = (await getCollection("projets", ({ data }) => data.categorie ===
 // Même carrousel que la home (tous projets confondus) : il reste identique
 // d'une page à l'autre pour préserver l'effet "one page" au switch
 // Commandes/Créations.
-const itemsCarrousel = await getItemsCarrousel();
+const itemsCarrousel = await getItemsCarrousel(lang);
 
-const titre = "Créations — Alexandre Berger, réalisateur";
-const description = "Créations personnelles d'Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.";
+const titre = t(lang, "creations.titre");
+const description = t(lang, "creations.description");
 
 // N'affiche dans le filtre que les genres réellement utilisés par au moins un projet.
 const ORDRE_TYPES = ["Fiction", "Documentaire", "Clip", "Expérimental"];
@@ -40,28 +46,28 @@ function genreDisponible(genre: string) {
 }
 ---
 
-<Layout title={titre} description={description} currentPath="/creations">
-  <Signature />
+<Layout title={titre} description={description} currentPath="/creations" lang={lang}>
+  <Signature lang={lang} />
 
-  <CarrouselHome items={itemsCarrousel} />
+  <CarrouselHome items={itemsCarrousel} lang={lang} />
 
-  <TitreSwitch actif="creations" />
+  <TitreSwitch actif="creations" lang={lang} />
 
   {(typesPresents.length > 0 || rolesPresents.length > 0) && (
     <div class="filtres-ligne">
       {typesPresents.length > 0 && (
-        <nav class="filtres" id="filtres" aria-label="Filtrer par genre">
-          <button type="button" data-type="all" aria-pressed="true">Tous</button>
-          {typesPresents.map((t) => (
-            <button type="button" data-type={t} aria-pressed="false" disabled={genreDisponible(t) ? undefined : true}>{t}</button>
+        <nav class="filtres" id="filtres" aria-label={t(lang, "filtre.aria.genre")}>
+          <button type="button" data-type="all" aria-pressed="true">{t(lang, "filtre.tous")}</button>
+          {typesPresents.map((g) => (
+            <button type="button" data-type={g} aria-pressed="false" disabled={genreDisponible(g) ? undefined : true}>{libelle(lang, "genre", g)}</button>
           ))}
         </nav>
       )}
 
       {rolesPresents.length > 0 && (
-        <nav class="filtres filtres-role" id="filtres-role" aria-label="Filtrer par rôle">
+        <nav class="filtres filtres-role" id="filtres-role" aria-label={t(lang, "filtre.aria.role")}>
           {rolesPresents.map((r) => (
-            <button type="button" data-role={r} aria-pressed={r === roleParDefaut ? "true" : "false"}>{r}</button>
+            <button type="button" data-role={r} aria-pressed={r === roleParDefaut ? "true" : "false"}>{roleCreation(lang, r)}</button>
           ))}
         </nav>
       )}
@@ -78,7 +84,7 @@ function genreDisponible(genre: string) {
       const annee = p.data.annee
         ? (p.data.anneeFin && p.data.anneeFin !== p.data.annee ? `${p.data.annee}/${p.data.anneeFin}` : String(p.data.annee))
         : null;
-      const meta = [annee, p.data.genre, p.data.duree].filter((v) => !!v).join(" · ");
+      const meta = [annee, p.data.genre ? libelle(lang, "genre", p.data.genre) : undefined, p.data.duree].filter((v) => !!v).join(" · ");
       const cachePardefaut = roleParDefaut !== null && p.data.role !== roleParDefaut;
       return (
         <li class="creation" data-count={images.length} data-type={p.data.genre || ""} data-role={p.data.role || ""} hidden={cachePardefaut || undefined}>
@@ -92,7 +98,7 @@ function genreDisponible(genre: string) {
           <div class="creation-texte">
             {meta && <p class="creation-meta">{meta}</p>}
             <h2 class="creation-titre">{p.data.titre}</h2>
-            {p.data.realisateur && <p class="creation-realisateur">De {p.data.realisateur}</p>}
+            {p.data.realisateur && <p class="creation-realisateur">{t(lang, "de")} {p.data.realisateur}</p>}
             {p.data.description && <p class="creation-description">{p.data.description}</p>}
           </div>
         </li>
@@ -171,7 +177,7 @@ function genreDisponible(genre: string) {
 </style>
 
 <script>
-  import { scrollerVersTitre } from "../lib/positionTitre";
+  import { scrollerVersTitre } from "../../lib/positionTitre";
 
   function setupFiltres() {
     const navGenre = document.getElementById('filtres');

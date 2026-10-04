@@ -28,6 +28,7 @@ interface DonneesBooking {
   references?: string; // références sélectionnées, une par ligne
   description: string;
   site?: string; // honeypot anti-spam, doit rester vide
+  lang?: string; // langue de la page d'où part la demande ("fr" ou "en") : langue de l'e-mail de confirmation
 }
 
 const CHAMPS_REQUIS: (keyof DonneesBooking)[] = ["entreprise", "nom", "prenom", "email", "telephone", "description"];
@@ -49,6 +50,59 @@ const LABELS: Record<string, string> = {
   description: "Description du projet",
 };
 
+// Libellés et textes en anglais : l'e-mail de confirmation et les messages d'erreur suivent la langue
+// du visiteur ; l'e-mail reçu par Alexandre reste en français (avec la langue du visiteur indiquée).
+const LABELS_EN: Record<string, string> = {
+  entreprise: "Company / Institution / Organisation",
+  nom: "Last name",
+  prenom: "First name",
+  fonction: "Position / Department",
+  email: "Email",
+  telephone: "Phone",
+  type: "Type of project",
+  duree: "Shooting duration",
+  date: "Desired start date",
+  lieu: "Location",
+  budget: "Estimated budget",
+  criteres: "Search criteria",
+  references: "Selected references",
+  description: "Project description",
+};
+
+const TEXTES = {
+  fr: {
+    metier: "Réalisateur",
+    titre: "Votre demande a bien été reçue",
+    sujet: "Votre demande a bien été reçue",
+    bonjour: "Bonjour",
+    merci: "Merci pour votre demande concernant",
+    retour: "Je reviens vers vous dans les plus brefs délais.",
+    recap: "Récapitulatif de votre demande :",
+    nonConfigure: "Le service d'envoi n'est pas configuré. Merci de me contacter directement.",
+    invalide: "Requête invalide.",
+    manquants: "Champs manquants : ",
+    emailInvalide: "Adresse email invalide.",
+    echec: "L'envoi a échoué. Merci de réessayer ou de m'écrire directement.",
+  },
+  en: {
+    metier: "Director",
+    titre: "Your request has been received",
+    sujet: "Your request has been received",
+    bonjour: "Hello",
+    merci: "Thank you for your request regarding",
+    retour: "I will get back to you as soon as possible.",
+    recap: "Summary of your request:",
+    nonConfigure: "The sending service is not configured. Please contact me directly.",
+    invalide: "Invalid request.",
+    manquants: "Missing fields: ",
+    emailInvalide: "Invalid email address.",
+    echec: "Sending failed. Please try again or write to me directly.",
+  },
+} as const;
+
+type LangueMail = keyof typeof TEXTES;
+const langueDe = (d: { lang?: string }): LangueMail => (d.lang === "en" ? "en" : "fr");
+
 function reponseJson(corps: unknown, status = 200) {
   return new Response(JSON.stringify(corps), {
     status,
@@ -56,11 +110,12 @@ function reponseJson(corps: unknown, status = 200) {
   });
 }
 
-function recapitulatif(d: DonneesBooking, inclureEmail = true) {
+function recapitulatif(d: DonneesBooking, inclureEmail = true, langue: LangueMail = "fr") {
+  const labels = langue === "en" ? LABELS_EN : LABELS;
   return (Object.keys(LABELS) as (keyof DonneesBooking)[])
     .filter((champ) => (inclureEmail || champ !== "email") && String(d[champ] ?? "").trim())
     // Les références tiennent sur plusieurs lignes : on les passe à la ligne sous le libellé.
-    .map((champ) => `${LABELS[champ]} :${champ === "references" ? "\n" : " "}${d[champ]}`)
+    .map((champ) => `${labels[champ]}${langue === "en" ? ":" : " :"}${champ === "references" ? "\n" : " "}${d[champ]}`)
     .join("\n");
 }
 
@@ -71,7 +126,9 @@ function echapperHtml(valeur: unknown) {
 }
 
 function emailConfirmationHtml(d: DonneesBooking) {
-  const recap = echapperHtml(recapitulatif(d, false)).replace(/\n/g, "<br />");
+  const langue = langueDe(d);
+  const x = TEXTES[langue];
+  const recap = echapperHtml(recapitulatif(d, false, langue)).replace(/\n/g, "<br />");
   return `<!doctype html>
 <html>
   <body style="margin:0;padding:0;background:#f5f5f5;font-family:Helvetica,Arial,sans-serif;color:#111;">
@@ -81,13 +138,13 @@ function emailConfirmationHtml(d: DonneesBooking) {
           <table role="presentation" width="100%" style="max-width:520px;background:#fff;border-radius:4px;">
             <tr>
               <td style="padding:32px;">
-                <p style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#999;margin:0 0 24px;">Alexandre Berger — Réalisateur</p>
-                <h1 style="font-size:20px;font-weight:600;margin:0 0 16px;">Votre demande a bien été reçue</h1>
+                <p style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#999;margin:0 0 24px;">Alexandre Berger — ${x.metier}</p>
+                <h1 style="font-size:20px;font-weight:600;margin:0 0 16px;">${x.titre}</h1>
                 <p style="font-size:15px;line-height:1.6;color:#333;margin:0 0 24px;">
-                  Bonjour ${echapperHtml(d.prenom)},<br /><br />
-                  Merci pour votre demande concernant <strong>${echapperHtml(d.entreprise)}</strong>. Je reviens vers vous dans les plus brefs délais.
+                  ${x.bonjour} ${echapperHtml(d.prenom)},<br /><br />
+                  ${x.merci} <strong>${echapperHtml(d.entreprise)}</strong>. ${x.retour}
                 </p>
-                <p style="font-size:13px;color:#777;margin:0 0 8px;">Récapitulatif de votre demande :</p>
+                <p style="font-size:13px;color:#777;margin:0 0 8px;">${x.recap}</p>
                 <p style="font-size:13px;line-height:1.7;color:#444;border-left:2px solid #e11d2e;padding-left:12px;margin:0;">${recap}</p>
               </td>
             </tr>
@@ -103,10 +160,7 @@ export const POST: APIRoute = async ({ request }) => {
   const cleApi = import.meta.env.RESEND_API_KEY;
   if (!cleApi) {
     console.error("RESEND_API_KEY manquante : variable d'environnement non définie.");
-    return reponseJson(
-      { ok: false, erreur: "Le service d'envoi n'est pas configuré. Merci de me contacter directement." },
-      500
-    );
+    return reponseJson({ ok: false, erreur: TEXTES.fr.nonConfigure }, 500);
   }
   const resend = new Resend(cleApi);
 
@@ -114,7 +168,7 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     donnees = await request.json();
   } catch {
-    return reponseJson({ ok: false, erreur: "Requête invalide." }, 400);
+    return reponseJson({ ok: false, erreur: TEXTES.fr.invalide }, 400);
   }
 
   // Honeypot : champ invisible pour les humains, que seuls les robots
@@ -128,16 +182,19 @@ export const POST: APIRoute = async ({ request }) => {
   donnees.criteres = typeof donnees.criteres === "string" ? donnees.criteres.slice(0, 500) : undefined;
   donnees.references = typeof donnees.references === "string" ? donnees.references.slice(0, 3000) : undefined;
 
+  const langue = langueDe(donnees);
+  const x = TEXTES[langue];
+  const labelsLangue = langue === "en" ? LABELS_EN : LABELS;
   const manquants = CHAMPS_REQUIS.filter((champ) => !String(donnees[champ] ?? "").trim());
   if (manquants.length > 0) {
     return reponseJson(
-      { ok: false, erreur: `Champs manquants : ${manquants.map((c) => LABELS[c] ?? c).join(", ")}` },
+      { ok: false, erreur: `${x.manquants}${manquants.map((c) => labelsLangue[c] ?? c).join(", ")}` },
       400
     );
   }
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donnees.email)) {
-    return reponseJson({ ok: false, erreur: "Adresse email invalide." }, 400);
+    return reponseJson({ ok: false, erreur: x.emailInvalide }, 400);
   }
 
   try {
@@ -145,20 +202,20 @@ export const POST: APIRoute = async ({ request }) => {
       from: EMAIL_EXPEDITEUR,
       to: EMAIL_NOTIFICATION,
       replyTo: donnees.email,
-      subject: `Demande de tournage — ${donnees.entreprise}`,
-      text: recapitulatif(donnees, true),
+      subject: `Demande de tournage${langue === "en" ? " (site en anglais)" : ""} — ${donnees.entreprise}`,
+      text: (langue === "en" ? "Langue du visiteur : anglais (il a rempli le formulaire sur la version anglaise du site)\n\n" : "") + recapitulatif(donnees, true),
     });
 
     await resend.emails.send({
       from: EMAIL_EXPEDITEUR,
       to: donnees.email,
-      subject: "Votre demande a bien été reçue",
+      subject: x.sujet,
       html: emailConfirmationHtml(donnees),
     });
   } catch (erreur) {
     console.error("Erreur envoi email booking:", erreur);
     return reponseJson(
-      { ok: false, erreur: "L'envoi a échoué. Merci de réessayer ou de m'écrire directement." },
+      { ok: false, erreur: x.echec },
       502
     );
   }

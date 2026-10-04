@@ -1,24 +1,30 @@
 ---
 export const prerender = true;
-import { getCollection } from "astro:content";
-import Layout from "../../layouts/Layout.astro";
+import { getCarnet } from "../../../lib/contenu";
+import Layout from "../../../layouts/Layout.astro";
+import { cheminsLangues, langDe, t, url, dateFormatee } from "../../../i18n";
 
-const entrees = (await getCollection("carnet", ({ data }) => !data.brouillon)).sort(
+export function getStaticPaths() {
+  return cheminsLangues();
+}
+const lang = langDe(Astro.params);
+
+const entrees = (await getCarnet(lang, ({ data }) => !data.brouillon)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
 
-const titre = "Carnet — Alexandre Berger, réalisateur";
-const description = "Le carnet d'Alexandre Berger, réalisateur freelance en Île-de-France : notes de tournage, coulisses et réflexions sur le documentaire, la fiction et le film de marque.";
+const titre = t(lang, "carnet.titre.page");
+const description = t(lang, "carnet.description");
 ---
 
-<Layout title={titre} description={description} currentPath="/carnet">
-  <h1 class="titre-page">Carnet</h1>
+<Layout title={titre} description={description} currentPath="/carnet" lang={lang}>
+  <h1 class="titre-page">{t(lang, "carnet.titre")}</h1>
   <ul class="entrees">
     {entrees.map((e) => (
       <li>
-        <a href={`/carnet/${e.id}`}>
+        <a href={url(lang, `/carnet/${e.id}`)}>
           <span class="entree-titre">{e.data.titre}</span>
-          <span class="entree-date">{e.data.date.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}</span>
+          <span class="entree-date">{dateFormatee(lang, e.data.date, { year: "numeric", month: "long", day: "numeric" })}</span>
           {e.data.extrait && <span class="entree-extrait">{e.data.extrait}</span>}
         </a>
       </li>
