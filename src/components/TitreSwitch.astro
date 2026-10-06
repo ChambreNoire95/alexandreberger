@@ -12,13 +12,12 @@ const { actif, lang = "fr" } = Astro.props;
   {actif === "commandes" ? (
     <h1 class="titre-page">{t(lang, "commandes")}</h1>
   ) : (
-    <a href={url(lang, "/")} class="titre-inactif">{t(lang, "commandes")}</a>
+    <a href={url(lang, "/")} class="titre-inactif"><span class="fleche" aria-hidden="true">←</span> {t(lang, "commandes")}</a>
   )}
-  <span class="separateur" aria-hidden="true"></span>
   {actif === "creations" ? (
     <h1 class="titre-page">{t(lang, "creations")}</h1>
   ) : (
-    <a href={url(lang, "/creations")} class="titre-inactif">{t(lang, "creations")}</a>
+    <a href={url(lang, "/creations")} class="titre-inactif">{t(lang, "creations")} <span class="fleche" aria-hidden="true">→</span></a>
   )}
 </div>
 
@@ -28,17 +27,24 @@ const { actif, lang = "fr" } = Astro.props;
 
   /* Desktop uniquement : sur mobile, seul le titre de la page active reste
      affiché, comme avant (cf. le mémo sur le périmètre desktop). */
-  .separateur, .titre-inactif { display:none; }
+  .titre-inactif { display:none; }
 
+  /* Desktop : « Films de commande » calé à gauche, « Créations » calé à droite, dans la police des phrases du
+     header (Signature.astro : Archivo gras, sans capitales forcées), 30 % plus petite. Le titre de la page est
+     blanc ; l'autre est un lien grisé, blanc au survol, avec une flèche rouge qui pointe vers son côté. */
   @media (min-width: 801px) {
-    .separateur { display:block; width:1px; height:1.1em; background:rgba(var(--blanc-rgb),.3); }
+    .titre-switch { width:100%; justify-content:space-between; align-items:baseline; gap:2rem; }
+    .titre-switch :global(.titre-page), .titre-inactif {
+      font-family:'Archivo', 'Inter', sans-serif; font-weight:700;
+      font-size:clamp(1.85rem, 4.37vw, 3.6rem); line-height:1.1;
+      letter-spacing:normal; text-transform:none; white-space:nowrap;
+    }
+    .titre-switch :global(.titre-page) { color:var(--blanc); }
     .titre-inactif {
-      display:inline-block;
-      font-family:'Archivo', 'Inter', sans-serif;
-      font-size:1.3rem; letter-spacing:.22em; text-transform:uppercase;
-      color:rgba(var(--blanc-rgb),.5); text-decoration:none; font-weight:400;
+      display:inline-block; color:rgba(var(--blanc-rgb),.4); text-decoration:none;
       transition:color 140ms ease;
     }
-    .titre-inactif:hover { color:rgba(var(--blanc-rgb),.7); }
+    .titre-inactif:hover { color:var(--blanc); }
+    .titre-inactif .fleche { font-family:'Inter', sans-serif; font-weight:400; }
   }
 </style>
