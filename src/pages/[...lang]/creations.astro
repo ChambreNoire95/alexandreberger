@@ -129,6 +129,12 @@ function genreDisponible(genre: string) {
     color:rgba(var(--blanc-rgb),.2); border-color:rgba(var(--blanc-rgb),.12);
     cursor:not-allowed;
   }
+  /* Desktop : même look que les filtres de l'accueil : blanc à 100 % (lisible) ; au survol et à l'état actif, rouge plein,
+     texte blanc. Les boutons sans projet (disabled) restent estompés. */
+  @media (min-width: 801px) {
+    .filtres button:not(:disabled) { color:var(--blanc); border-color:var(--blanc); }
+    .filtres button:not(:disabled):hover, .filtres button[aria-pressed="true"] { background:var(--rouge); border-color:var(--rouge); color:var(--blanc); }
+  }
   @media (min-width: 801px) {
     /* Genre à gauche (aligné avec le contenu des projets), rôle à droite,
        sur la même ligne. En dessous de ce seuil, les deux restent
