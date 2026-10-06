@@ -318,7 +318,10 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       </footer>
     )}
 
-    <section class="bandeau" transition:persist>
+    {/* Présentation, carnet, menu et contact : quatre blocs sur une seule ligne sur grand écran (voir .niveaux),
+       deux lignes de deux en dessous, empilés sur mobile. */}
+    <div class="niveaux" transition:persist>
+    <section class="bandeau">
       <div class="bandeau-texte">
         <p>{presentation}</p>
       </div>
@@ -338,7 +341,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
 
     {/* Dernier niveau avant le copyright : récapitulatif du menu (tous les liens visibles) + formulaire de contact,
        présents sur toutes les pages. Les liens portent data-nav : majNavActive() tient leur état à jour. */}
-    <section class="pied" transition:persist>
+    <section class="pied">
       <nav class="pied-menu" aria-label={t(lang, "pied.menu")}>
         <p class="pied-titre">{t(lang, "pied.menu")}</p>
         <ul>
@@ -366,6 +369,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
         </form>
       </div>
     </section>
+    </div>
     <script>
       // Formulaire de contact du pied de page (/api/contact). Le bloc est transition:persist : on écoute au niveau
       // du document, une seule fois, plutôt que de rattacher l'écouteur à chaque navigation. En phase de capture :
@@ -605,7 +609,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   }
   .carnet-vide { font-family:var(--police-texte); font-weight:400; font-size:.95rem; color:rgba(var(--blanc-rgb),.5); margin:0; max-width:30rem; }
 
-  /* Dernier niveau : menu vertical + formulaire de contact, moitié-moitié (même axe que le bandeau au-dessus). */
+  /* Menu vertical + formulaire de contact : moitié-moitié sous 1200 px (même axe que le bandeau), sur la ligne du bandeau au-delà. */
   .pied { display:flex; border-top:1px solid rgba(var(--blanc-rgb),.14); text-align:left; }
   .pied-menu, .pied-contact { padding:3.5rem clamp(1.5rem, 4vw, 3rem); }
   .pied-menu { flex:1 1 50%; border-right:1px solid rgba(var(--blanc-rgb),.14); }
@@ -650,6 +654,21 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     .pied-champ input { font-size:.875rem; padding:.5rem .75rem; }
     #form-contact button[type="submit"] { margin-top:.35rem; padding:.75rem 1.7rem; font-size:.72rem; }
     .pied-statut { font-size:.85rem; }
+  }
+  /* Grand écran : les quatre blocs (présentation, carnet, menu, contact) sur une seule ligne, centrés en hauteur.
+     Le menu, court, cède de la largeur au formulaire. */
+  @media (min-width: 1200px) {
+    .niveaux { display:flex; align-items:stretch; margin-top:3rem; border-top:1px solid rgba(var(--blanc-rgb),.14); }
+    .niveaux .bandeau, .niveaux .pied { flex:2 1 0; min-width:0; margin-top:0; border-top:none; min-height:0; }
+    .niveaux .pied { border-left:1px solid rgba(var(--blanc-rgb),.14); }
+    .niveaux .bandeau-texte, .niveaux .bandeau-carnet, .niveaux .pied-menu, .niveaux .pied-contact {
+      padding:2.75rem clamp(1.25rem, 2vw, 2rem); min-width:0;
+    }
+    .niveaux .pied-menu, .niveaux .pied-contact { display:flex; flex-direction:column; justify-content:center; }
+    .niveaux .pied-menu { flex:.75 1 0; }
+    .niveaux .pied-menu a { font-size:.78rem; }
+    .niveaux .pied-contact { flex:1.25 1 0; }
+    .niveaux .bandeau-texte p { font-size:.95rem; }
   }
   @media (max-width: 720px) {
     .pied { flex-direction:column; }
