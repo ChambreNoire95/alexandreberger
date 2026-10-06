@@ -10,7 +10,7 @@ import { getItemsCarrousel } from "../../lib/carrousel";
 import { descriptionDepuisTexte } from "../../lib/meta";
 import { urlEmbed } from "../../lib/video";
 import bandeDemo from "../../content/settings/bande-demo.json";
-import { cheminsLangues, langDe, t, url, libelle, roleAffiche, roleCreation, dateFormatee } from "../../i18n";
+import { cheminsLangues, langDe, t, url, libelle, roleAffiche, dateFormatee } from "../../i18n";
 
 export function getStaticPaths() {
   return cheminsLangues();
@@ -21,17 +21,6 @@ const projets = (await getProjets(lang, ({ data }) => data.categorie === "comman
   // Plus récente en premier, plus ancienne en bas (comme sur Créations).
   (a, b) => (b.data.date?.valueOf() ?? -Infinity) - (a.data.date?.valueOf() ?? -Infinity)
 );
-
-// Créations : ne servent qu'à la recherche de références (pas à la liste ni aux aperçus).
-const creations = (await getProjets(lang, ({ data }) => data.categorie === "creations" && !data.brouillon)).sort(
-  (a, b) => (b.data.annee ?? -Infinity) - (a.data.annee ?? -Infinity)
-);
-// Commandes d'abord : à critères égaux, elles passent devant les Créations dans les résultats.
-// Les fiches cochées « Ne pas faire remonter dans les références » (horsRecherche) en sont exclues.
-const elementsRecherche = [
-  ...projets.map((p) => ({ p, creation: false })),
-  ...creations.map((p) => ({ p, creation: true })),
-].filter(({ p }) => !p.data.horsRecherche);
 
 // Panneau d'aperçu (écran large + souris) : un aperçu par projet ayant une image.
 // Durée : les unités (min, h, s…) sont enveloppées pour être affichées plus petites.
@@ -54,55 +43,17 @@ const apercus = projets
     titreFilm: p.data.titreFilm?.trim() || undefined,
     duree: p.data.duree?.trim() || undefined,
   }));
-// « Trouvez les références adaptées à vos besoins » : secteurs et besoins (champs CMS à choix).
-const fichesRecherche = elementsRecherche.map(({ p }) => ({
-  se: p.data.secteurs ?? [],
-  be: p.data.besoins ?? [],
-  fo: p.data.formats ?? [],
-  to: p.data.tons ?? [],
-}));
+// Filtres Univers et Critères (champs CMS à choix) : seules les valeurs portées par au moins un film sont proposées.
 const SECTEURS = ["Mode", "Musique", "Série/Cinéma", "Art", "Culture", "Terroir / Gastronomie", "Éducation", "Sciences", "Société", "Sport", "Solidarité", "Environnement"];
 const BESOINS = ["Interviews", "Mise en scène / Direction artistique", "Tournage à l'étranger", "Projet au long cours", "Images d'archives"];
-// Seules les valeurs réellement utilisées par au moins une fiche sont proposées.
-const secteursRecherche = SECTEURS.filter((x) => fichesRecherche.some((f) => f.se.includes(x)));
-const FORMATS = ["Réseaux sociaux", "Court", "Long", "Série"];
-const TONS = ["Humour", "Informatif", "Décalé", "Promotionnel"];
-const tonsRecherche = TONS.filter((x) => fichesRecherche.some((f) => f.to.includes(x)));
-const formatsRecherche = FORMATS.filter((x) => fichesRecherche.some((f) => f.fo.includes(x)));
-const besoinsRecherche = BESOINS.filter((x) => fichesRecherche.some((f) => f.be.includes(x)));
+const universPresents = SECTEURS.filter((x) => projets.some((p) => p.data.secteurs?.includes(x)));
+const criteresPresents = BESOINS.filter((x) => projets.some((p) => p.data.besoins?.includes(x)));
 const indexAvecApercu = new Set(apercus.map((a) => a.index));
 
 const itemsCarrousel = await getItemsCarrousel(lang);
 
 const titre = t(lang, "accueil.titre");
 const description = t(lang, "accueil.description");
-
-// Textes et libellés pour le script de la fenêtre de recherche (la langue de la page s'applique aussi aux messages).
-const toutesValeurs = {
-  univers: SECTEURS,
-  critere: BESOINS,
-  format: FORMATS,
-  ton: TONS,
-};
-const libelles: Record<string, string> = {};
-for (const [categorie, valeurs] of Object.entries(toutesValeurs)) {
-  for (const v of valeurs) libelles[v] = libelle(lang, categorie as "univers" | "critere" | "format" | "ton", v);
-}
-const textesRecherche = {
-  rien: t(lang, "recherche.rien"),
-  exacts: t(lang, "recherche.exacts"),
-  proches: t(lang, "recherche.proches"),
-  univers: t(lang, "recherche.univers.etat"),
-  reference: t(lang, "recherche.reference"),
-  references: t(lang, "recherche.references"),
-  groupes: {
-    univers: t(lang, "recherche.univers"),
-    criteres: t(lang, "recherche.criteres"),
-    format: t(lang, "recherche.format"),
-    ton: t(lang, "recherche.ton"),
-  },
-  libelles,
-};
 
 // N'affiche dans le filtre que les types réellement utilisés par au moins un projet.
 const ORDRE_TYPES = ["Making-of", "Documentaire", "Activation / Aftermovie", "Institutionnel", "Brand Content", "RSE", "Fiction"];
@@ -118,21 +69,49 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 
   <TitreSwitch actif="commandes" lang={lang} />
 
-  {typesPresents.length > 0 && (
-    <nav class="filtres" id="filtres" aria-label={t(lang, "filtre.aria.type")}>
-      <button type="button" data-type="all" aria-pressed="true">{t(lang, "filtre.tous")}</button>
-      {typesPresents.map((ty) => (
-        <button type="button" data-type={ty} aria-pressed="false">{libelle(lang, "type", ty)}</button>
-      ))}
-      <button type="button" class="filtre-recherche" data-recherche-ouvrir aria-haspopup="dialog">{t(lang, "recherche.bouton")}</button>
-    </nav>
-  )}
+  {/* Zone de filtres : trois rangées (type de film, univers, critères) qui se croisent. Les valeurs séparées par « | »
+     sur chaque <li> sont lues par setupFiltres(). */}
+  <div class="filtres-zone" id="filtres">
+    {typesPresents.length > 0 && (
+      <div class="filtres-rang">
+        <p class="filtres-label">{t(lang, "filtre.type")}</p>
+        <div class="filtres" role="group" data-groupe="type" aria-label={t(lang, "filtre.aria.type")}>
+          <button type="button" data-valeur="" aria-pressed="true">{t(lang, "filtre.tous")}</button>
+          {typesPresents.map((ty) => (
+            <button type="button" data-valeur={ty} aria-pressed="false">{libelle(lang, "type", ty)}</button>
+          ))}
+        </div>
+      </div>
+    )}
+    {universPresents.length > 0 && (
+      <div class="filtres-rang">
+        <p class="filtres-label">{t(lang, "filtre.univers")}</p>
+        <div class="filtres" role="group" data-groupe="univers" aria-label={t(lang, "filtre.univers")}>
+          <button type="button" data-valeur="" aria-pressed="true">{t(lang, "filtre.tous")}</button>
+          {universPresents.map((u) => (
+            <button type="button" data-valeur={u} aria-pressed="false">{libelle(lang, "univers", u)}</button>
+          ))}
+        </div>
+      </div>
+    )}
+    {criteresPresents.length > 0 && (
+      <div class="filtres-rang">
+        <p class="filtres-label">{t(lang, "filtre.criteres")}</p>
+        <div class="filtres" role="group" data-groupe="criteres" aria-label={t(lang, "filtre.criteres")}>
+          <button type="button" data-valeur="" aria-pressed="true">{t(lang, "filtre.tous")}</button>
+          {criteresPresents.map((c) => (
+            <button type="button" data-valeur={c} aria-pressed="false">{libelle(lang, "critere", c)}</button>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
 
   <div class="liste-apercu">
-  <ul id="accroches" class:list={["accroches", { "sans-filtres": typesPresents.length === 0 }]}>
+  <ul id="accroches" class="accroches">
     {projets.map((p, index) => {
       return (
-        <li data-type={p.data.type || ""} data-apercu={indexAvecApercu.has(index) ? index : undefined}>
+        <li data-type={p.data.type || ""} data-univers={(p.data.secteurs ?? []).join("|")} data-criteres={(p.data.besoins ?? []).join("|")} data-apercu={indexAvecApercu.has(index) ? index : undefined}>
           <a href={url(lang, `/projets/${p.id}`)}>
             <span class="accroche-titre">{p.data.titre}</span>
             {p.data.role && p.data.client ? (
@@ -145,6 +124,8 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       );
     })}
   </ul>
+
+  <p class="filtres-vide" id="filtres-vide" hidden>{t(lang, "filtre.rien")}</p>
 
   <aside class="apercu" aria-label={t(lang, "apercu.aria")}>
     <div class="apercu-pile">
@@ -180,50 +161,6 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   </aside>
   </div>
 
-  <dialog class="rech" id="rech" aria-labelledby="rech-titre" data-textes={JSON.stringify(textesRecherche)}>
-    <button type="button" class="rech-fermer" data-rech-fermer aria-label={t(lang, "fermer")}>×</button>
-    <h2 class="rech-titre" id="rech-titre">{t(lang, "recherche.titre")}</h2>
-    <p class="rech-intro">{t(lang, "recherche.intro")}</p>
-    <p class="rech-groupe">{t(lang, "recherche.univers")}</p>
-    <div class="rech-pastilles" role="group" aria-label={t(lang, "recherche.univers")}>
-      {secteursRecherche.map((m) => <button type="button" data-groupe="secteur" data-pastille={m} aria-pressed="false">{libelle(lang, "univers", m)}</button>)}
-    </div>
-    <p class="rech-groupe">{t(lang, "recherche.criteres")}</p>
-    <div class="rech-pastilles" role="group" aria-label={t(lang, "recherche.criteres")}>
-      {besoinsRecherche.map((m) => <button type="button" data-groupe="besoin" data-pastille={m} aria-pressed="false">{libelle(lang, "critere", m)}</button>)}
-    </div>
-    <p class="rech-groupe">{t(lang, "recherche.format")}</p>
-    <div class="rech-pastilles" role="group" aria-label={t(lang, "recherche.format")}>
-      {formatsRecherche.map((m) => <button type="button" data-groupe="format" data-pastille={m} aria-pressed="false">{libelle(lang, "format", m)}</button>)}
-    </div>
-    <p class="rech-groupe">{t(lang, "recherche.ton")}</p>
-    <div class="rech-pastilles" role="group" aria-label={t(lang, "recherche.ton")}>
-      {tonsRecherche.map((m) => <button type="button" data-groupe="ton" data-pastille={m} aria-pressed="false">{libelle(lang, "ton", m)}</button>)}
-    </div>
-    <p class="rech-etat" id="rech-etat" aria-live="polite"></p>
-    <ul class="rech-resultats" id="rech-resultats">
-      {elementsRecherche.map(({ p, creation }, index) => (
-        <li data-index={index} hidden>
-          <a href={url(lang, `/projets/${p.id}`)}>
-            <span class="rech-vignette">
-              {(p.data.couverture || p.data.image1) && <OptimizedImage src={(p.data.couverture || p.data.image1) as string} alt="" sizes="140px" />}
-            </span>
-            <span class="rech-texte">
-              {creation && <span class="rech-etiquette">{t(lang, "recherche.creation")}</span>}
-              <span class="rech-nom">{p.data.titre}</span>
-              {creation
-                ? (p.data.genre || p.data.annee) && <span class="rech-client">{[p.data.genre ? libelle(lang, "genre", p.data.genre) : undefined, p.data.annee].filter(Boolean).join(" · ")}</span>
-                : p.data.client && <span class="rech-client">{p.data.client}</span>}
-            </span>
-            <span class="rech-go" aria-hidden="true">→</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-    <a class="rech-contact" href={url(lang, "/booking")}>{t(lang, "recherche.contact")} <span class="fleche">→</span></a>
-    <script is:inline type="application/json" id="rech-data" set:html={JSON.stringify(fichesRecherche).replace(/</g, "\\u003c")}></script>
-  </dialog>
-
   {demoUrl && (
     <dialog class="demo-popup" id="demo-popup" aria-label={t(lang, "demo.titre")} data-src={demoUrl}>
       <button type="button" class="demo-fermer" data-demo-fermer aria-label={t(lang, "fermer")}>×</button>
@@ -233,7 +170,27 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 </Layout>
 
 <style>
+  /* Zone de filtres, entre deux filets : une rangée par famille (libellé + boutons). */
+  .filtres-zone {
+    width:100%; max-width:1240px; display:flex; flex-direction:column; gap:1.5rem;
+    padding:1.75rem 0; border-top:1px solid rgba(var(--blanc-rgb),.14); border-bottom:1px solid rgba(var(--blanc-rgb),.14);
+  }
+  .filtres-rang { display:flex; flex-direction:column; align-items:center; gap:.75rem; }
+  .filtres-label {
+    margin:0; font-family:'Archivo', 'Inter', sans-serif; font-weight:700; font-size:.7rem;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--blanc);
+  }
   .filtres { display:flex; flex-wrap:wrap; justify-content:center; gap:.75rem; margin:0; }
+  .filtres button:disabled { opacity:.3; cursor:not-allowed; border-style:dashed; }
+  .filtres button:disabled:hover { color:rgba(var(--blanc-rgb),.5); border-color:rgba(var(--blanc-rgb),.3); }
+  .filtres-vide { grid-column:1; margin:4.5rem 0 0; font-family:var(--police-texte); font-weight:400; font-size:1rem; color:rgba(var(--blanc-rgb),.65); }
+  /* Desktop : libellé à gauche (colonne fixe), boutons à la suite, le tout aligné sur la liste. */
+  @media (min-width: 801px) {
+    .filtres-zone { gap:1rem; }
+    .filtres-rang { flex-direction:row; align-items:baseline; gap:1.5rem; }
+    .filtres-label { flex:none; width:8.5rem; }
+    .filtres { justify-content:flex-start; }
+  }
   .filtres button {
     font-family:'Archivo', 'Inter', sans-serif; font-weight:200;
     font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
@@ -244,7 +201,6 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   .filtres button:hover { color:var(--blanc); border-color:var(--rouge); }
   .filtres button[aria-pressed="true"] { background:var(--blanc); color:#0b0b0b; border-color:var(--blanc); font-weight:700; }
   .accroches { list-style:none; margin:4.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:3.575rem; }
-  .accroches.sans-filtres { margin-top:5.5rem; }
   .accroches { overflow-anchor:none; }
   .accroches li[hidden] { display:none; }
   .accroches a {
@@ -350,94 +306,6 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     .apercu-demo-ouvrir:hover .apercu-demo-play { background:rgba(var(--blanc-rgb),.18); transform:scale(1.06); }
   }
 
-  /* « Trouver une référence » : bouton dans la rangée de filtres + fenêtre de dialogue. */
-  /* Bouton plein blanc, texte noir et gras, sur tous les écrans. */
-  .filtres .filtre-recherche { font-weight:700; background:var(--blanc); border-color:var(--blanc); color:#0b0b0b; text-wrap:balance; line-height:1.4; }
-  .filtres .filtre-recherche:hover, .filtres .filtre-recherche:focus-visible { background:var(--rouge); border-color:var(--rouge); color:var(--blanc); }
-  /* Grand écran + souris : filtres calés à gauche (comme la liste), bouton de recherche
-     à droite en blanc plein. */
-  @media (min-width: 1100px) and (hover:hover) and (pointer:fine) {
-    .filtres { width:100%; max-width:1240px; justify-content:flex-start; }
-    .filtres .filtre-recherche { margin-left:auto; box-sizing:border-box; width:420px; text-align:center; }
-  }
-
-  .rech {
-    box-sizing:border-box; width:min(92vw, 640px); max-height:88vh; overflow-y:auto;
-    padding:1.6rem; background:#0b0b0b; color:var(--blanc); text-align:left;
-    border:1px solid rgba(var(--blanc-rgb),.35); border-radius:2px;
-  }
-  .rech::backdrop { background:rgba(0,0,0,.85); }
-  .rech-fermer {
-    position:absolute; top:.6rem; right:.9rem; padding:0; font-size:1.8rem; line-height:1;
-    color:var(--blanc); background:transparent; border:0; cursor:pointer;
-  }
-  .rech-fermer:hover { color:rgba(var(--blanc-rgb),.6); }
-  .rech-titre { margin:0 2rem .5rem 0; font-size:1.15rem; font-weight:700; text-transform:uppercase; line-height:1.3; }
-  .rech-intro { margin:0 0 1.2rem; font-family:var(--police-texte); font-weight:400; font-size:.95rem; line-height:1.6; color:rgba(var(--blanc-rgb),.8); }
-  .rech-groupe {
-    margin:0 0 .5rem; font-family:'Archivo', 'Inter', sans-serif; font-size:.68rem;
-    letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--blanc);
-  }
-  .rech-pastilles { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1rem; }
-  .rech-pastilles button {
-    font-family:'Archivo', 'Inter', sans-serif; font-weight:200;
-    font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
-    color:rgba(var(--blanc-rgb),.7); background:transparent; cursor:pointer;
-    border:1px solid rgba(var(--blanc-rgb),.3); border-radius:2px; padding:.4rem .8rem;
-  }
-  .rech-pastilles button:hover { color:var(--blanc); border-color:var(--blanc); }
-  .rech-pastilles button:disabled { opacity:.3; cursor:not-allowed; border-style:dashed; }
-  .rech-pastilles button:disabled:hover { color:rgba(var(--blanc-rgb),.7); border-color:rgba(var(--blanc-rgb),.3); }
-  .rech-pastilles button[aria-pressed="true"] { background:var(--blanc); color:#0b0b0b; border-color:var(--blanc); }
-  .rech-etat { min-height:1.4em; margin:.9rem 0 .6rem; font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.55); }
-  .rech-resultats { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.7rem; }
-  .rech-resultats li[hidden] { display:none; }
-  .rech-resultats a {
-    display:flex; align-items:center; gap:1rem; padding:10px; text-decoration:none; color:var(--blanc);
-    border:1px solid rgba(var(--blanc-rgb),.35); border-radius:2px; transition:border-color 140ms ease;
-  }
-  .rech-resultats a:hover, .rech-resultats a:focus-visible { border-color:var(--blanc); }
-  .rech-vignette { flex:none; width:112px; aspect-ratio:16/9; overflow:hidden; background:#111; border-bottom:1px solid var(--blanc); }
-  .rech-vignette :global(img) { width:100%; height:100%; object-fit:cover; display:block; }
-  .rech-texte { flex:1; min-width:0; display:flex; flex-direction:column; gap:.25rem; }
-  .rech-nom { font-weight:700; font-size:.95rem; line-height:1.3; }
-  .rech-client {
-    font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.68rem; letter-spacing:.1em;
-    text-transform:uppercase; color:rgba(var(--blanc-rgb),.5);
-  }
-  .rech-etiquette {
-    align-self:flex-start; padding:.1rem .4rem; border:1px solid rgba(var(--blanc-rgb),.6); border-radius:2px;
-    font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.62rem; letter-spacing:.14em;
-    text-transform:uppercase; color:var(--blanc);
-  }
-  .rech-go { flex:none; font-size:1.3rem; line-height:1; color:var(--rouge); transition:transform 140ms ease; }
-  .rech-resultats a:hover .rech-go, .rech-resultats a:focus-visible .rech-go { transform:translateX(.3rem); }
-  .rech-contact {
-    display:inline-block; margin-top:1.2rem; color:var(--blanc); text-decoration:none; font-weight:700; font-size:.95rem;
-    border-bottom:1px solid rgba(var(--blanc-rgb),.5); padding-bottom:.15rem;
-  }
-  .rech-contact:hover { border-bottom-color:var(--blanc); }
-  /* Grand écran : fenêtre plus large et plus aérée, pour le confort. */
-  @media (min-width: 900px) {
-    .rech { width:min(92vw, 880px); max-height:92vh; padding:2.2rem 2.5rem; }
-    .rech-titre { font-size:1.4rem; margin-bottom:.7rem; }
-    .rech-intro { font-size:1.05rem; margin-bottom:1.7rem; }
-    .rech-groupe { font-size:.76rem; margin-bottom:.65rem; }
-    .rech-pastilles { gap:.6rem; margin-bottom:1.3rem; }
-    .rech-pastilles button { font-size:.78rem; padding:.55rem 1rem; }
-    .rech-etat { font-size:.78rem; margin:1.1rem 0 .8rem; }
-    .rech-resultats { gap:.8rem; }
-    .rech-resultats a { gap:1.3rem; padding:12px; }
-    .rech-vignette { width:168px; }
-    .rech-nom { font-size:1.1rem; }
-    .rech-client { font-size:.74rem; }
-    .rech-contact { margin-top:1.5rem; font-size:1rem; }
-  }
-  @media (max-width: 520px) {
-    .rech { padding:1.1rem; }
-    .rech-vignette { width:84px; }
-  }
-
   /* Pop-up vidéo (ouverte depuis l'encart « bande démo »). */
   .demo-popup {
     padding:0; border:0; background:transparent; color:var(--blanc);
@@ -458,34 +326,80 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   }
   .demo-fermer:hover { color:rgba(var(--blanc-rgb),.6); }
   @media (prefers-reduced-motion: reduce) {
-    .apercu-item, .accroche-titre::before, .apercu-fleche, .demo-cadre :global(iframe), .rech-go { transition:none !important; }
+    .apercu-item, .accroche-titre::before, .apercu-fleche, .demo-cadre :global(iframe) { transition:none !important; }
   }
 </style>
 
 <script>
   import { scrollerVersTitre } from "../../lib/positionTitre";
   
+  // Trois familles de filtres qui se croisent : type (un seul), univers (un seul), critères (plusieurs : le film doit
+  // tous les porter). Un bouton qui ne mènerait à aucun film avec le reste de la sélection est grisé.
   function setupFiltres() {
-    const nav = document.getElementById('filtres');
-    const items = document.querySelectorAll<HTMLLIElement>('#accroches li');
-    if (!nav || !items.length) return;
+    const zone = document.getElementById('filtres');
+    const liste = document.getElementById('accroches');
+    const vide = document.getElementById('filtres-vide');
+    const items = [...document.querySelectorAll<HTMLLIElement>('#accroches li')];
+    if (!zone || !liste || !items.length) return;
 
-    nav.addEventListener('click', (event) => {
-      const bouton = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-type]');
-      if (!bouton) return;
-      const type = bouton.dataset.type;
+    const fiches = items.map((li) => ({
+      li,
+      type: li.dataset.type ?? '',
+      univers: (li.dataset.univers ?? '').split('|').filter(Boolean),
+      criteres: (li.dataset.criteres ?? '').split('|').filter(Boolean),
+    }));
+    const boutons = [...zone.querySelectorAll<HTMLButtonElement>('button[data-valeur]')];
+    const groupeDe = (b: HTMLElement) => b.closest<HTMLElement>('[data-groupe]')?.dataset.groupe ?? '';
+    let type = '';
+    let univers = '';
+    const criteres = new Set<string>();
 
-      nav.querySelectorAll('button[data-type]').forEach((b) => b.setAttribute('aria-pressed', String(b === bouton)));
-      items.forEach((li) => {
-        li.hidden = type !== 'all' && li.dataset.type !== type;
+    type Fiche = (typeof fiches)[number];
+    const convient = (f: Fiche, t: string, u: string, c: Set<string>) =>
+      (!t || f.type === t) && (!u || f.univers.includes(u)) && [...c].every((x) => f.criteres.includes(x));
+
+    const appliquer = () => {
+      let visibles = 0;
+      fiches.forEach((f) => {
+        f.li.hidden = !convient(f, type, univers, criteres);
+        if (!f.li.hidden) visibles++;
       });
+      if (vide) vide.hidden = visibles > 0;
 
-      document.getElementById('accroches')?.dispatchEvent(new Event('filtre'));
+      boutons.forEach((b) => {
+        const g = groupeDe(b);
+        const v = b.dataset.valeur ?? '';
+        const actif = g === 'type' ? type === v : g === 'univers' ? univers === v : v ? criteres.has(v) : criteres.size === 0;
+        b.setAttribute('aria-pressed', String(actif));
+        // « Tous » et les boutons déjà cochés restent toujours cliquables.
+        b.disabled = !!v && !actif && !fiches.some((f) =>
+          g === 'type' ? convient(f, v, univers, criteres)
+            : g === 'univers' ? convient(f, type, v, criteres)
+            : convient(f, type, univers, new Set([...criteres, v]))
+        );
+      });
+    };
+
+    zone.addEventListener('click', (event) => {
+      const bouton = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-valeur]');
+      if (!bouton || bouton.disabled) return;
+      const g = groupeDe(bouton);
+      const v = bouton.dataset.valeur ?? '';
+      if (g === 'type') type = v;
+      else if (g === 'univers') univers = univers === v ? '' : v;
+      else if (!v) criteres.clear();
+      else if (criteres.has(v)) criteres.delete(v);
+      else criteres.add(v);
+
+      appliquer();
+      liste.dispatchEvent(new Event('filtre'));
 
       // Masquer/afficher des accroches change la hauteur de la page : on recale
       // aussitôt, dans la même image, sur la position de référence (titre en haut).
       scrollerVersTitre();
     });
+
+    appliquer();
   }
 
   function setupApercu() {
@@ -522,127 +436,6 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     parDefaut();
   }
 
-  interface FicheRecherche { se: string[]; be: string[]; fo: string[]; to: string[]; }
-
-  function setupRecherche(fiches: FicheRecherche[]) {
-    const dialogue = document.getElementById('rech') as HTMLDialogElement | null;
-    const liste = document.getElementById('rech-resultats');
-    const etat = document.getElementById('rech-etat');
-    if (!dialogue || !liste || !etat) return;
-    const lis = [...liste.querySelectorAll<HTMLLIElement>('li')];
-    const pastilles = [...dialogue.querySelectorAll<HTMLButtonElement>('[data-pastille]')];
-
-    // Textes de la langue de la page (messages, libellés), posés par le serveur sur la fenêtre.
-    const T = JSON.parse(dialogue.dataset.textes ?? '{}');
-    const lib = (valeur: string) => (T.libelles?.[valeur] as string | undefined) ?? valeur;
-
-    // Un seul secteur ; plusieurs besoins possibles (les films qui en couvrent le plus remontent en premier).
-    let secteur = '';
-    const besoins = new Set<string>();
-    const formats = new Set<string>(); // plusieurs formats possibles : un film qui en a au moins un convient
-    const tons = new Set<string>(); // idem pour le ton
-
-    // Une pastille est grisée si, avec les critères déjà choisis dans les AUTRES lignes, aucun film ne la porte :
-    // elle ne mènerait qu'à zéro résultat. Les pastilles déjà cochées restent toujours cliquables (pour les retirer).
-    const valeursDe = (f: FicheRecherche, g: string) => (g === 'secteur' ? f.se : g === 'besoin' ? f.be : g === 'format' ? f.fo : f.to);
-    const convient = (f: FicheRecherche, sauf: string) =>
-      (sauf === 'secteur' || !secteur || f.se.includes(secteur)) &&
-      (sauf === 'besoin' || !besoins.size || f.be.some((x) => besoins.has(x))) &&
-      (sauf === 'format' || !formats.size || f.fo.some((x) => formats.has(x))) &&
-      (sauf === 'ton' || !tons.size || f.to.some((x) => tons.has(x)));
-    const majDisponibilites = () => {
-      pastilles.forEach((b) => {
-        const g = b.dataset.groupe ?? '';
-        const v = b.dataset.pastille ?? '';
-        const cochee = b.getAttribute('aria-pressed') === 'true';
-        b.disabled = !cochee && !fiches.some((f) => convient(f, g) && valeursDe(f, g).includes(v));
-      });
-    };
-
-    const lancer = () => {
-      pastilles.forEach((b) => {
-        const v = b.dataset.pastille ?? '';
-        const actif = b.dataset.groupe === 'secteur' ? secteur === v : b.dataset.groupe === 'besoin' ? besoins.has(v) : b.dataset.groupe === 'format' ? formats.has(v) : tons.has(v);
-        b.setAttribute('aria-pressed', String(actif));
-      });
-      majDisponibilites();
-      lis.forEach((li) => { li.hidden = true; });
-      if (!secteur && !besoins.size && !formats.size && !tons.size) {
-        etat.textContent = '';
-        return;
-      }
-
-      const candidats = fiches
-        .map((f, index) => ({ index, couverts: f.be.filter((x) => besoins.has(x)).length }))
-        .filter((r) => (!secteur || fiches[r.index].se.includes(secteur)) && (!besoins.size || r.couverts > 0) && (!formats.size || fiches[r.index].fo.some((x) => formats.has(x))) && (!tons.size || fiches[r.index].to.some((x) => tons.has(x))))
-        .sort((a, b) => b.couverts - a.couverts || a.index - b.index); // à égalité : le plus récent d'abord
-
-      const retenus = candidats.slice(0, 5);
-      if (!retenus.length) {
-        etat.textContent = T.rien ?? "Rien qui croise ces critères pour l'instant. Essayez d'autres critères, ou parlons de votre projet.";
-        return;
-      }
-      // « 5/8 » quand il y a plus de correspondances que de résultats affichés.
-      const tronque = candidats.length > retenus.length;
-      const compte = tronque ? `${retenus.length}/${candidats.length}` : `${retenus.length}`;
-      etat.textContent = !besoins.size
-        ? `${secteur ? `${T.univers ?? 'Univers'} ${lib(secteur)} · ` : ''}${compte} ${retenus.length > 1 ? (T.references ?? 'références') : (T.reference ?? 'référence')}`
-        : `${retenus[0].couverts === besoins.size ? (T.exacts ?? 'Les références qui répondent à vos critères') : (T.proches ?? 'Les références les plus proches de vos critères')}${tronque ? ` · ${compte}` : ''}`;
-
-      retenus.forEach((r) => {
-        const li = lis[r.index];
-        li.hidden = false;
-        liste.appendChild(li); // dans l'ordre du classement
-      });
-    };
-
-    // La sélection (références affichées + critères) est mémorisée à chaque changement : le formulaire Booking
-    // la reprend, que le prospect y aille par « Parlons de votre projet » ou par le menu.
-    const memoriser = () => {
-      try {
-        const references = lis
-          .filter((li) => !li.hidden)
-          .map((li) => ({
-            titre: li.querySelector('.rech-nom')?.textContent?.trim() ?? '',
-            chemin: li.querySelector('a')?.getAttribute('href') ?? '',
-            creation: !!li.querySelector('.rech-etiquette'),
-          }))
-          .filter((r) => r.titre && r.chemin);
-        const criteres = [
-          secteur && `${T.groupes?.univers ?? 'Univers'} : ${lib(secteur)}`,
-          besoins.size && `${T.groupes?.criteres ?? 'Critères'} : ${[...besoins].map(lib).join(', ')}`,
-          formats.size && `${T.groupes?.format ?? 'Format/Durée'} : ${[...formats].map(lib).join(', ')}`,
-          tons.size && `${T.groupes?.ton ?? 'Ton'} : ${[...tons].map(lib).join(', ')}`,
-        ].filter(Boolean).join(' · ');
-        // `selection` : valeurs brutes (clés du CMS), pour que la page Booking reconstruise la ligne de critères dans SA langue.
-        const selection = { univers: secteur, criteres: [...besoins], format: [...formats], ton: [...tons] };
-        if (references.length) sessionStorage.setItem('references-booking', JSON.stringify({ references, criteres, selection }));
-        else sessionStorage.removeItem('references-booking');
-      } catch {
-        /* stockage indisponible : le formulaire s'affichera simplement sans références */
-      }
-    };
-
-    document.querySelectorAll('[data-recherche-ouvrir]').forEach((b) =>
-      b.addEventListener('click', () => dialogue.showModal())
-    );
-    dialogue.querySelector('[data-rech-fermer]')?.addEventListener('click', () => dialogue.close());
-    dialogue.addEventListener('click', (e) => { if (e.target === dialogue) dialogue.close(); });
-    pastilles.forEach((b) =>
-      b.addEventListener('click', () => {
-        const valeur = b.dataset.pastille ?? '';
-        if (b.dataset.groupe === 'secteur') secteur = secteur === valeur ? '' : valeur;
-        else {
-          const ensemble = b.dataset.groupe === 'besoin' ? besoins : b.dataset.groupe === 'format' ? formats : tons;
-          if (ensemble.has(valeur)) ensemble.delete(valeur);
-          else ensemble.add(valeur);
-        }
-        lancer();
-        memoriser();
-      })
-    );
-  }
-
   function setupDemo() {
     const popup = document.getElementById('demo-popup') as HTMLDialogElement | null;
     if (!popup) return;
@@ -675,8 +468,4 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   document.addEventListener('astro:page-load', setupFiltres);
   document.addEventListener('astro:page-load', setupApercu);
   document.addEventListener('astro:page-load', setupDemo);
-  document.addEventListener('astro:page-load', () => {
-    const brut = document.getElementById('rech-data')?.textContent;
-    if (brut) setupRecherche(JSON.parse(brut) as FicheRecherche[]);
-  });
 </script>

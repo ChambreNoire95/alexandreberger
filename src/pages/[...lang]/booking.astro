@@ -28,8 +28,6 @@ const textesScript = {
   groupes: {
     univers: t(lang, "recherche.univers"),
     criteres: t(lang, "recherche.criteres"),
-    format: t(lang, "recherche.format"),
-    ton: t(lang, "recherche.ton"),
   },
   libelles: libellesRecherche(lang),
 };
@@ -260,8 +258,6 @@ const textesRappel = {
             const morceaux = [
               typeof sel.univers === "string" && sel.univers && `${g.univers} : ${lib(sel.univers)}`,
               liste(sel.criteres).length && `${g.criteres} : ${liste(sel.criteres).map(lib).join(", ")}`,
-              liste(sel.format).length && `${g.format} : ${liste(sel.format).map(lib).join(", ")}`,
-              liste(sel.ton).length && `${g.ton} : ${liste(sel.ton).map(lib).join(", ")}`,
             ].filter(Boolean);
             if (morceaux.length) criteres = morceaux.join(" · ");
           }

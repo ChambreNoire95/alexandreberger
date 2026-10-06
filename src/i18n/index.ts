@@ -96,39 +96,23 @@ const CRITERES: Record<string, string> = {
   "Images d'archives": "Archive footage",
 };
 
-const FORMATS: Record<string, string> = {
-  "Réseaux sociaux": "Social media",
-  Court: "Short",
-  Long: "Long",
-  Série: "Series",
-};
-
-const TONS: Record<string, string> = {
-  Humour: "Humor",
-  Informatif: "Informative",
-  Décalé: "Offbeat",
-  Promotionnel: "Promotional",
-};
-
 const TABLES: Record<string, Record<string, string>> = {
   type: TYPES_FILM,
   genre: TYPES_FILM,
   univers: UNIVERS,
   critere: CRITERES,
-  format: FORMATS,
-  ton: TONS,
 };
 
 /** Libellé affiché d'une valeur du CMS : libelle("en", "univers", "Mode") → "Fashion". */
-export function libelle(lang: Lang, categorie: "type" | "genre" | "univers" | "critere" | "format" | "ton", valeur: string): string {
+export function libelle(lang: Lang, categorie: "type" | "genre" | "univers" | "critere", valeur: string): string {
   if (lang === "fr") return valeur;
   return TABLES[categorie]?.[valeur] ?? valeur;
 }
 
-/** Libellés de tous les critères de recherche (Univers, Critères, Format/Durée, Ton) dans la langue donnée : valeur du CMS → libellé affiché. */
+/** Libellés des filtres Univers et Critères dans la langue donnée : valeur du CMS → libellé affiché. */
 export function libellesRecherche(lang: Lang): Record<string, string> {
   const sortie: Record<string, string> = {};
-  for (const categorie of ["univers", "critere", "format", "ton"] as const) {
+  for (const categorie of ["univers", "critere"] as const) {
     for (const valeur of Object.keys(TABLES[categorie] ?? {})) sortie[valeur] = libelle(lang, categorie, valeur);
   }
   return sortie;
