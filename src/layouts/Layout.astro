@@ -4,6 +4,7 @@ import { getCollection } from "astro:content";
 import LogoFormats from "../components/LogoFormats.astro";
 import { url, sansLangue, autreLangue, t, dateFormatee, type Lang } from "../i18n";
 import { getCarnet } from "../lib/contenu";
+import logosClients from "../data/logos-clients.json";
 
 interface Props {
   title: string;
@@ -35,18 +36,11 @@ const personneJsonLd = {
 };
 const blocsJsonLd = [personneJsonLd, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [])];
 
-const clients = [
-  "Bon Marché Rive Gauche", "Petit Bateau", "Univers Sel", "Synology", "Université Paris Nanterre",
-  "Pompiers 95", "SDIS Guadeloupe", "Ruush", "Agence Trafic", "Disney+", "Fiap Paris", "Burger King",
-  "Cine Nominé", "Dessine l'Espoir", "The Ivory Fondation", "Polytech Montpellier", "Madame Arthur/Divan du monde",
-  "AG2R La Mondiale", "SloSlo", "Concord Label Group", "Universal Music France", "Hachette", "Tonies",
-  "La Semaine De La Critique", "Voilà Chef", "JoyVox", "UnisCité",
-  "Sapari Productions", "Supermerci", "Webfleet",
-  "PlayStation", "Team Vitality", "La Métropole du Grand Paris", "BeIn Sports",
-  "Jule et Lily", "Cosmopolitan", "L'Equipe Explore", "Les Cahiers Pour Décider Et Agir",
-  "Palinal", "Epikure Studio", "Progress Associés", "Adopt Parfums", "Pan Distribution", "Agropolis Fondation",
-  "Le Syndicat du Cru Minervois", "TUI", "Mediaposte",
-].sort((a, b) => a.localeCompare(b, "fr"));
+// Références (pied de page) : logos blancs générés par scripts/generer-logos.mjs (liste : scripts/logos/clients.json).
+// L'ordre d'affichage est celui de clients.json : par notoriété décroissante (les marques les plus connues d'abord),
+// pour servir de preuve lors du démarchage. Les références sans logo restent en texte, à la fin.
+const clientsLogo = logosClients.filter((c) => c.logo);
+const clientsTexte = logosClients.filter((c) => !c.logo);
 
 const presentation = t(lang, "bandeau.presentation");
 
@@ -309,17 +303,24 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     {currentPath !== "/creations" && (
       <footer transition:persist>
         <p class="refs-titre">{t(lang, "footer.titre")}</p>
-        <ul class="refs refs-desktop">
-          {clients.map((client) => (
-            <li class="refs-item">{client}</li>
+        <ul class="refs-logos">
+          {clientsLogo.map((c) => (
+            <li style={`--l:${c.largeur}px;--h:${c.hauteur}px`}>
+              {/* Lien externe sur toutes les pages : nofollow, pour ne pas diluer le référencement du site. */}
+              <a href={c.url} target="_blank" rel="noopener nofollow">
+                <img src={c.logo} width={c.largeur} height={c.hauteur} alt={t(lang, "footer.logo.alt").replace("{nom}", c.nom)} loading="lazy" decoding="async" />
+              </a>
+            </li>
+          ))}
+          {clientsTexte.map((c) => (
+            <li class="refs-texte">{c.url ? <a href={c.url} target="_blank" rel="noopener nofollow">{c.nom}</a> : c.nom}</li>
           ))}
         </ul>
-        <p class="refs refs-mobile">{clients.join(" · ")}</p>
       </footer>
     )}
 
-    {/* Présentation, carnet, menu et contact : quatre blocs sur une seule ligne sur grand écran (voir .niveaux),
-       deux lignes de deux en dessous, empilés sur mobile. */}
+    {/* Présentation, carnet et contact : trois blocs sur une seule ligne sur grand écran (voir .niveaux),
+       le contact sous les deux autres en dessous, empilés sur mobile. */}
     <div class="niveaux" transition:persist>
     <section class="bandeau">
       <div class="bandeau-texte">
@@ -339,22 +340,11 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       </div>
     </section>
 
-    {/* Dernier niveau avant le copyright : récapitulatif du menu (tous les liens visibles) + formulaire de contact,
-       présents sur toutes les pages. Les liens portent data-nav : majNavActive() tient leur état à jour. */}
+    {/* Formulaire de contact, présent sur toutes les pages, mis en avant (cadre, titre fléché, bouton rouge). */}
     <section class="pied">
-      <nav class="pied-menu" aria-label={t(lang, "pied.menu")}>
-        <p class="pied-titre">{t(lang, "pied.menu")}</p>
-        <ul>
-          <li><a href={url(lang, "/")} data-nav aria-current={currentPath === "/" ? "page" : undefined}>{t(lang, "menu.commandes")}</a></li>
-          <li><a href={url(lang, "/creations")} data-nav aria-current={currentPath === "/creations" ? "page" : undefined}>{t(lang, "menu.creations")}</a></li>
-          <li><a href={url(lang, "/carnet")} data-nav data-nav-prefix aria-current={currentPath.startsWith("/carnet") ? "page" : undefined}>{t(lang, "menu.carnet")}</a></li>
-          <li><a href={url(lang, "/autour-du-monde")} data-nav aria-current={currentPath === "/autour-du-monde" ? "page" : undefined}>{t(lang, "menu.autour")}</a></li>
-          <li><a href={url(lang, "/a-propos")} data-nav aria-current={currentPath === "/a-propos" ? "page" : undefined}>{t(lang, "menu.apropos")}</a></li>
-          <li><a href={url(lang, "/booking")} data-nav aria-current={currentPath === "/booking" ? "page" : undefined}>{t(lang, "nav.booking")}</a></li>
-        </ul>
-      </nav>
       <div class="pied-contact">
-        <p class="pied-titre">{t(lang, "contact.titre")}</p>
+        <div class="pied-cadre">
+        <h2 class="pied-accroche"><span class="fleche" aria-hidden="true">→</span> {t(lang, "contact.titre")}</h2>
         <p class="pied-intro">{t(lang, "contact.intro")}</p>
         <form id="form-contact" data-textes={JSON.stringify(textesContact)}>
           <input type="text" name="site" class="pied-piege" tabindex="-1" autocomplete="off" aria-hidden="true" />
@@ -367,6 +357,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
           <button type="submit">{t(lang, "contact.envoyer")}</button>
           <p class="pied-statut" role="status" hidden></p>
         </form>
+        </div>
       </div>
     </section>
     </div>
@@ -573,15 +564,17 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   .retour-haut.visible { opacity:1; translate:0 0; pointer-events:auto; }
   .retour-haut:hover { background:var(--blanc); color:#0b0b0b; border-color:var(--blanc); }
   footer { border-top:1px solid rgba(var(--blanc-rgb),.14); padding-top:3rem; margin-top:3rem; }
-  .refs-titre { font-size:.7rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.5); margin:0 0 1.25rem; }
-  .refs { font-size:.9rem; font-family:var(--police-texte); font-weight:400; line-height:1.8; color:rgba(var(--blanc-rgb),.65); margin:0; }
-  .refs-desktop {
-    display:flex; flex-wrap:wrap; justify-content:center;
-    list-style:none; padding:0; max-width:900px; margin:0 auto;
+  .refs-titre { font-size:.7rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.5); margin:0 0 2.25rem; }
+  /* Logos des références : blancs, taille d'affichage calculée par le script (surface visuelle constante), centrés et
+     renvoyés à la ligne selon la place. Les références sans logo suivent en texte. */
+  .refs-logos {
+    list-style:none; padding:0; max-width:1120px; margin:0 auto;
+    display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:1.9rem 2.9rem;
   }
-  .refs-item::after { content:"·"; margin:0 .55em; color:rgba(var(--blanc-rgb),.3); }
-  .refs-item:last-child::after { content:none; }
-  .refs-mobile { display:none; }
+  .refs-logos a { display:block; color:inherit; text-decoration:none; }
+  .refs-logos img { display:block; width:var(--l); height:var(--h); opacity:.85; transition:opacity 140ms ease; }
+  .refs-logos a:hover img, .refs-logos a:focus-visible img { opacity:1; }
+  .refs-texte { font-size:.9rem; font-family:var(--police-texte); font-weight:400; color:rgba(var(--blanc-rgb),.65); }
 
   .bandeau {
     margin-top:3rem;
@@ -609,19 +602,13 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   }
   .carnet-vide { font-family:var(--police-texte); font-weight:400; font-size:.95rem; color:rgba(var(--blanc-rgb),.5); margin:0; max-width:30rem; }
 
-  /* Menu vertical + formulaire de contact : moitié-moitié sous 1200 px (même axe que le bandeau), sur la ligne du bandeau au-delà. */
+  /* Formulaire de contact : pleine largeur sous le bandeau en dessous de 1200 px, sur la même ligne au-delà. */
   .pied { display:flex; border-top:1px solid rgba(var(--blanc-rgb),.14); text-align:left; }
-  .pied-menu, .pied-contact { padding:3.5rem clamp(1.5rem, 4vw, 3rem); }
-  .pied-menu { flex:1 1 50%; border-right:1px solid rgba(var(--blanc-rgb),.14); }
-  .pied-contact { flex:1 1 50%; min-width:0; }
-  .pied-titre { font-size:.805rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.5); margin:0 0 1.5rem; }
-  .pied-menu ul { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1.1rem; }
-  .pied-menu a {
-    font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.85rem; letter-spacing:.18em; text-transform:uppercase;
-    color:rgba(var(--blanc-rgb),.9); text-decoration:none; transition:color 140ms ease;
-  }
-  .pied-menu a:hover { color:var(--rouge); }
-  .pied-menu a[aria-current="page"] { color:var(--blanc); text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
+  .pied-contact { flex:1 1 100%; min-width:0; padding:3.5rem clamp(1.5rem, 4vw, 3rem); display:flex; justify-content:center; }
+  /* Mise en avant : cadre (comme le bloc « rappel » de la page Booking), titre en gras précédé de la flèche rouge, bouton rouge. */
+  .pied-cadre { width:100%; max-width:36rem; padding:2rem 2rem 2.25rem; background:rgba(var(--blanc-rgb),.04); border:1px solid rgba(var(--blanc-rgb),.3); border-radius:2px; }
+  .pied-accroche { font-family:'Archivo', 'Inter', sans-serif; font-weight:700; font-size:1.35rem; letter-spacing:.02em; line-height:1.2; color:var(--blanc); margin:0 0 .6rem; text-wrap:balance; }
+  .pied-accroche .fleche { font-family:'Inter', sans-serif; font-weight:400; }
   .pied-intro { font-family:var(--police-texte); font-weight:400; font-size:.95rem; line-height:1.6; color:rgba(var(--blanc-rgb),.65); margin:0 0 2rem; }
   #form-contact { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:44rem; }
   .pied-champ { display:flex; flex-direction:column; gap:.6rem; min-width:0; }
@@ -632,21 +619,22 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     padding:.85rem 1rem; transition:border-color 140ms ease; width:100%;
   }
   .pied-champ input:focus { outline:none; border-color:rgba(var(--blanc-rgb),.8); }
-  /* Bouton d'envoi : comme sur la page Booking (gras ; rouge + texte blanc au survol). */
+  /* Bouton d'envoi : rouge du site (comme le bouton Booking du header), blanc au survol. */
   #form-contact button[type="submit"] {
     grid-column:1 / -1; justify-self:start; margin-top:.5rem; padding:1.1rem 2.4rem;
     font-family:'Archivo', 'Inter', sans-serif; font-weight:700; font-size:.85rem; letter-spacing:.18em; text-transform:uppercase;
-    color:#0b0b0b; background:var(--blanc); border:1px solid var(--blanc); border-radius:2px;
+    color:var(--blanc); background:var(--rouge); border:1px solid var(--rouge); border-radius:2px;
     cursor:pointer; transition:background 140ms ease, color 140ms ease, border-color 140ms ease;
   }
-  #form-contact button[type="submit"]:hover:not(:disabled) { background:var(--rouge); border-color:var(--rouge); color:var(--blanc); }
+  #form-contact button[type="submit"]:hover:not(:disabled) { background:var(--blanc); border-color:var(--blanc); color:#0b0b0b; }
   #form-contact button[type="submit"]:disabled { opacity:.5; cursor:not-allowed; }
   .pied-statut { grid-column:1 / -1; font-family:var(--police-texte); font-weight:400; font-size:.9rem; color:rgba(var(--blanc-rgb),.6); margin:0; }
   .pied-statut-erreur { color:#e11d2e; }
   .pied-piege { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
   /* Desktop : formulaire resserré (champs, espacements et bouton plus petits) ; le mobile garde des champs confortables au doigt. */
   @media (min-width: 721px) {
-    .pied-menu, .pied-contact { padding-top:2.75rem; padding-bottom:2.75rem; }
+    .pied-contact { padding-top:2.75rem; padding-bottom:2.75rem; }
+    .pied-cadre { padding:1.5rem 1.6rem 1.75rem; }
     .pied-intro { font-size:.875rem; margin-bottom:1.25rem; }
     #form-contact { gap:.9rem 1rem; max-width:31rem; }
     .pied-champ { gap:.4rem; }
@@ -655,25 +643,22 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     #form-contact button[type="submit"] { margin-top:.35rem; padding:.75rem 1.7rem; font-size:.72rem; }
     .pied-statut { font-size:.85rem; }
   }
-  /* Grand écran : les quatre blocs (présentation, carnet, menu, contact) sur une seule ligne, centrés en hauteur.
-     Le menu, court, cède de la largeur au formulaire. */
+  /* Grand écran : les trois blocs (présentation, carnet, contact) sur une seule ligne, centrés en hauteur. */
   @media (min-width: 1200px) {
     .niveaux { display:flex; align-items:stretch; margin-top:3rem; border-top:1px solid rgba(var(--blanc-rgb),.14); }
-    .niveaux .bandeau, .niveaux .pied { flex:2 1 0; min-width:0; margin-top:0; border-top:none; min-height:0; }
+    .niveaux .bandeau, .niveaux .pied { min-width:0; margin-top:0; border-top:none; min-height:0; }
+    .niveaux .bandeau { flex:2 1 0; }
+    .niveaux .pied { flex:1.35 1 0; }
     .niveaux .pied { border-left:1px solid rgba(var(--blanc-rgb),.14); }
-    .niveaux .bandeau-texte, .niveaux .bandeau-carnet, .niveaux .pied-menu, .niveaux .pied-contact {
+    .niveaux .bandeau-texte, .niveaux .bandeau-carnet, .niveaux .pied-contact {
       padding:2.75rem clamp(1.25rem, 2vw, 2rem); min-width:0;
     }
-    .niveaux .pied-menu, .niveaux .pied-contact { display:flex; flex-direction:column; justify-content:center; }
-    .niveaux .pied-menu { flex:.75 1 0; }
-    .niveaux .pied-menu a { font-size:.78rem; }
-    .niveaux .pied-contact { flex:1.25 1 0; }
+    .niveaux .pied-contact { align-items:center; }
     .niveaux .bandeau-texte p { font-size:.95rem; }
   }
   @media (max-width: 720px) {
-    .pied { flex-direction:column; }
-    .pied-menu { border-right:none; border-bottom:1px solid rgba(var(--blanc-rgb),.14); }
-    .pied-menu, .pied-contact { padding-top:2.5rem; padding-bottom:2.5rem; }
+    .pied-contact { padding-top:2.5rem; padding-bottom:2.5rem; }
+    .pied-cadre { padding:1.5rem 1.25rem 1.75rem; }
     #form-contact { grid-template-columns:1fr; gap:1.25rem; }
   }
 
@@ -742,10 +727,9 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     .booking-btn { order:-1; }
     .onglet-mobile { display:block; }
 
-    /* Plus de découpage en lignes équilibrées : un seul bloc de texte qui
-       s'enroule naturellement selon la largeur de l'écran. */
-    .refs-desktop { display:none; }
-    .refs-mobile { display:block; }
+    /* Logos des références : un peu plus petits et plus serrés. */
+    .refs-logos { gap:1.4rem 1.9rem; }
+    .refs-logos img { width:calc(var(--l) * .74); height:calc(var(--h) * .74); }
   }
 
   @media (orientation: landscape) and (max-height: 500px) {

@@ -1,0 +1,324 @@
+[
+  {
+    "nom": "Disney+",
+    "url": "https://www.disneyplus.com/fr-fr",
+    "logo": "/logos/disney-plus.png",
+    "largeur": 80,
+    "hauteur": 44
+  },
+  {
+    "nom": "PlayStation",
+    "url": "https://www.playstation.com/fr-fr/",
+    "logo": "/logos/playstation.png",
+    "largeur": 127,
+    "hauteur": 23
+  },
+  {
+    "nom": "Burger King",
+    "url": "https://www.burgerking.fr/",
+    "logo": "/logos/burger-king.png",
+    "largeur": 53,
+    "hauteur": 58
+  },
+  {
+    "nom": "Universal Music France",
+    "url": "https://www.universalmusic.fr/",
+    "logo": "/logos/universal-music-france.png",
+    "largeur": 99,
+    "hauteur": 47
+  },
+  {
+    "nom": "Bon Marché Rive Gauche",
+    "url": "https://www.lebonmarche.com/",
+    "logo": "/logos/bon-marche.png",
+    "largeur": 51,
+    "hauteur": 58
+  },
+  {
+    "nom": "L'Equipe Explore",
+    "url": "https://www.lequipe.fr/explore/",
+    "logo": "/logos/lequipe-explore.png",
+    "largeur": 128,
+    "hauteur": 23
+  },
+  {
+    "nom": "BeIn Sports",
+    "url": "https://www.beinsports.com/fr-fr",
+    "logo": "/logos/bein-sports.png",
+    "largeur": 128,
+    "hauteur": 23
+  },
+  {
+    "nom": "Hachette",
+    "url": "https://www.hachette.com/",
+    "logo": "/logos/hachette.png",
+    "largeur": 100,
+    "hauteur": 29
+  },
+  {
+    "nom": "Petit Bateau",
+    "url": "https://www.petit-bateau.fr/",
+    "logo": "/logos/petit-bateau.png",
+    "largeur": 61,
+    "hauteur": 58
+  },
+  {
+    "nom": "Cosmopolitan",
+    "url": "https://www.cosmopolitan.fr/",
+    "logo": "/logos/cosmopolitan.png",
+    "largeur": 128,
+    "hauteur": 23
+  },
+  {
+    "nom": "AG2R La Mondiale",
+    "url": "https://www.ag2rlamondiale.fr/",
+    "logo": "/logos/ag2r-la-mondiale.png",
+    "largeur": 112,
+    "hauteur": 42
+  },
+  {
+    "nom": "TUI",
+    "url": "https://www.tui.fr/",
+    "logo": "/logos/tui.png",
+    "largeur": 81,
+    "hauteur": 36
+  },
+  {
+    "nom": "Team Vitality",
+    "url": "https://vitality.gg/",
+    "logo": "/logos/team-vitality.png",
+    "largeur": 41,
+    "hauteur": 53
+  },
+  {
+    "nom": "La Semaine De La Critique",
+    "url": "https://www.semainedelacritique.com/",
+    "logo": "/logos/semaine-de-la-critique.png",
+    "largeur": 50,
+    "hauteur": 58
+  },
+  {
+    "nom": "Concord Label Group",
+    "url": "https://concord.com/labels/",
+    "logo": "/logos/concord.png",
+    "largeur": 120,
+    "hauteur": 24
+  },
+  {
+    "nom": "Synology",
+    "url": "https://www.synology.com/fr-fr",
+    "logo": "/logos/synology.png",
+    "largeur": 106,
+    "hauteur": 27
+  },
+  {
+    "nom": "Tonies",
+    "url": "https://tonies.com/fr-fr/",
+    "logo": "/logos/tonies.png",
+    "largeur": 106,
+    "hauteur": 27
+  },
+  {
+    "nom": "Adopt Parfums",
+    "url": "https://www.adopt.com/fr",
+    "logo": "/logos/adopt.png",
+    "largeur": 89,
+    "hauteur": 33
+  },
+  {
+    "nom": "Webfleet",
+    "url": "https://www.webfleet.com/fr_fr/webfleet/",
+    "logo": "/logos/webfleet.png",
+    "largeur": 132,
+    "hauteur": 21
+  },
+  {
+    "nom": "Mediaposte",
+    "url": "https://www.mediaposte.fr/",
+    "logo": "/logos/mediaposte.png",
+    "largeur": 152,
+    "hauteur": 12
+  },
+  {
+    "nom": "La Métropole du Grand Paris",
+    "url": "https://www.metropolegrandparis.fr/fr",
+    "logo": "/logos/metropole-du-grand-paris.png",
+    "largeur": 105,
+    "hauteur": 44
+  },
+  {
+    "nom": "Université Paris Nanterre",
+    "url": "https://www.parisnanterre.fr/",
+    "logo": "/logos/universite-paris-nanterre.png",
+    "largeur": 134,
+    "hauteur": 29
+  },
+  {
+    "nom": "Polytech Montpellier",
+    "url": "https://www.polytech.umontpellier.fr/",
+    "logo": "/logos/polytech-montpellier.png",
+    "largeur": 111,
+    "hauteur": 34
+  },
+  {
+    "nom": "UnisCité",
+    "url": "https://www.uniscite.fr/",
+    "logo": "/logos/unis-cite.png",
+    "largeur": 94,
+    "hauteur": 31
+  },
+  {
+    "nom": "Pompiers 95",
+    "url": "https://www.pompiers95.fr/",
+    "logo": "/logos/pompiers-95.png",
+    "largeur": 132,
+    "hauteur": 22
+  },
+  {
+    "nom": "SDIS Guadeloupe",
+    "url": "https://www.sdis971.fr/",
+    "logo": "/logos/sdis-guadeloupe.png",
+    "largeur": 111,
+    "hauteur": 35
+  },
+  {
+    "nom": "Pan Distribution",
+    "url": "https://pan-europeenne.com/",
+    "logo": "/logos/pan-distribution.png",
+    "largeur": 53,
+    "hauteur": 58
+  },
+  {
+    "nom": "Madame Arthur/Divan du monde",
+    "url": "https://madamearthur.fr/",
+    "logo": "/logos/madame-arthur.png",
+    "largeur": 77,
+    "hauteur": 50
+  },
+  {
+    "nom": "Fiap Paris",
+    "url": "https://www.fiap.paris/",
+    "logo": "/logos/fiap-paris.png",
+    "largeur": 57,
+    "hauteur": 46
+  },
+  {
+    "nom": "Agropolis Fondation",
+    "url": "https://www.agropolis-fondation.fr/",
+    "logo": "/logos/agropolis-fondation.png",
+    "largeur": 107,
+    "hauteur": 36
+  },
+  {
+    "nom": "Le Syndicat du Cru Minervois",
+    "url": "https://aop-minervois.com/",
+    "logo": "/logos/cru-minervois.png",
+    "largeur": 65,
+    "hauteur": 53
+  },
+  {
+    "nom": "The Ivory Fondation",
+    "url": "https://theivoryfoundation.org/",
+    "logo": "/logos/the-ivory-fondation.png",
+    "largeur": 152,
+    "hauteur": 14
+  },
+  {
+    "nom": "Univers Sel",
+    "url": "https://universsel.org/",
+    "logo": "/logos/univers-sel.png",
+    "largeur": 55,
+    "hauteur": 53
+  },
+  {
+    "nom": "Dessine l'Espoir",
+    "url": "https://dessinelespoir.fr/",
+    "logo": "/logos/dessine-lespoir.png",
+    "largeur": 53,
+    "hauteur": 53
+  },
+  {
+    "nom": "Les Cahiers Pour Décider Et Agir",
+    "url": "https://www.decider-agir.fr/",
+    "logo": "/logos/cahiers-pour-decider-et-agir.png",
+    "largeur": 93,
+    "hauteur": 41
+  },
+  {
+    "nom": "Cine Nominé",
+    "url": "https://cinenomine.com/",
+    "logo": "/logos/cine-nomine.png",
+    "largeur": 71,
+    "hauteur": 53
+  },
+  {
+    "nom": "Sapari Productions",
+    "url": "https://sapari.fr/",
+    "logo": "/logos/sapari-productions.png",
+    "largeur": 100,
+    "hauteur": 23
+  },
+  {
+    "nom": "Agence Trafic",
+    "url": "https://agencetrafic.com/",
+    "logo": "/logos/agence-trafic.png",
+    "largeur": 96,
+    "hauteur": 24
+  },
+  {
+    "nom": "Ruush",
+    "url": "https://www.ruush.com/",
+    "logo": "/logos/ruush.png",
+    "largeur": 95,
+    "hauteur": 25
+  },
+  {
+    "nom": "Epikure Studio",
+    "url": "https://www.epikurestudio.com/",
+    "logo": "/logos/epikure-studio.png",
+    "largeur": 102,
+    "hauteur": 23
+  },
+  {
+    "nom": "Progress Associés",
+    "url": "https://www.progress-associes.com/",
+    "logo": "/logos/progress-associes.png",
+    "largeur": 108,
+    "hauteur": 27
+  },
+  {
+    "nom": "Voilà Chef",
+    "url": "https://www.voilachef.com/",
+    "logo": "/logos/voila-chef.png",
+    "largeur": 119,
+    "hauteur": 19
+  },
+  {
+    "nom": "Jule et Lily",
+    "url": "https://juleetlily.com/",
+    "logo": "/logos/jule-et-lily.png",
+    "largeur": 64,
+    "hauteur": 45
+  },
+  {
+    "nom": "JoyVox",
+    "url": "https://joyvox.fr/",
+    "logo": "/logos/joyvox.png",
+    "largeur": 53,
+    "hauteur": 53
+  },
+  {
+    "nom": "Palinal",
+    "url": "https://www.palinal.fr/",
+    "logo": "/logos/palinal.png",
+    "largeur": 112,
+    "hauteur": 34
+  },
+  {
+    "nom": "SloSlo",
+    "url": "https://slo-slo.com/",
+    "logo": "/logos/sloslo.png",
+    "largeur": 85,
+    "hauteur": 28
+  }
+]
