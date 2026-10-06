@@ -132,16 +132,6 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
 
   <aside class="apercu" aria-label={t(lang, "apercu.aria")}>
     <div class="apercu-pile">
-      {demoUrl && (
-        <article class="apercu-item apercu-demo" data-index="-1" data-demo>
-          <p class="apercu-entete"><span class="apercu-titre-film">DEMOREEL</span>{bandeDemo.duree?.trim() && <span class="apercu-duree" set:html={dureeHtml(bandeDemo.duree.trim())} />}</p>
-          <button type="button" class:list={["apercu-image", "apercu-demo-ouvrir", { "avec-image": !!bandeDemo.image }]} data-demo-ouvrir aria-haspopup="dialog" aria-label={t(lang, "apercu.demo.voir")}>
-            {bandeDemo.image && <OptimizedImage src={bandeDemo.image} alt="" sizes="420px" />}
-            <span class="apercu-demo-play" aria-hidden="true"></span>
-          </button>
-          <p class="apercu-accroche">{t(lang, "apercu.demo.texte")}</p>
-        </article>
-      )}
       {apercus.map((a) => (
         <article class="apercu-item" data-index={a.index}>
           {(a.titreFilm || a.duree) && (
@@ -164,11 +154,19 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   </aside>
   </div>
 
+  {/* Demoreel intégrée en pleine largeur (celle du contenu, alignée sur les titres des projets), juste au-dessus
+     de « Ils m'ont fait confiance ». Image de couverture + bouton lecture : le lecteur n'est chargé qu'au clic
+     (pas de lecteur vidéo lourd au chargement de la page), puis la lecture démarre sur place. */}
   {demoUrl && (
-    <dialog class="demo-popup" id="demo-popup" aria-label={t(lang, "demo.titre")} data-src={demoUrl}>
-      <button type="button" class="demo-fermer" data-demo-fermer aria-label={t(lang, "fermer")}>×</button>
-      <div class="demo-cadre"></div>
-    </dialog>
+    <section class="demoreel" aria-labelledby="demoreel-titre">
+      <h2 class="sr-only" id="demoreel-titre">{t(lang, "demo.titre")}</h2>
+      <div class="demoreel-lecteur" data-demoreel data-src={demoUrl}>
+        <button type="button" class:list={["demoreel-lancer", { "avec-image": !!bandeDemo.image }]} data-demoreel-lancer aria-label={t(lang, "apercu.demo.voir")}>
+          {bandeDemo.image && <OptimizedImage src={bandeDemo.image} alt="" sizes="(min-width: 1300px) 1240px, 100vw" />}
+          <span class="demoreel-play" aria-hidden="true"></span>
+        </button>
+      </div>
+    </section>
   )}
 </Layout>
 
@@ -287,49 +285,45 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     }
     .apercu-fleche:hover, .apercu-fleche:focus-visible { transform:translateX(.3rem); }
 
-    /* Encart « bande démo » : même gabarit qu'une fiche projet. */
-    .apercu-demo-ouvrir { position:relative; cursor:pointer; background:linear-gradient(135deg,#1c1c1c,#0b0b0b); }
-    .apercu-demo-ouvrir :global(img) { width:100%; height:100%; object-fit:cover; display:block; }
-    .apercu-demo-play {
-      position:absolute; top:50%; left:50%; width:64px; height:64px; margin:-32px 0 0 -32px;
-      border:1px solid var(--blanc); border-radius:50%; background:rgba(0,0,0,.45);
-      transition:background 140ms ease, transform 140ms ease;
-    }
-    .apercu-demo-play::before {
-      content:""; position:absolute; top:50%; left:50%; margin:-9px 0 0 -6px;
-      border-style:solid; border-width:9px 0 9px 16px; border-color:transparent transparent transparent var(--blanc);
-    }
-    /* Avec une image (souvent un titre au centre) : bouton lecture en bas à gauche. */
-    .apercu-demo-ouvrir.avec-image .apercu-demo-play {
-      top:auto; left:14px; bottom:14px; width:44px; height:44px; margin:0;
-    }
-    .apercu-demo-ouvrir.avec-image .apercu-demo-play::before {
-      margin:-7px 0 0 -4px; border-width:7px 0 7px 12px;
-    }
-    .apercu-demo-ouvrir:hover .apercu-demo-play { background:rgba(var(--blanc-rgb),.18); transform:scale(1.06); }
   }
 
-  /* Pop-up vidéo (ouverte depuis l'encart « bande démo »). */
-  .demo-popup {
-    padding:0; border:0; background:transparent; color:var(--blanc);
-    width:min(92vw, 1100px); max-width:none; max-height:none; overflow:visible;
+  /* Demoreel intégrée : pleine largeur du contenu (même bord gauche que les titres des projets), 16/9. */
+  .demoreel { width:100%; max-width:1240px; margin:7rem 0 0; }
+  .demoreel-lecteur {
+    position:relative; width:100%; aspect-ratio:16/9; overflow:hidden; border-radius:2px;
+    background:linear-gradient(135deg,#1c1c1c,#0b0b0b);
   }
-  .demo-popup::backdrop { background:rgba(0,0,0,.85); }
-  .demo-cadre { aspect-ratio:16/9; width:100%; background:#000; }
-  /* L'iframe reste invisible (fond noir du cadre) jusqu'à son chargement :
-     évite le flash blanc du document vide avant l'affichage du lecteur. */
-  .demo-cadre :global(iframe) {
-    width:100%; height:100%; border:0; display:block; background:#000; color-scheme:dark;
+  .demoreel-lancer { position:absolute; inset:0; display:block; width:100%; height:100%; padding:0; border:0; background:transparent; cursor:pointer; }
+  .demoreel-lancer :global(img) { width:100%; height:100%; object-fit:cover; display:block; }
+  /* L'iframe reste invisible (fond noir) jusqu'à son chargement : évite le flash blanc avant l'affichage du lecteur. */
+  .demoreel-lecteur :global(iframe) {
+    position:absolute; inset:0; width:100%; height:100%; border:0; display:block; background:#000; color-scheme:dark;
     opacity:0; transition:opacity 200ms ease;
   }
-  .demo-cadre :global(iframe.pret) { opacity:1; }
-  .demo-fermer {
-    position:absolute; top:-2.6rem; right:0; width:2.2rem; height:2.2rem; padding:0;
-    font-size:1.8rem; line-height:1; color:var(--blanc); background:transparent; border:0; cursor:pointer;
+  .demoreel-lecteur :global(iframe.pret) { opacity:1; }
+  .demoreel-lecteur.lecture .demoreel-lancer { display:none; }
+  .demoreel-play {
+    position:absolute; top:50%; left:50%; width:84px; height:84px; margin:-42px 0 0 -42px;
+    border:1px solid var(--blanc); border-radius:50%; background:rgba(0,0,0,.45);
+    transition:background 140ms ease, transform 140ms ease;
   }
-  .demo-fermer:hover { color:rgba(var(--blanc-rgb),.6); }
+  .demoreel-play::before {
+    content:""; position:absolute; top:50%; left:50%; margin:-12px 0 0 -8px;
+    border-style:solid; border-width:12px 0 12px 21px; border-color:transparent transparent transparent var(--blanc);
+  }
+  /* Avec une image de couverture (souvent un titre au centre) : bouton lecture en bas à gauche. */
+  .demoreel-lancer.avec-image .demoreel-play { top:auto; left:1.75rem; bottom:1.75rem; width:60px; height:60px; margin:0; }
+  .demoreel-lancer.avec-image .demoreel-play::before { margin:-10px 0 0 -6px; border-width:10px 0 10px 17px; }
+  .demoreel-lancer:hover .demoreel-play, .demoreel-lancer:focus-visible .demoreel-play { background:var(--rouge); border-color:var(--rouge); transform:scale(1.06); }
+  @media (max-width: 800px) {
+    .demoreel { margin-top:4rem; }
+    .demoreel-play { width:60px; height:60px; margin:-30px 0 0 -30px; }
+    .demoreel-play::before { margin:-9px 0 0 -6px; border-width:9px 0 9px 15px; }
+    .demoreel-lancer.avec-image .demoreel-play { left:1rem; bottom:1rem; width:44px; height:44px; margin:0; }
+    .demoreel-lancer.avec-image .demoreel-play::before { margin:-7px 0 0 -4px; border-width:7px 0 7px 12px; }
+  }
   @media (prefers-reduced-motion: reduce) {
-    .apercu-item, .accroche-titre::before, .apercu-fleche, .demo-cadre :global(iframe) { transition:none !important; }
+    .apercu-item, .accroche-titre::before, .apercu-fleche, .demoreel-lecteur :global(iframe), .demoreel-play { transition:none !important; }
   }
 </style>
 
@@ -423,10 +417,8 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       const li = (event.target as HTMLElement).closest<HTMLLIElement>('li[data-apercu]');
       if (li) activer(Number(li.dataset.apercu));
     };
-    // Au repos et après un filtre : l'encart « bande démo » s'il existe, sinon
-    // le premier projet visible (le plus récent).
+    // Au repos et après un filtre : le premier projet visible (le plus récent).
     const parDefaut = () => {
-      if (panneau.querySelector('[data-demo]')) return activer(-1);
       const li = liste.querySelector<HTMLLIElement>('li[data-apercu]:not([hidden])');
       activer(li ? Number(li.dataset.apercu) : -1);
     };
@@ -439,12 +431,14 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
     parDefaut();
   }
 
-  function setupDemo() {
-    const popup = document.getElementById('demo-popup') as HTMLDialogElement | null;
-    if (!popup) return;
-    const cadre = popup.querySelector<HTMLElement>('.demo-cadre')!;
-    const ouvrir = () => {
-      const url = new URL(popup.dataset.src!);
+  // Demoreel : au clic sur l'image de couverture, le lecteur se charge sur place et la lecture démarre.
+  function setupDemoreel() {
+    const lecteur = document.querySelector<HTMLElement>('[data-demoreel]');
+    const lancer = lecteur?.querySelector<HTMLButtonElement>('[data-demoreel-lancer]');
+    if (!lecteur || !lancer) return;
+    lancer.addEventListener('click', () => {
+      if (lecteur.classList.contains('lecture')) return;
+      const url = new URL(lecteur.dataset.src!);
       url.searchParams.set('autoplay', '1');
       // Vidéas : le preset du lecteur peut être « muet » et sans contrôles ; on force le son.
       if (url.hostname.endsWith('videas.fr')) {
@@ -457,18 +451,12 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
       iframe.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
       iframe.allowFullscreen = true;
       iframe.addEventListener('load', () => iframe.classList.add('pret'), { once: true });
-      cadre.replaceChildren(iframe);
-      popup.showModal();
-    };
-    document.querySelectorAll('[data-demo-ouvrir]').forEach((b) => b.addEventListener('click', ouvrir));
-    popup.querySelector('[data-demo-fermer]')?.addEventListener('click', () => popup.close());
-    // Clic sur le fond sombre = fermeture.
-    popup.addEventListener('click', (e) => { if (e.target === popup) popup.close(); });
-    // Vide l'iframe à la fermeture pour couper le son.
-    popup.addEventListener('close', () => cadre.replaceChildren());
+      lecteur.classList.add('lecture');
+      lecteur.append(iframe);
+    });
   }
 
   document.addEventListener('astro:page-load', setupFiltres);
   document.addEventListener('astro:page-load', setupApercu);
-  document.addEventListener('astro:page-load', setupDemo);
+  document.addEventListener('astro:page-load', setupDemoreel);
 </script>

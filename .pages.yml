@@ -18,9 +18,8 @@ content:
     type: file
     path: src/content/settings/bande-demo.json
     fields:
-      - { name: video, label: "Lien de la vidéo (YouTube ou Vimeo)", type: string, description: "S'ouvre en pop-up depuis l'encart par défaut de la page d'accueil. Si vide, l'encart n'apparaît pas." }
-      - { name: duree, label: "Durée (optionnel)", type: string, description: "Ex. 2 min. Affichée à côté du titre « DEMOREEL »." }
-      - { name: image, label: "Image de l'encart (optionnel)", type: image, description: "Format 16/9. Si vide, l'encart est un fond sombre avec un bouton lecture." }
+      - { name: video, label: "Lien de la vidéo (YouTube, Vimeo ou Vidéas)", type: string, description: "Intégrée en pleine largeur sur la page d'accueil, juste au-dessus de « Ils m'ont fait confiance ». Si vide, la demoreel n'apparaît pas." }
+      - { name: image, label: "Image de couverture (optionnel)", type: image, description: "Format 16/9, affichée avant la lecture, avec un bouton lecture. Si vide : fond sombre avec le bouton lecture." }
 
   - name: projets-commandes
     label: "Projets — Commandes"
