@@ -77,10 +77,10 @@ const TEXTES = {
     bonjour: "Bonjour",
     merci: "Merci pour votre demande concernant",
     retour: "Je reviens vers vous dans les plus brefs délais.",
-    recap: "Récapitulatif de votre demande :",
+    recap: "Récapitulatif de votre demande :",
     nonConfigure: "Le service d'envoi n'est pas configuré. Merci de me contacter directement.",
     invalide: "Requête invalide.",
-    manquants: "Champs manquants : ",
+    manquants: "Champs manquants : ",
     emailInvalide: "Adresse email invalide.",
     echec: "L'envoi a échoué. Merci de réessayer ou de m'écrire directement.",
   },
@@ -115,7 +115,7 @@ function recapitulatif(d: DonneesBooking, inclureEmail = true, langue: LangueMai
   return (Object.keys(LABELS) as (keyof DonneesBooking)[])
     .filter((champ) => (inclureEmail || champ !== "email") && String(d[champ] ?? "").trim())
     // Les références tiennent sur plusieurs lignes : on les passe à la ligne sous le libellé.
-    .map((champ) => `${labels[champ]}${langue === "en" ? ":" : " :"}${champ === "references" ? "\n" : " "}${d[champ]}`)
+    .map((champ) => `${labels[champ]}${langue === "en" ? ":" : "\u00a0:"}${champ === "references" ? "\n" : " "}${d[champ]}`)
     .join("\n");
 }
 

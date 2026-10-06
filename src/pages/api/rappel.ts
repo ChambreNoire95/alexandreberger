@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { Resend } from "resend";
+import { creneauValide, creneauLisible, telephoneValide } from "../../lib/creneau";
 
 // Deuxième route dynamique du site (avec /api/booking) : demande de rappel téléphonique.
 // Envoie un seul e-mail, à Alexandre : le visiteur n'a laissé que son numéro, pas d'adresse.
@@ -23,7 +24,7 @@ const TEXTES = {
   fr: {
     nonConfigure: "Le service d'envoi n'est pas configuré. Merci de me contacter directement.",
     invalide: "Requête invalide.",
-    manquants: "Champs manquants : ",
+    manquants: "Champs manquants : ",
     telephone: "Numéro de téléphone invalide.",
     emailInvalide: "Adresse email invalide.",
     creneau: "Merci de choisir un créneau valide (date à venir, entre 8h et 20h, heure de Paris).",
@@ -31,10 +32,10 @@ const TEXTES = {
     metier: "Réalisateur",
     sujet: "Votre demande de rappel a bien été reçue",
     bonjour: "Bonjour",
-    texte: "Merci pour votre demande. Je vous appelle au créneau suivant :",
-    recap: "Récapitulatif de votre demande :",
+    texte: "Merci pour votre demande. Je vous appelle au créneau suivant :",
+    recap: "Récapitulatif de votre demande :",
     quand: "Quand",
-    pied: "Un contretemps ? Répondez simplement à cet e-mail pour proposer un autre moment.",
+    pied: "Un contretemps ? Répondez simplement à cet e-mail pour proposer un autre moment.",
   },
   en: {
     nonConfigure: "The sending service is not configured. Please contact me directly.",
@@ -63,27 +64,16 @@ function reponseJson(corps: unknown, status = 200) {
   return new Response(JSON.stringify(corps), { status, headers: { "Content-Type": "application/json" } });
 }
 
-/** Date du jour à Paris, au format AAAA-MM-JJ (le serveur Vercel tourne en UTC). */
-function aujourdhuiParis(): string {
-  return new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Paris" }).format(new Date());
-}
-
 function echapperHtml(valeur: unknown) {
   return String(valeur ?? "").replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string
   );
 }
 
-/** « lundi 5 octobre 2026 à 10h30 (heure de Paris) » / « Monday 5 October 2026 at 10:30 (Paris time) ». */
-function creneauLisible(date: string, heure: string, langue: "fr" | "en"): string {
-  const jour = new Intl.DateTimeFormat(langue === "en" ? "en-GB" : "fr-FR", { dateStyle: "full", timeZone: "UTC" }).format(new Date(`${date}T00:00:00Z`));
-  return langue === "en" ? `${jour} at ${heure} (Paris time)` : `${jour} à ${heure.replace(":", "h")} (heure de Paris)`;
-}
-
 function emailConfirmationHtml(d: { nom: string; fonction: string; telephone: string; email: string }, quand: string, langue: "fr" | "en") {
   const x = TEXTES[langue];
   const lab = LABELS_CHAMPS[langue];
-  const ligne = (libelle: string, valeur: string) => `${echapperHtml(libelle)} : ${echapperHtml(valeur)}`.replace(" :", langue === "en" ? ":" : " :");
+  const ligne = (libelle: string, valeur: string) => `${echapperHtml(libelle)} : ${echapperHtml(valeur)}`.replace(" :", langue === "en" ? ":" : "\u00a0:");
   const recap = [ligne(lab.nom, d.nom), ligne(lab.fonction, d.fonction), ligne(lab.telephone, d.telephone), ligne(lab.email, d.email), ligne(x.quand, quand)].join("<br />");
   return `<!doctype html>
 <html>
@@ -149,8 +139,7 @@ export const POST: APIRoute = async ({ request }) => {
     return reponseJson({ ok: false, erreur: `${x.manquants}${manquants.map((c) => LABELS_CHAMPS[langue][c]).join(", ")}` }, 400);
   }
 
-  // Téléphone : chiffres, espaces et + ( ) . - ; au moins 6 chiffres.
-  if (!/^[\d\s+().-]+$/.test(telephone) || telephone.replace(/\D/g, "").length < 6) {
+  if (!telephoneValide(telephone)) {
     return reponseJson({ ok: false, erreur: x.telephone }, 400);
   }
 
@@ -159,14 +148,11 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   // Créneau : date réelle, aujourd'hui ou plus tard (heure de Paris), heure entre 08:00 et 20:00.
-  const dateValide = /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(Date.parse(`${date}T00:00:00Z`));
-  const heureValide = /^([01]\d|2[0-3]):[0-5]\d$/.test(heure) && heure >= "08:00" && heure <= "20:00";
-  if (!dateValide || !heureValide || date < aujourdhuiParis()) {
+  if (!creneauValide(date, heure)) {
     return reponseJson({ ok: false, erreur: x.creneau }, 400);
   }
 
-  const dateLisible = new Intl.DateTimeFormat("fr-FR", { dateStyle: "full", timeZone: "UTC" }).format(new Date(`${date}T00:00:00Z`));
-  const quand = `${dateLisible} à ${heure.replace(":", "h")} (heure de Paris)`;
+  const quand = creneauLisible(date, heure, "fr");
 
   const lignes = [
     `Prénom + Nom : ${nom}`,

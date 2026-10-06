@@ -7,6 +7,7 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import { basename, extname } from "node:path";
 import type { Lang } from "../i18n";
+import { typoFr } from "./typo-fr.mjs";
 
 const CHAMPS_TEXTE = [
   "titre",
@@ -20,6 +21,14 @@ const CHAMPS_TEXTE = [
   "image2Alt",
   "image3Alt",
 ] as const;
+
+// Espaces insécables de la ponctuation française sur les champs texte (voir typo-fr.mjs). Appliqué à la
+// fiche française avant la fusion : un champ non traduit garde ainsi sa typographie sur le site anglais.
+function avecTypo<E extends { data: object }>(entree: E, champs: readonly string[]): E {
+  const data = { ...entree.data } as Record<string, unknown>;
+  for (const champ of champs) if (typeof data[champ] === "string") data[champ] = typoFr(data[champ]);
+  return { ...entree, data };
+}
 
 const nomFichier = (entree: { filePath?: string; id: string }) =>
   entree.filePath ? basename(entree.filePath, extname(entree.filePath)) : entree.id;
@@ -36,7 +45,7 @@ export async function getProjets(
   lang: Lang,
   filtre?: (entree: CollectionEntry<"projets">) => boolean
 ): Promise<Projet[]> {
-  const fr = await getCollection("projets", filtre);
+  const fr = (await getCollection("projets", filtre)).map((p) => avecTypo(p, CHAMPS_TEXTE));
   if (lang === "fr") return fr.map((p) => ({ ...p, source: p, traduit: false }));
 
   const en = new Map((await getCollection("projetsEn")).map((e) => [e.id, e]));
@@ -59,6 +68,8 @@ export async function getProjets(
   });
 }
 
+const CHAMPS_TEXTE_CARNET = ["titre", "extrait", "couvertureAlt"] as const;
+
 export type EntreeCarnet = CollectionEntry<"carnet"> & {
   source: CollectionEntry<"carnet"> | CollectionEntry<"carnetEn">;
 };
@@ -68,7 +79,7 @@ export async function getCarnet(
   lang: Lang,
   filtre?: (entree: CollectionEntry<"carnet">) => boolean
 ): Promise<EntreeCarnet[]> {
-  const fr = await getCollection("carnet", filtre);
+  const fr = (await getCollection("carnet", filtre)).map((e) => avecTypo(e, CHAMPS_TEXTE_CARNET));
   if (lang === "fr") return fr.map((e) => ({ ...e, source: e }));
 
   const en = new Map((await getCollection("carnetEn")).map((e) => [e.id, e]));
@@ -76,7 +87,7 @@ export async function getCarnet(
     const trad = en.get(nomFichier(e));
     if (!trad) return { ...e, source: e };
     const data = { ...e.data };
-    for (const champ of ["titre", "extrait", "couvertureAlt"] as const) {
+    for (const champ of CHAMPS_TEXTE_CARNET) {
       const valeur = trad.data[champ];
       if (typeof valeur === "string" && valeur.trim()) (data as Record<string, unknown>)[champ] = valeur.trim();
     }

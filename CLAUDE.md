@@ -18,10 +18,8 @@ session de travail.\
 - Astro 7, `output: 'server'` + adapter `@astrojs/vercel`, mais **toutes les\
   pages ont `export const prerender = true`** (site statique) \'97 seule\
   `/api/booking` est une vraie fonction serveur (formulaire de contact via Resend).\
-- D\'e9ploy\'e9 sur Vercel. `astro.config.mjs` : `site` pointe encore vers\
-  `alexandreberger.vercel.app` (domaine d\'e9finitif `alexandreberger.com` pas\
-  encore branch\'e9 \'97 il r\'e9pond en 404 via un serveur Varnish tiers, sans rapport\
-  avec ce projet). `build.inlineStylesheets: 'auto'` (d\'e9faut Astro, explicit\'e9).\
+- D\'e9ploy\'e9 sur Vercel, domaine principal **https://www.alexandreberger.com** (l'apex redirige vers www ; `site` dans\
+  `astro.config.mjs` est d\'e9j\'e0 \'e0 jour). `build.inlineStylesheets: 'auto'` (d\'e9faut Astro, explicit\'e9).\
 - Contenu : `astro:content` avec loader `glob`, 3 collections dans\
   `src/content.config.ts` : `projets` (Commandes + Cr\'e9ations, cat\'e9gorie via\
   `categorie: "commandes" | "creations"`), `carnet`, `projetsSatellites`.\
@@ -140,8 +138,9 @@ pousser un changement :\
 En cas de conflit sur un fichier de contenu, toujours pr\'e9server le contenu\
 r\'e9el ajout\'e9 par Pages CMS plut\'f4t que d'anciennes donn\'e9es de test.\
 \
+## Documentation de r\'e9f\'e9rence (\'c0 LIRE EN PREMIER)\
+- `docs/SITE.md` : tout le site (stack, d\'e9ploiement, i18n FR/EN, Pages CMS, images, design system, header/logo/carrousel, page Booking et ses API, workflow git, pi\'e8ges, d\'e9cisions d\'e9j\'e0 prises). Plus r\'e9cent que le reste de ce fichier en cas de contradiction.\
+\
 ## \'c0 faire\
-- Page de vente s\'e9par\'e9e (non commenc\'e9e).\
-- Brancher le domaine d\'e9finitif `alexandreberger.com` sur Vercel, puis mettre\
-  \'e0 jour `site` dans `astro.config.mjs`.\
+- Relecture des traductions anglaises par Alexandre ; test d'envoi r\'e9el des formulaires Booking (notification + confirmation).\
 }

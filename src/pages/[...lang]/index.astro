@@ -173,7 +173,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
             <p class="apercu-meta">{[a.date, a.client].filter(Boolean).join(" · ")}</p>
           )}
           {a.accroche && <p class="apercu-accroche">{a.accroche}</p>}
-          <a class="apercu-fleche" href={a.href} aria-label={`${t(lang, "apercu.savoir")} : ${a.titre}`}>→</a>
+          <a class="apercu-fleche" href={a.href} aria-label={`${t(lang, "apercu.savoir")}${lang === "en" ? ":" : "\u00a0:"} ${a.titre}`}>→</a>
         </article>
       ))}
     </div>

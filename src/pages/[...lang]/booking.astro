@@ -2,11 +2,14 @@
 export const prerender = true;
 import Layout from "../../layouts/Layout.astro";
 import { cheminsLangues, langDe, t, libellesRecherche } from "../../i18n";
+import { heuresRappel } from "../../lib/creneau";
 
 export function getStaticPaths() {
   return cheminsLangues();
 }
 const lang = langDe(Astro.params);
+const heures = heuresRappel(); // liste déroulante du rappel, par pas de 15 min
+const libelleHeure = (h: string) => (lang === "fr" ? h.replace(":", "h") : h);
 
 const titre = t(lang, "booking.titre.page");
 const description = t(lang, "booking.description");
@@ -178,7 +181,10 @@ const textesRappel = {
           <span>{t(lang, "rappel.quand")}</span>
           <div class="ligne">
             <input type="date" name="date" aria-label={t(lang, "booking.date")} required />
-            <input type="time" name="heure" min="08:00" max="20:00" step="900" aria-label={t(lang, "rappel.quand")} required />
+            <select name="heure" aria-label={t(lang, "rappel.heure")} required>
+              <option value="" disabled selected>{t(lang, "rappel.heure")}</option>
+              {heures.map((h) => <option value={h}>{libelleHeure(h)}</option>)}
+            </select>
           </div>
           <small class="note">{t(lang, "rappel.quand.note")}</small>
         </div>
@@ -437,7 +443,12 @@ const textesRappel = {
   .champ select { appearance:none; cursor:pointer; }
   .champ select option { background:#0b0b0b; color:var(--blanc); }
   /* Sélecteurs natifs de date et d'heure : pictogrammes et fenêtre en thème sombre. */
-  .champ input[type="date"], .champ input[type="time"] { color-scheme:dark; min-height:3.1rem; }
+  .champ input[type="date"], .champ select[name="heure"] { color-scheme:dark; min-height:3.1rem; }
+  .champ select[name="heure"] {
+    padding-right:2.4rem;
+    background-image:linear-gradient(45deg, transparent 50%, rgba(241,238,232,.7) 50%), linear-gradient(135deg, rgba(241,238,232,.7) 50%, transparent 50%);
+    background-position:calc(100% - 1.15rem) 50%, calc(100% - .8rem) 50%; background-size:.4rem .4rem; background-repeat:no-repeat;
+  }
   .note { font-family:var(--police-texte); font-size:.8rem; color:rgba(var(--blanc-rgb),.45); }
 
   /* Second formulaire (rappel) : encadré, fond noir à 90 %. Sous le premier sur mobile / petite fenêtre. */

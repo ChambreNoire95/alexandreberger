@@ -1,3 +1,5 @@
+import { typoFr } from "./typo-fr.mjs";
+
 const MIN_CARACTERES = 60;
 
 function nettoyer(markdown: string): string {
@@ -16,6 +18,12 @@ function nettoyer(markdown: string): string {
  * vide ou trop court pour être une vraie description.
  */
 export function descriptionDepuisTexte(source: string | undefined, max = 155): string | undefined {
+  // nettoyer() ramène toute espace (insécables comprises) à une espace simple : on repose ensuite les insécables
+  // de la ponctuation française (sans effet sur un texte anglais).
+  return typoFr(extraire(source, max));
+}
+
+function extraire(source: string | undefined, max: number): string | undefined {
   if (!source) return undefined;
 
   const paragraphe = source

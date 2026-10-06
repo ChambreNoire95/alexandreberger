@@ -15,9 +15,11 @@ interface Props {
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   /** Chemin public de l'image de partage (og:image). Défaut : /og-default.jpg */
   image?: string;
+  /** Page non publiée / non référencée : ajoute <meta name="robots" content="noindex, nofollow">. */
+  noindex?: boolean;
 }
 
-const { title, description, currentPath, jsonLd, image, lang = "fr" } = Astro.props;
+const { title, description, currentPath, jsonLd, image, noindex = false, lang = "fr" } = Astro.props;
 const imagePartage = new URL(image || "/og-default.jpg", Astro.site).toString();
 
 // Fiche d'identité affichée sur toutes les pages (données structurées
@@ -67,6 +69,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={urlCanonique} />
     <link rel="alternate" hreflang="fr" href={alternates.fr} />
     <link rel="alternate" hreflang="en" href={alternates.en} />
