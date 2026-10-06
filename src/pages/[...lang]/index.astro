@@ -52,11 +52,27 @@ const lignes = projets.map((p) => {
     duree: dureeHtml(p.data.duree?.trim() || undefined),
   };
 });
-// Filtres Univers et Critères (champs CMS à choix) : seules les valeurs portées par au moins un film sont proposées.
+// Univers (rails) et Critères (filtre), champs CMS à choix : seules les valeurs portées par au moins un film sont proposées.
 const SECTEURS = ["Mode", "Musique", "Série/Cinéma", "Art", "Culture", "Terroir / Gastronomie", "Éducation", "Sciences", "Société", "Sport", "Solidarité", "Environnement"];
 const BESOINS = ["Interviews", "Mise en scène / Direction artistique", "Tournage à l'étranger", "Projet au long cours", "Images d'archives"];
-const universPresents = SECTEURS.filter((x) => projets.some((p) => p.data.secteurs?.includes(x)));
 const criteresPresents = BESOINS.filter((x) => projets.some((p) => p.data.besoins?.includes(x)));
+
+// Rails : les 12 univers du CMS sont regroupés en 4 rangées, à l'affichage seulement (les fiches ne changent pas). Chaque
+// film figure dans UNE seule rangée : celle de son PREMIER univers. Rangées de la plus fournie à la moins fournie. Un film
+// sans univers (ou d'un univers ajouté au CMS sans être rangé ici) tombe dans « Autres films », pour ne jamais disparaître.
+const GROUPES = [
+  { cle: "cinema", univers: ["Série/Cinéma", "Musique"] },
+  { cle: "art", univers: ["Art", "Mode", "Culture"] },
+  { cle: "sport", univers: ["Sport"] },
+  { cle: "societe", univers: ["Société", "Éducation", "Environnement", "Sciences", "Solidarité", "Terroir / Gastronomie"] },
+];
+const groupeDe = (l: (typeof lignes)[number]) =>
+  GROUPES.find((g) => g.univers.includes(l.p.data.secteurs?.[0] ?? ""))?.cle ?? "autres";
+const rails = [...GROUPES.map((g) => g.cle), "autres"]
+  .map((cle) => ({ cle, titre: t(lang, `rails.${cle}`), films: lignes.filter((l) => groupeDe(l) === cle) }))
+  .filter((r) => r.films.length > 0)
+  .sort((a, b) => b.films.length - a.films.length);
+const compte = (n: number) => `${n} ${t(lang, n > 1 ? "rails.films" : "rails.film")}`;
 
 const itemsCarrousel = await getItemsCarrousel(lang);
 
@@ -95,17 +111,6 @@ const FILTRE_TYPE_ACTIF = false;
         </div>
       </div>
     )}
-    {universPresents.length > 0 && (
-      <div class="filtres-rang">
-        <p class="filtres-label">{t(lang, "filtre.univers")}</p>
-        <div class="filtres" role="group" data-groupe="univers" aria-label={t(lang, "filtre.univers")}>
-          <button type="button" data-valeur="" aria-pressed="true">{t(lang, "filtre.tous")}</button>
-          {universPresents.map((u) => (
-            <button type="button" data-valeur={u} aria-pressed="false">{libelle(lang, "univers", u)}</button>
-          ))}
-        </div>
-      </div>
-    )}
     {criteresPresents.length > 0 && (
       <div class="filtres-rang">
         <p class="filtres-label">{t(lang, "filtre.criteres")}</p>
@@ -119,29 +124,63 @@ const FILTRE_TYPE_ACTIF = false;
     )}
   </div>
 
-  <ul id="accroches" class="accroches">
-    {lignes.map(({ p, image, alt, description, duree }) => (
-      <li data-type={p.data.type || ""} data-univers={(p.data.secteurs ?? []).join("|")} data-criteres={(p.data.besoins ?? []).join("|")}>
-        <a href={url(lang, `/projets/${p.id}`)}>
-          {image && (
-            <span class="projet-visuel">
-              <OptimizedImage src={image} alt={alt} sizes="(min-width: 1100px) 400px, 45vw" nePasChargerSi="(max-width: 800px)" />
-              {duree && <span class="projet-duree" set:html={duree} />}
-            </span>
-          )}
-          <span class="projet-texte">
-            <span class="accroche-titre">{p.data.titre}</span>
-            {p.data.role && p.data.client ? (
-              <span class="accroche-meta">{roleAffiche(lang, p.data.role)} <br class="saut-mobile" />{t(lang, "pour")} {p.data.client}</span>
-            ) : (
-              (p.data.role || p.data.client) && <span class="accroche-meta">{p.data.role ? roleAffiche(lang, p.data.role) : p.data.client}</span>
-            )}
-            {description && <span class="accroche-description">{description}</span>}
+  {/* Rails (desktop) : une rangée par groupe d'univers, qui défile à l'horizontale (trackpad, flèches). Sur mobile, ils sont
+     remplacés par la liste complète des films (titre + rôle), centrée comme avant : première section ci-dessous. */}
+  <div class="rails" id="rails" data-film={t(lang, "rails.film")} data-films={t(lang, "rails.films")}>
+    <section class="rail rail-tous">
+      <ul class="rail-piste">
+        {lignes.map(({ p }) => (
+          <li data-type={p.data.type || ""} data-univers={(p.data.secteurs ?? []).join("|")} data-criteres={(p.data.besoins ?? []).join("|")}>
+            <a href={url(lang, `/projets/${p.id}`)}>
+              <span class="projet-texte">
+                <span class="accroche-titre">{p.data.titre}</span>
+                {p.data.role && p.data.client ? (
+                  <span class="accroche-meta">{roleAffiche(lang, p.data.role)} <br class="saut-mobile" />{t(lang, "pour")} {p.data.client}</span>
+                ) : (
+                  (p.data.role || p.data.client) && <span class="accroche-meta">{p.data.role ? roleAffiche(lang, p.data.role) : p.data.client}</span>
+                )}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+    {rails.map((rail) => (
+      <section class="rail">
+        <div class="rail-tete">
+          <h2 class="rail-titre">{rail.titre}</h2>
+          <span class="rail-compte">{compte(rail.films.length)}</span>
+          <span class="rail-fleches">
+            <button type="button" class="rail-btn" data-dir="-1" aria-label={`${t(lang, "carrousel.precedent")} — ${rail.titre}`}>←</button>
+            <button type="button" class="rail-btn" data-dir="1" aria-label={`${t(lang, "carrousel.suivant")} — ${rail.titre}`}>→</button>
           </span>
-        </a>
-      </li>
+        </div>
+        <ul class="rail-piste">
+          {rail.films.map(({ p, image, alt, description, duree }) => (
+            <li data-type={p.data.type || ""} data-univers={(p.data.secteurs ?? []).join("|")} data-criteres={(p.data.besoins ?? []).join("|")}>
+              <a href={url(lang, `/projets/${p.id}`)}>
+                {image && (
+                  <span class="projet-visuel">
+                    <OptimizedImage src={image} alt={alt} sizes="(min-width: 1100px) 290px, 30vw" nePasChargerSi="(max-width: 800px)" />
+                    {duree && <span class="projet-duree" set:html={duree} />}
+                  </span>
+                )}
+                <span class="projet-texte">
+                  <span class="accroche-titre">{p.data.titre}</span>
+                  {p.data.role && p.data.client ? (
+                    <span class="accroche-meta">{roleAffiche(lang, p.data.role)} <br class="saut-mobile" />{t(lang, "pour")} {p.data.client}</span>
+                  ) : (
+                    (p.data.role || p.data.client) && <span class="accroche-meta">{p.data.role ? roleAffiche(lang, p.data.role) : p.data.client}</span>
+                  )}
+                  {description && <span class="accroche-description">{description}</span>}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
     ))}
-  </ul>
+  </div>
 
   <p class="filtres-vide" id="filtres-vide" hidden>{t(lang, "filtre.rien")}</p>
 
@@ -150,7 +189,7 @@ const FILTRE_TYPE_ACTIF = false;
      (pas de lecteur vidéo lourd au chargement de la page), puis la lecture démarre sur place. */}
   {demoUrl && (
     <section class="demoreel" aria-labelledby="demoreel-titre">
-      <h2 class="sr-only" id="demoreel-titre">{t(lang, "demo.titre")}</h2>
+      <h2 class="demoreel-titre" id="demoreel-titre">{t(lang, "demo.titre")}</h2>
       <div class="demoreel-lecteur" style={`--ratio:${ratioDemo}`} data-demoreel data-src={demoUrl}>
         <button type="button" class:list={["demoreel-lancer", { "avec-image": !!bandeDemo.image }]} data-demoreel-lancer aria-label={t(lang, "apercu.demo.voir")}>
           {bandeDemo.image && <img src={bandeDemo.image} width={dimensionsDemo?.width} height={dimensionsDemo?.height} alt="" loading="lazy" decoding="async" />}
@@ -175,7 +214,7 @@ const FILTRE_TYPE_ACTIF = false;
   .filtres { display:flex; flex-wrap:wrap; justify-content:center; gap:.75rem; margin:0; }
   .filtres button:disabled { opacity:.3; cursor:not-allowed; border-style:dashed; }
   .filtres button:disabled:hover { color:rgba(var(--blanc-rgb),.5); border-color:rgba(var(--blanc-rgb),.3); }
-  .filtres-vide { margin:4.5rem 0 0; font-family:var(--police-texte); font-weight:400; font-size:1rem; color:rgba(var(--blanc-rgb),.65); }
+  .filtres-vide { width:100%; max-width:1240px; margin:4.5rem 0 0; font-family:var(--police-texte); font-weight:400; font-size:1rem; color:rgba(var(--blanc-rgb),.65); }
   /* Desktop : une colonne par famille (Univers | Critères), côte à côte ; libellé au-dessus, boutons qui reviennent à la
      ligne dans leur colonne. La première colonne, qui a le plus de boutons, est un peu plus large. */
   @media (min-width: 801px) {
@@ -201,10 +240,13 @@ const FILTRE_TYPE_ACTIF = false;
     .filtres button:not(:disabled):hover, .filtres button[aria-pressed="true"] { background:var(--rouge); border-color:var(--rouge); color:var(--blanc); }
     .filtres button:disabled:hover { background:transparent; color:var(--blanc); border-color:var(--blanc); }
   }
-  .accroches { list-style:none; margin:4.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:3.575rem; }
-  .accroches { overflow-anchor:none; }
-  .accroches li[hidden] { display:none; }
-  .accroches a {
+  /* Liste des films. Base (mobile) : seule la liste complète (.rail-tous), centrée, sans visuel ni description. */
+  .rails { width:100%; overflow-anchor:none; }
+  .rail:not(.rail-tous), .rail-tete { display:none; }
+  .rail[hidden] { display:none; }
+  .rail-piste { list-style:none; margin:4.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:3.575rem; }
+  .rail-piste li[hidden] { display:none; }
+  .rail-piste a {
     display:flex; flex-direction:column; align-items:center; gap:.6rem;
     text-decoration:none;
   }
@@ -214,7 +256,7 @@ const FILTRE_TYPE_ACTIF = false;
     font-stretch:100%; /* largeur normale d'Archivo (le reste du site est resserré) */
     color:var(--blanc); white-space:nowrap; transition:color 140ms ease;
   }
-  .accroches a:hover .accroche-titre { color:rgba(var(--blanc-rgb),.6); }
+  .rail-piste a:hover .accroche-titre { color:rgba(var(--blanc-rgb),.6); }
   @media (max-width: 700px) {
     .accroche-titre { white-space:normal; max-width:40ch; text-align:center; }
   }
@@ -224,39 +266,82 @@ const FILTRE_TYPE_ACTIF = false;
   }
   .accroche-description { font-family:var(--police-texte); font-weight:400; font-size:1rem; line-height:1.6; color:rgba(var(--blanc-rgb),.8); max-width:52rem; }
   .saut-mobile { display:none; }
-  /* Mobile : liste centrée sans visuel ni description (inchangée). */
   .projet-visuel, .accroche-description { display:none; }
   @media (max-width: 800px) {
     .saut-mobile { display:inline; }
   }
 
-  /* Desktop : mosaïque de cartes (2 colonnes, 3 à partir de 1100 px) : visuel en haut, puis titre, « Rôle pour Client » et
-     description. Ordre de lecture de gauche à droite puis de haut en bas (le plus récent en premier). */
+  /* Desktop : rails. Une rangée par univers (titre, nombre de films, flèches), dont les cartes défilent à l'horizontale ;
+     le bord droit s'estompe pour signaler la suite. Carte : visuel 16/9 + durée, titre, « Rôle pour Client », description. */
   @media (min-width: 801px) {
-    .accroches { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:3rem 2rem; align-items:start; width:100%; max-width:1240px; }
-    .accroches a { flex-direction:column; align-items:stretch; gap:1rem; text-align:left; }
+    .rails { max-width:1240px; margin-top:3.5rem; }
+    .rail:not(.rail-tous) { display:block; }
+    .rail-tous { display:none; } /* liste complète : mobile uniquement */
+    .rail[hidden] { display:none; }
+    .rail:not(.rail-tous) + .rail:not(.rail-tous) { margin-top:3rem; padding-top:2.5rem; border-top:1px solid rgba(var(--blanc-rgb),.14); }
+    .rail-tete { display:flex; align-items:baseline; gap:1rem; margin-bottom:1.1rem; }
+    .rail-titre { margin:0; font-weight:800; font-size:clamp(1.35rem, 2.3vw, 1.9rem); line-height:1; color:var(--blanc); }
+    .rail-compte {
+      font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.7rem; letter-spacing:.16em;
+      text-transform:uppercase; color:rgba(var(--blanc-rgb),.5);
+    }
+    .rail-fleches { margin-left:auto; display:flex; gap:.4rem; }
+    .rail-fleches[hidden] { display:none; }
+    .rail-btn {
+      width:2.25rem; height:2.25rem; padding:0; font-family:'Inter', sans-serif; font-size:1rem; line-height:1;
+      color:var(--blanc); background:transparent; border:1px solid var(--blanc); border-radius:2px; cursor:pointer;
+      transition:background 140ms ease, border-color 140ms ease, opacity 140ms ease;
+    }
+    .rail-btn:not(:disabled):hover, .rail-btn:focus-visible { background:var(--rouge); border-color:var(--rouge); outline:none; }
+    .rail-btn:disabled { opacity:.3; cursor:default; }
+    .rail-piste {
+      margin:0; flex-direction:row; align-items:flex-start; gap:1rem;
+      overflow-x:auto; scroll-snap-type:x proximity; scrollbar-width:none; overscroll-behavior-x:contain;
+      padding-right:8%;
+      -webkit-mask-image:linear-gradient(to right, #000 88%, transparent); mask-image:linear-gradient(to right, #000 88%, transparent);
+    }
+    .rail-piste::-webkit-scrollbar { display:none; }
+    /* Rangée qui tient entièrement dans la largeur : pas d'estompe. */
+    .rail-piste.entiere { -webkit-mask-image:none; mask-image:none; padding-right:0; }
+    /* 3 cartes par écran (4 à partir de 1100 px) : une rangée de 4 films tient entière, la suivante dépasse dans l'estompe. */
+    .rail-piste li { flex:none; width:max(220px, calc((100% - 2rem) / 3)); scroll-snap-align:start; }
+    .rail-piste a { align-items:stretch; gap:.85rem; text-align:left; }
     .projet-visuel {
       display:block; position:relative; width:100%; aspect-ratio:16/9;
       overflow:hidden; border-radius:2px; background:#111; border-bottom:1px solid var(--blanc);
     }
-    .projet-visuel :global(img) { width:100%; height:100%; object-fit:cover; display:block; transition:opacity 140ms ease; }
-    .accroches a:hover .projet-visuel :global(img), .accroches a:focus-visible .projet-visuel :global(img) { opacity:.75; }
+    .projet-visuel :global(img) { width:100%; height:100%; object-fit:cover; display:block; transition:transform 600ms cubic-bezier(.2,.7,.2,1); }
+    .rail-piste a:hover .projet-visuel :global(img), .rail-piste a:focus-visible .projet-visuel :global(img) { transform:scale(1.05); }
     /* Durée : pastille en bas à droite du visuel. Unités (min, h…) plus petites. */
     .projet-duree {
       position:absolute; right:.5rem; bottom:.5rem; padding:.15rem .45rem; border-radius:2px;
       background:rgba(0,0,0,.75); color:var(--blanc); font-weight:700; font-size:.8rem; line-height:1.3; text-transform:uppercase;
     }
     .projet-duree :global(.duree-unite) { font-size:.75em; }
-    .projet-texte { align-items:flex-start; min-width:0; gap:.55rem; }
-    .accroche-titre { white-space:normal; font-size:clamp(1.05rem, 1.55vw, 1.3rem); }
-    .accroche-description { display:block; font-size:.95rem; line-height:1.55; }
+    .projet-texte { align-items:flex-start; min-width:0; gap:.5rem; }
+    .accroche-titre { white-space:normal; font-size:1.08rem; }
+    .accroche-description { display:block; font-size:.92rem; line-height:1.5; }
   }
   @media (min-width: 1100px) {
-    .accroches { grid-template-columns:repeat(3, minmax(0, 1fr)); gap:3.5rem 2rem; }
+    .rail-piste li { width:calc((100% - 3rem) / 4); }
+    .rail-piste.entiere li { width:calc((92% - 3rem) / 4); } /* même largeur de carte avec ou sans estompe */
   }
 
   /* Demoreel intégrée : pleine largeur du contenu (même bord gauche que les titres des projets), 16/9. */
   .demoreel { width:100%; max-width:1240px; margin:7rem 0 0; }
+  /* Titre au-dessus de la vidéo. Mobile : comme les titres de page (capitales espacées, centré). Desktop : comme les titres
+     des rails, calé à gauche, sous un filet. */
+  .demoreel-titre {
+    margin:0 0 2rem; font-family:'Archivo', 'Inter', sans-serif; font-weight:400; font-size:1.3rem;
+    letter-spacing:.22em; text-transform:uppercase; text-align:center; color:var(--blanc);
+  }
+  @media (min-width: 801px) {
+    .demoreel { margin-top:3rem; padding-top:2.5rem; border-top:1px solid rgba(var(--blanc-rgb),.14); }
+    .demoreel-titre {
+      margin-bottom:1.1rem; font-weight:800; font-size:clamp(1.35rem, 2.3vw, 1.9rem); line-height:1;
+      letter-spacing:normal; text-transform:none; text-align:left;
+    }
+  }
   .demoreel-lecteur {
     position:relative; width:100%; aspect-ratio:var(--ratio, 16 / 9); overflow:hidden; border-radius:2px;
     background:linear-gradient(135deg,#1c1c1c,#0b0b0b); transition:aspect-ratio 450ms ease;
@@ -294,20 +379,50 @@ const FILTRE_TYPE_ACTIF = false;
     .demoreel-lancer.avec-image .demoreel-play::before { margin:-7px 0 0 -4px; border-width:7px 0 7px 12px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .projet-visuel :global(img), .demoreel-lecteur, .demoreel-lecteur :global(iframe), .demoreel-play { transition:none !important; }
+    .projet-visuel :global(img), .rail-btn, .demoreel-lecteur, .demoreel-lecteur :global(iframe), .demoreel-play { transition:none !important; }
   }
 </style>
 
 <script>
   import { scrollerVersTitre } from "../../lib/positionTitre";
   
-  // Trois familles de filtres qui se croisent : type (un seul), univers (un seul), critères (plusieurs : le film doit
-  // tous les porter). Un bouton qui ne mènerait à aucun film avec le reste de la sélection est grisé.
+  // Rails : flèches (grisées en bout de course, masquées si toute la rangée tient dans la largeur).
+  function majRail(rail: HTMLElement) {
+    const piste = rail.querySelector<HTMLElement>('.rail-piste');
+    const fleches = rail.querySelector<HTMLElement>('.rail-fleches');
+    if (!piste || !fleches) return;
+    // Le padding droit (estompe) fausse la mesure : on compare le bord de la dernière carte visible à celui de la piste.
+    const cartes = [...piste.querySelectorAll<HTMLElement>('li:not([hidden])')];
+    const derniere = cartes[cartes.length - 1];
+    piste.classList.remove('entiere');
+    const tient = !derniere || derniere.offsetLeft + derniere.offsetWidth <= piste.clientWidth + 1;
+    piste.classList.toggle('entiere', tient);
+    fleches.hidden = tient;
+    const [avant, apres] = [...fleches.querySelectorAll<HTMLButtonElement>('.rail-btn')];
+    if (avant) avant.disabled = piste.scrollLeft <= 1;
+    if (apres) apres.disabled = piste.scrollLeft + piste.clientWidth >= piste.scrollWidth - 1;
+  }
+  function setupRails() {
+    const rails = [...document.querySelectorAll<HTMLElement>('#rails .rail')];
+    rails.forEach((rail) => {
+      const piste = rail.querySelector<HTMLElement>('.rail-piste');
+      if (!piste) return;
+      rail.querySelectorAll<HTMLButtonElement>('.rail-btn').forEach((b) =>
+        b.addEventListener('click', () => piste.scrollBy({ left: Number(b.dataset.dir) * piste.clientWidth * 0.75, behavior: 'smooth' }))
+      );
+      piste.addEventListener('scroll', () => majRail(rail), { passive: true });
+      majRail(rail);
+    });
+    if (rails.length) window.addEventListener('resize', () => rails.forEach(majRail));
+  }
+
+  // Filtres qui se croisent : type (un seul, désactivé pour l'instant), critères (plusieurs : le film doit tous les porter).
+  // Un bouton qui ne mènerait à aucun film avec le reste de la sélection est grisé. Les univers sont devenus les rails.
   function setupFiltres() {
     const zone = document.getElementById('filtres');
-    const liste = document.getElementById('accroches');
+    const liste = document.getElementById('rails');
     const vide = document.getElementById('filtres-vide');
-    const items = [...document.querySelectorAll<HTMLLIElement>('#accroches li')];
+    const items = [...document.querySelectorAll<HTMLLIElement>('#rails .rail-piste li')];
     if (!zone || !liste || !items.length) return;
 
     const fiches = items.map((li) => ({
@@ -333,6 +448,16 @@ const FILTRE_TYPE_ACTIF = false;
         if (!f.li.hidden) visibles++;
       });
       if (vide) vide.hidden = visibles > 0;
+      // Une rangée sans film visible disparaît ; les autres affichent leur nouveau nombre de films et repartent du début.
+      liste.querySelectorAll<HTMLElement>('.rail').forEach((rail) => {
+        const n = rail.querySelectorAll('.rail-piste li:not([hidden])').length;
+        rail.hidden = n === 0;
+        const c = rail.querySelector('.rail-compte');
+        if (c) c.textContent = `${n} ${n > 1 ? liste.dataset.films : liste.dataset.film}`;
+        const piste = rail.querySelector<HTMLElement>('.rail-piste');
+        if (piste) piste.scrollLeft = 0;
+        majRail(rail);
+      });
 
       boutons.forEach((b) => {
         const g = groupeDe(b);
@@ -396,6 +521,7 @@ const FILTRE_TYPE_ACTIF = false;
     });
   }
 
+  document.addEventListener('astro:page-load', setupRails);
   document.addEventListener('astro:page-load', setupFiltres);
   document.addEventListener('astro:page-load', setupDemoreel);
 </script>

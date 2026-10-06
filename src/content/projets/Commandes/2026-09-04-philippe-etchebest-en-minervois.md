@@ -2,7 +2,7 @@
 titre: Philippe Etchebest en Minervois
 categorie: commandes
 enChantier: false
-brouillon: false
+brouillon: true
 horsRecherche: false
 role: Producteur / Réalisateur
 accroche: Le chef Philippe Etchebest s'invite le temps d'un épisode du

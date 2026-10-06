@@ -8,6 +8,8 @@ horsRecherche: true
 role: Réalisateur
 client: Le Bon Marché Rive Gauche
 type: Brand Content
+secteurs:
+  - Musique
 date: 2021-11-01
 couverture: /uploads/NatalieDessay_2021-11-01_1.jpg
 couvertureAlt: Natalie Dessay en concert digital au Bon Marché Rive Gauche,
