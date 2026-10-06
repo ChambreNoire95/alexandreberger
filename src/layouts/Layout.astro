@@ -42,6 +42,31 @@ const blocsJsonLd = [personneJsonLd, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonL
 const clientsLogo = logosClients.filter((c) => c.logo);
 const clientsTexte = logosClients.filter((c) => !c.logo);
 
+// Grand écran : les logos sont répartis sur 5 lignes, dans l'ordre de notoriété (coupures choisies pour que la ligne la
+// plus large soit la plus étroite possible, donc des lignes de largeur voisine). Les tailles des logos ne changent pas ;
+// la plus large dépasse un peu du contenu, sur les côtés. En dessous de 1200 px, les lignes se fondent dans un seul
+// bloc qui revient à la ligne naturellement (voir .refs-ligne en CSS).
+const NB_LIGNES = 5;
+const ECART_X = 2.9 * 16; // écart horizontal de référence entre deux logos (px)
+const largeurLigne = (de: number, a: number) =>
+  clientsLogo.slice(de, a).reduce((somme, c) => somme + c.largeur, 0) + Math.max(0, a - de - 1) * ECART_X;
+const n = clientsLogo.length;
+const meilleur: number[][] = Array.from({ length: NB_LIGNES + 1 }, () => Array(n + 1).fill(Infinity));
+const coupure: number[][] = Array.from({ length: NB_LIGNES + 1 }, () => Array(n + 1).fill(0));
+meilleur[0][0] = 0;
+for (let r = 1; r <= NB_LIGNES; r++)
+  for (let j = 1; j <= n; j++)
+    for (let i = r - 1; i < j; i++) {
+      const v = Math.max(meilleur[r - 1][i], largeurLigne(i, j));
+      if (v < meilleur[r][j]) { meilleur[r][j] = v; coupure[r][j] = i; }
+    }
+const rangees: (typeof clientsLogo)[] = [];
+for (let r = NB_LIGNES, j = n; r >= 1 && j > 0; r--) {
+  const i = coupure[r][j];
+  rangees.unshift(clientsLogo.slice(i, j));
+  j = i;
+}
+
 // Même page dans l'autre langue (pour <link rel="alternate" hreflang> et le sélecteur FR | EN).
 const cheminNormalise = sansLangue(Astro.url.pathname).replace(/\/$/, "") || "/";
 const alternates = {
@@ -320,19 +345,27 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     {currentPath !== "/creations" && (
       <footer transition:persist>
         <p class="refs-titre">{t(lang, "footer.titre")}</p>
-        <ul class="refs-logos">
-          {clientsLogo.map((c) => (
-            <li style={`--l:${c.largeur}px;--h:${c.hauteur}px`}>
-              {/* Lien externe sur toutes les pages : nofollow, pour ne pas diluer le référencement du site. */}
-              <a href={c.url} target="_blank" rel="noopener nofollow">
-                <img src={c.logo} width={c.largeur} height={c.hauteur} alt={t(lang, "footer.logo.alt").replace("{nom}", c.nom)} loading="lazy" decoding="async" />
-              </a>
-            </li>
+        <div class="refs-logos">
+          {rangees.map((rangee) => (
+            <ul class="refs-ligne">
+              {rangee.map((c) => (
+                <li style={`--l:${c.largeur}px;--h:${c.hauteur}px`}>
+                  {/* Lien externe sur toutes les pages : nofollow, pour ne pas diluer le référencement du site. */}
+                  <a href={c.url} target="_blank" rel="noopener nofollow">
+                    <img src={c.logo} width={c.largeur} height={c.hauteur} alt={t(lang, "footer.logo.alt").replace("{nom}", c.nom)} loading="lazy" decoding="async" />
+                  </a>
+                </li>
+              ))}
+            </ul>
           ))}
-          {clientsTexte.map((c) => (
-            <li class="refs-texte">{c.url ? <a href={c.url} target="_blank" rel="noopener nofollow">{c.nom}</a> : c.nom}</li>
-          ))}
-        </ul>
+          {clientsTexte.length > 0 && (
+            <ul class="refs-ligne">
+              {clientsTexte.map((c) => (
+                <li class="refs-texte">{c.url ? <a href={c.url} target="_blank" rel="noopener nofollow">{c.nom}</a> : c.nom}</li>
+              ))}
+            </ul>
+          )}
+        </div>
       </footer>
     )}
 
@@ -594,8 +627,19 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   /* Logos des références : blancs, taille d'affichage calculée par le script (surface visuelle constante), centrés et
      renvoyés à la ligne selon la place. Les références sans logo suivent en texte. */
   .refs-logos {
-    list-style:none; padding:0; max-width:1120px; margin:0 auto;
+    max-width:1120px; margin:0 auto;
     display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:1.9rem 2.9rem;
+  }
+  /* Les 5 lignes (une <ul> chacune) se fondent dans le bloc ci-dessus : retour à la ligne naturel. */
+  .refs-ligne { display:contents; list-style:none; margin:0; padding:0; }
+  /* Grand écran (≥ 1200 px) : 5 lignes fixes, centrées, qui dépassent un peu du contenu sur les côtés. L'écart entre
+     logos se resserre quand l'écran rétrécit, pour que la plus large (≈ 883 px de logos + 10 écarts) tienne toujours avec une marge. */
+  @media (min-width: 1200px) {
+    .refs-logos { max-width:none; flex-direction:column; flex-wrap:nowrap; gap:1.9rem; }
+    .refs-ligne {
+      display:flex; flex-wrap:nowrap; justify-content:center; align-items:center; width:max-content;
+      gap:0 clamp(1rem, calc((100vw - 943px) / 10), 2.9rem);
+    }
   }
   .refs-logos a { display:block; color:inherit; text-decoration:none; }
   .refs-logos img { display:block; width:var(--l); height:var(--h); opacity:.85; transition:opacity 140ms ease; }
