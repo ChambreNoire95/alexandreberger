@@ -14,9 +14,13 @@ interface Props {
   loading?: "eager" | "lazy";
   fetchpriority?: "high" | "low" | "auto";
   sizes?: string;
+  /** Media query (ex. « (max-width: 800px) ») pour laquelle l'image est masquée en CSS : le navigateur reçoit alors une image
+   *  vide d'1 pixel à la place, et ne télécharge pas le vrai fichier (un `display:none` ne l'en empêche pas). */
+  nePasChargerSi?: string;
 }
 
-const { src, alt, class: className, loading = "lazy", fetchpriority = "auto", sizes = "100vw" } = Astro.props;
+const { src, alt, class: className, loading = "lazy", fetchpriority = "auto", sizes = "100vw", nePasChargerSi } = Astro.props;
+const PIXEL_VIDE = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 
 const disponibles = extensionOptimisable(src)
   ? LARGEURS_OPTIMISEES.filter((largeur) => existsSync(path.join("public", cheminOptimise(src, largeur, "webp"))))
@@ -36,6 +40,7 @@ function srcset(format: "webp" | "avif") {
 
 {disponibles.length > 0 ? (
   <picture>
+    {nePasChargerSi && <source media={nePasChargerSi} srcset={PIXEL_VIDE} />}
     <source type="image/avif" srcset={srcset("avif")} sizes={sizes} />
     <source type="image/webp" srcset={srcset("webp")} sizes={sizes} />
     <img src={src} alt={alt} class={className} loading={loading} fetchpriority={fetchpriority} width={dimensions?.width} height={dimensions?.height} />

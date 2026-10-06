@@ -25,7 +25,6 @@ const projets = (await getProjets(lang, ({ data }) => data.categorie === "comman
   (a, b) => (b.data.date?.valueOf() ?? -Infinity) - (a.data.date?.valueOf() ?? -Infinity)
 );
 
-// Panneau d'aperçu (écran large + souris) : un aperçu par projet ayant une image.
 // Durée : les unités (min, h, s…) sont enveloppées pour être affichées plus petites.
 const echapper = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const dureeHtml = (d?: string) =>
@@ -39,26 +38,25 @@ const dimensionsDemo = bandeDemo.image && existsSync(`public${cheminManifest(ban
   ? JSON.parse(readFileSync(`public${cheminManifest(bandeDemo.image)}`, "utf-8"))[nomFichier(bandeDemo.image)]
   : undefined;
 const ratioDemo = dimensionsDemo ? `${dimensionsDemo.width} / ${dimensionsDemo.height}` : "16 / 9";
-const apercus = projets
-  .map((p, index) => ({ p, index }))
-  .filter(({ p }) => p.data.couverture || p.data.image1)
-  .map(({ p, index }) => ({
-    index,
-    href: url(lang, `/projets/${p.id}`),
-    titre: p.data.titre,
-    image: (p.data.couverture || p.data.image1) as string,
-    date: p.data.date ? dateFormatee(lang, p.data.date, { month: "long", year: "numeric" }) : undefined,
-    client: p.data.client,
-    accroche: p.data.accroche ?? descriptionDepuisTexte(p.body, 140),
-    titreFilm: p.data.titreFilm?.trim() || undefined,
-    duree: p.data.duree?.trim() || undefined,
-  }));
+
+// Liste des films : visuel à gauche (couverture, à défaut première image), titre, « Rôle pour Client », courte description
+// (accroche du CMS, à défaut le début du texte) et durée.
+const lignes = projets.map((p) => {
+  const aCouverture = !!p.data.couverture;
+  const image = p.data.couverture || p.data.image1;
+  return {
+    p,
+    image,
+    alt: (aCouverture ? p.data.couvertureAlt : p.data.image1Alt) || p.data.titre,
+    description: p.data.accroche?.trim() || descriptionDepuisTexte(p.body, 140),
+    duree: dureeHtml(p.data.duree?.trim() || undefined),
+  };
+});
 // Filtres Univers et Critères (champs CMS à choix) : seules les valeurs portées par au moins un film sont proposées.
 const SECTEURS = ["Mode", "Musique", "Série/Cinéma", "Art", "Culture", "Terroir / Gastronomie", "Éducation", "Sciences", "Société", "Sport", "Solidarité", "Environnement"];
 const BESOINS = ["Interviews", "Mise en scène / Direction artistique", "Tournage à l'étranger", "Projet au long cours", "Images d'archives"];
 const universPresents = SECTEURS.filter((x) => projets.some((p) => p.data.secteurs?.includes(x)));
 const criteresPresents = BESOINS.filter((x) => projets.some((p) => p.data.besoins?.includes(x)));
-const indexAvecApercu = new Set(apercus.map((a) => a.index));
 
 const itemsCarrousel = await getItemsCarrousel(lang);
 
@@ -121,49 +119,31 @@ const FILTRE_TYPE_ACTIF = false;
     )}
   </div>
 
-  <div class="liste-apercu">
   <ul id="accroches" class="accroches">
-    {projets.map((p, index) => {
-      return (
-        <li data-type={p.data.type || ""} data-univers={(p.data.secteurs ?? []).join("|")} data-criteres={(p.data.besoins ?? []).join("|")} data-apercu={indexAvecApercu.has(index) ? index : undefined}>
-          <a href={url(lang, `/projets/${p.id}`)}>
+    {lignes.map(({ p, image, alt, description, duree }) => (
+      <li data-type={p.data.type || ""} data-univers={(p.data.secteurs ?? []).join("|")} data-criteres={(p.data.besoins ?? []).join("|")}>
+        <a href={url(lang, `/projets/${p.id}`)}>
+          {image && (
+            <span class="projet-visuel">
+              <OptimizedImage src={image} alt={alt} sizes="(min-width: 1100px) 280px, 22vw" nePasChargerSi="(max-width: 800px)" />
+              {duree && <span class="projet-duree" set:html={duree} />}
+            </span>
+          )}
+          <span class="projet-texte">
             <span class="accroche-titre">{p.data.titre}</span>
             {p.data.role && p.data.client ? (
               <span class="accroche-meta">{roleAffiche(lang, p.data.role)} <br class="saut-mobile" />{t(lang, "pour")} {p.data.client}</span>
             ) : (
               (p.data.role || p.data.client) && <span class="accroche-meta">{p.data.role ? roleAffiche(lang, p.data.role) : p.data.client}</span>
             )}
-          </a>
-        </li>
-      );
-    })}
+            {description && <span class="accroche-description">{description}</span>}
+          </span>
+        </a>
+      </li>
+    ))}
   </ul>
 
   <p class="filtres-vide" id="filtres-vide" hidden>{t(lang, "filtre.rien")}</p>
-
-  <aside class="apercu" aria-label={t(lang, "apercu.aria")}>
-    <div class="apercu-pile">
-      {apercus.map((a) => (
-        <article class="apercu-item" data-index={a.index}>
-          {(a.titreFilm || a.duree) && (
-            <p class="apercu-entete">
-              {a.titreFilm && <span class="apercu-titre-film">{a.titreFilm}</span>}
-              {a.duree && <span class="apercu-duree" set:html={dureeHtml(a.duree)} />}
-            </p>
-          )}
-          <div class="apercu-image">
-            <OptimizedImage src={a.image} alt="" sizes="420px" />
-          </div>
-          {(a.date || a.client) && (
-            <p class="apercu-meta">{[a.date, a.client].filter(Boolean).join(" · ")}</p>
-          )}
-          {a.accroche && <p class="apercu-accroche">{a.accroche}</p>}
-          <a class="apercu-fleche" href={a.href} aria-label={`${t(lang, "apercu.savoir")}${lang === "en" ? ":" : "\u00a0:"} ${a.titre}`}>→</a>
-        </article>
-      ))}
-    </div>
-  </aside>
-  </div>
 
   {/* Demoreel intégrée en pleine largeur (celle du contenu, alignée sur les titres des projets), juste au-dessus
      de « Ils m'ont fait confiance ». Image de couverture + bouton lecture : le lecteur n'est chargé qu'au clic
@@ -195,7 +175,7 @@ const FILTRE_TYPE_ACTIF = false;
   .filtres { display:flex; flex-wrap:wrap; justify-content:center; gap:.75rem; margin:0; }
   .filtres button:disabled { opacity:.3; cursor:not-allowed; border-style:dashed; }
   .filtres button:disabled:hover { color:rgba(var(--blanc-rgb),.5); border-color:rgba(var(--blanc-rgb),.3); }
-  .filtres-vide { grid-column:1; margin:4.5rem 0 0; font-family:var(--police-texte); font-weight:400; font-size:1rem; color:rgba(var(--blanc-rgb),.65); }
+  .filtres-vide { margin:4.5rem 0 0; font-family:var(--police-texte); font-weight:400; font-size:1rem; color:rgba(var(--blanc-rgb),.65); }
   /* Desktop : libellé à gauche (colonne fixe), boutons à la suite, le tout aligné sur la liste. */
   @media (min-width: 801px) {
     .filtres-zone { gap:1rem; }
@@ -225,6 +205,7 @@ const FILTRE_TYPE_ACTIF = false;
     display:flex; flex-direction:column; align-items:center; gap:.6rem;
     text-decoration:none;
   }
+  .projet-texte { display:flex; flex-direction:column; align-items:inherit; gap:.6rem; }
   .accroche-titre {
     font-weight:700; font-size:clamp(1.076rem, 2.458vw, 1.536rem); line-height:1.2; /* +10 % puis -3 % */
     font-stretch:100%; /* largeur normale d'Archivo (le reste du site est resserré) */
@@ -238,70 +219,33 @@ const FILTRE_TYPE_ACTIF = false;
     font-family:'Archivo', 'Inter', sans-serif; font-weight:400;
     font-size:.77rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.65);
   }
+  .accroche-description { font-family:var(--police-texte); font-weight:400; font-size:1rem; line-height:1.6; color:rgba(var(--blanc-rgb),.8); max-width:52rem; }
   .saut-mobile { display:none; }
+  /* Mobile : liste centrée sans visuel ni description (inchangée). */
+  .projet-visuel, .accroche-description { display:none; }
   @media (max-width: 800px) {
     .saut-mobile { display:inline; }
   }
 
-  /* Écran large + souris : liste ferrée à gauche, panneau d'aperçu fixe à
-     droite. Ailleurs (mobile, tablette, tactile) : liste centrée inchangée. */
-  .liste-apercu { display:contents; }
-  .apercu { display:none; }
-  @media (min-width: 1100px) and (hover:hover) and (pointer:fine) {
-    .liste-apercu {
-      display:grid; grid-template-columns:minmax(0, 1fr) 420px; column-gap:5rem;
-      width:100%; max-width:1240px; align-items:start;
+  /* Desktop : une ligne par film, visuel à gauche, texte à droite (titre, « Rôle pour Client », description). */
+  @media (min-width: 801px) {
+    .accroches { align-items:stretch; width:100%; max-width:1240px; gap:2.5rem; }
+    .accroches a { flex-direction:row; align-items:flex-start; gap:2rem; text-align:left; }
+    .projet-visuel {
+      display:block; position:relative; flex:none; width:clamp(190px, 22vw, 280px); aspect-ratio:16/9;
+      overflow:hidden; border-radius:2px; background:#111; border-bottom:1px solid var(--blanc);
     }
-    .accroches { align-items:flex-start; }
-    .accroches a { align-items:flex-start; text-align:left; }
-    .accroche-titre { white-space:normal; position:relative; }
-
-    /* Flèche « → » (comme le lien « Voir toute la playlist ») : suspendue dans
-       la marge gauche au survol/focus, donc sans décalage du titre. */
-    .accroche-titre::before {
-      content:"→"; position:absolute; left:-1.7em; top:0; color:var(--rouge);
-      opacity:0; transform:translateX(-.4em);
-      transition:opacity 160ms ease, transform 160ms ease;
+    .projet-visuel :global(img) { width:100%; height:100%; object-fit:cover; display:block; transition:opacity 140ms ease; }
+    .accroches a:hover .projet-visuel :global(img), .accroches a:focus-visible .projet-visuel :global(img) { opacity:.75; }
+    /* Durée : pastille en bas à droite du visuel. Unités (min, h…) plus petites. */
+    .projet-duree {
+      position:absolute; right:.5rem; bottom:.5rem; padding:.15rem .45rem; border-radius:2px;
+      background:rgba(0,0,0,.75); color:var(--blanc); font-weight:700; font-size:.8rem; line-height:1.3; text-transform:uppercase;
     }
-    .accroches a:hover .accroche-titre::before,
-    .accroches a:focus-visible .accroche-titre::before { opacity:1; transform:none; }
-
-    .apercu { display:block; position:sticky; top:28px; margin-top:4.5rem; }
-    .apercu-pile { display:grid; }
-    .apercu-item {
-      grid-area:1 / 1; align-self:start; display:flex; flex-direction:column; gap:1rem;
-      box-sizing:border-box; padding:10px; border:1px solid rgba(var(--blanc-rgb),.35); border-radius:2px;
-      opacity:0; visibility:hidden; transition:opacity 220ms ease, visibility 0s linear 220ms;
-    }
-    .apercu-item.actif { opacity:1; visibility:visible; transition-delay:0s; }
-    .apercu-image {
-      display:block; width:100%; padding:0; border:0; border-bottom:1px solid var(--blanc);
-      aspect-ratio:16/9; overflow:hidden; border-radius:2px; background:#111;
-    }
-    .apercu-image :global(img) { width:100%; height:100%; object-fit:cover; display:block; }
-    /* Les images ne sont demandées qu'à la première activation (classe posée en JS). */
-    .apercu-item:not(.charge) .apercu-image :global(picture) { display:none; }
-    /* Titre du film (champ CMS) + durée, au-dessus de l'image. */
-    .apercu-entete { margin:0; display:flex; align-items:baseline; justify-content:space-between; gap:1rem; }
-    .apercu-titre-film { font-weight:700; font-size:1rem; line-height:1.3; color:var(--blanc); text-transform:uppercase; }
-    .apercu-duree {
-      flex:none; margin-left:auto; font-weight:700; font-size:1rem; line-height:1.3;
-      text-transform:uppercase; color:var(--blanc);
-    }
-    .apercu-duree :global(.duree-unite) { font-size:.5em; }
-    .apercu-meta {
-      margin:0; font-family:'Archivo', 'Inter', sans-serif; font-weight:200;
-      font-size:.77rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.45);
-    }
-    .apercu-accroche { margin:0; font-family:var(--police-texte); font-weight:400; font-size:1rem; line-height:1.6; color:rgba(var(--blanc-rgb),.8); }
-
-    /* Flèche vers la fiche, en bas à droite du cadre. */
-    .apercu-fleche {
-      align-self:flex-end; margin-top:-.2rem; text-decoration:none;
-      font-size:1.4rem; line-height:1; color:var(--rouge); transition:transform 140ms ease;
-    }
-    .apercu-fleche:hover, .apercu-fleche:focus-visible { transform:translateX(.3rem); }
-
+    .projet-duree :global(.duree-unite) { font-size:.75em; }
+    .projet-texte { align-items:flex-start; min-width:0; }
+    .accroche-titre { white-space:normal; }
+    .accroche-description { display:block; }
   }
 
   /* Demoreel intégrée : pleine largeur du contenu (même bord gauche que les titres des projets), 16/9. */
@@ -343,7 +287,7 @@ const FILTRE_TYPE_ACTIF = false;
     .demoreel-lancer.avec-image .demoreel-play::before { margin:-7px 0 0 -4px; border-width:7px 0 7px 12px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .apercu-item, .accroche-titre::before, .apercu-fleche, .demoreel-lecteur, .demoreel-lecteur :global(iframe), .demoreel-play { transition:none !important; }
+    .projet-visuel :global(img), .demoreel-lecteur, .demoreel-lecteur :global(iframe), .demoreel-play { transition:none !important; }
   }
 </style>
 
@@ -409,7 +353,6 @@ const FILTRE_TYPE_ACTIF = false;
       else criteres.add(v);
 
       appliquer();
-      liste.dispatchEvent(new Event('filtre'));
 
       // Masquer/afficher des accroches change la hauteur de la page : on recale
       // aussitôt, dans la même image, sur la position de référence (titre en haut).
@@ -417,38 +360,6 @@ const FILTRE_TYPE_ACTIF = false;
     });
 
     appliquer();
-  }
-
-  function setupApercu() {
-    const liste = document.getElementById('accroches');
-    const panneau = document.querySelector('.apercu');
-    if (!liste || !panneau || !matchMedia('(min-width: 1100px) and (hover: hover) and (pointer: fine)').matches) return;
-
-    const fiches = [...panneau.querySelectorAll<HTMLElement>('.apercu-item')];
-    const conteneur = liste.closest<HTMLElement>('.liste-apercu');
-    const activer = (index: number) => {
-      fiches.forEach((fiche) => {
-        const actif = Number(fiche.dataset.index) === index;
-        fiche.classList.toggle('actif', actif);
-        if (actif) fiche.classList.add('charge');
-      });
-    };
-    const depuis = (event: Event) => {
-      const li = (event.target as HTMLElement).closest<HTMLLIElement>('li[data-apercu]');
-      if (li) activer(Number(li.dataset.apercu));
-    };
-    // Au repos et après un filtre : le premier projet visible (le plus récent).
-    const parDefaut = () => {
-      const li = liste.querySelector<HTMLLIElement>('li[data-apercu]:not([hidden])');
-      activer(li ? Number(li.dataset.apercu) : -1);
-    };
-
-    liste.addEventListener('mouseover', depuis);
-    liste.addEventListener('focusin', depuis);
-    liste.addEventListener('filtre', parDefaut);
-    // Le curseur quitte l'ensemble liste + panneau : retour à l'encart par défaut.
-    conteneur?.addEventListener('mouseleave', parDefaut);
-    parDefaut();
   }
 
   // Demoreel : au clic sur l'image de couverture, le lecteur se charge sur place et la lecture démarre.
@@ -479,6 +390,5 @@ const FILTRE_TYPE_ACTIF = false;
   }
 
   document.addEventListener('astro:page-load', setupFiltres);
-  document.addEventListener('astro:page-load', setupApercu);
   document.addEventListener('astro:page-load', setupDemoreel);
 </script>
