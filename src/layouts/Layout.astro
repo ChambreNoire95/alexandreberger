@@ -58,6 +58,16 @@ const alternates = {
 };
 const urlCanonique = alternates[lang];
 
+// Formulaire de contact du pied de page : textes lus par le script d'envoi.
+const textesContact = {
+  lang,
+  envoyer: t(lang, "contact.envoyer"),
+  envoi: t(lang, "booking.envoi"),
+  ok: t(lang, "contact.ok"),
+  erreur: t(lang, "booking.erreur"),
+  erreurReseau: t(lang, "booking.erreur.reseau"),
+};
+
 const entreesCarnet = await getCarnet(lang, ({ data }) => !data.brouillon);
 const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())[0];
 ---
@@ -326,6 +336,84 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       </div>
     </section>
 
+    {/* Dernier niveau avant le copyright : récapitulatif du menu (tous les liens visibles) + formulaire de contact,
+       présents sur toutes les pages. Les liens portent data-nav : majNavActive() tient leur état à jour. */}
+    <section class="pied" transition:persist>
+      <nav class="pied-menu" aria-label={t(lang, "pied.menu")}>
+        <p class="pied-titre">{t(lang, "pied.menu")}</p>
+        <ul>
+          <li><a href={url(lang, "/")} data-nav aria-current={currentPath === "/" ? "page" : undefined}>{t(lang, "menu.commandes")}</a></li>
+          <li><a href={url(lang, "/creations")} data-nav aria-current={currentPath === "/creations" ? "page" : undefined}>{t(lang, "menu.creations")}</a></li>
+          <li><a href={url(lang, "/carnet")} data-nav data-nav-prefix aria-current={currentPath.startsWith("/carnet") ? "page" : undefined}>{t(lang, "menu.carnet")}</a></li>
+          <li><a href={url(lang, "/autour-du-monde")} data-nav aria-current={currentPath === "/autour-du-monde" ? "page" : undefined}>{t(lang, "menu.autour")}</a></li>
+          <li><a href={url(lang, "/a-propos")} data-nav aria-current={currentPath === "/a-propos" ? "page" : undefined}>{t(lang, "menu.apropos")}</a></li>
+          <li><a href={url(lang, "/booking")} data-nav aria-current={currentPath === "/booking" ? "page" : undefined}>{t(lang, "nav.booking")}</a></li>
+        </ul>
+      </nav>
+      <div class="pied-contact">
+        <p class="pied-titre">{t(lang, "contact.titre")}</p>
+        <p class="pied-intro">{t(lang, "contact.intro")}</p>
+        <form id="form-contact" data-textes={JSON.stringify(textesContact)}>
+          <input type="text" name="site" class="pied-piege" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <label class="pied-champ"><span>{t(lang, "contact.prenom")}</span><input type="text" name="prenom" autocomplete="given-name" required /></label>
+          <label class="pied-champ"><span>{t(lang, "contact.nom")}</span><input type="text" name="nom" autocomplete="family-name" required /></label>
+          <label class="pied-champ"><span>{t(lang, "contact.structure")}</span><input type="text" name="structure" autocomplete="organization" required /></label>
+          <label class="pied-champ"><span>{t(lang, "contact.fonction")}</span><input type="text" name="fonction" autocomplete="organization-title" required /></label>
+          <label class="pied-champ"><span>{t(lang, "contact.email")}</span><input type="email" name="email" autocomplete="email" required /></label>
+          <label class="pied-champ"><span>{t(lang, "contact.telephone")}</span><input type="tel" name="telephone" autocomplete="tel" required /></label>
+          <button type="submit">{t(lang, "contact.envoyer")}</button>
+          <p class="pied-statut" role="status" hidden></p>
+        </form>
+      </div>
+    </section>
+    <script>
+      // Formulaire de contact du pied de page (/api/contact). Le bloc est transition:persist : on écoute au niveau
+      // du document, une seule fois, plutôt que de rattacher l'écouteur à chaque navigation. En phase de capture :
+      // preventDefault() doit passer AVANT l'écouteur du ClientRouter, qui sinon soumet le formulaire en GET
+      // (rechargement de la page avec les coordonnées dans l'adresse).
+      document.addEventListener("submit", async (event) => {
+        const form = event.target as HTMLFormElement;
+        if (form?.id !== "form-contact") return;
+        event.preventDefault();
+        const T = JSON.parse(form.dataset.textes ?? "{}") as Record<string, string>;
+        const bouton = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+        const statut = form.querySelector<HTMLElement>(".pied-statut");
+        const afficherStatut = (message: string, succes: boolean) => {
+          if (!statut) return;
+          statut.hidden = false;
+          statut.textContent = message;
+          statut.classList.toggle("pied-statut-erreur", !succes);
+        };
+        if (bouton) {
+          bouton.disabled = true;
+          bouton.textContent = T.envoi ?? "Envoi en cours…";
+        }
+        const donnees: Record<string, FormDataEntryValue> = Object.fromEntries(new FormData(form).entries());
+        donnees.lang = T.lang ?? "fr";
+        try {
+          const reponse = await fetch("/api/contact", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(donnees),
+          });
+          const resultat = await reponse.json();
+          if (reponse.ok && resultat.ok) {
+            afficherStatut(T.ok ?? "Vos coordonnées ont bien été envoyées.", true);
+            form.reset();
+          } else {
+            afficherStatut(resultat.erreur || T.erreur || "Une erreur est survenue. Merci de réessayer.", false);
+          }
+        } catch {
+          afficherStatut(T.erreurReseau ?? "Une erreur est survenue. Vérifiez votre connexion et réessayez.", false);
+        } finally {
+          if (bouton) {
+            bouton.disabled = false;
+            bouton.textContent = T.envoyer ?? "Envoyer";
+          }
+        }
+      }, true);
+    </script>
+
     <div class="cloture" transition:persist>
       <p class="copyright">
         {t(lang, "copyright")} / {new Date().getFullYear()} - <a href={url(lang, "/mentions-legales")}>{t(lang, "mentions")}</a>
@@ -516,6 +604,59 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     .carnet-label { font-size:.7475rem; }
   }
   .carnet-vide { font-family:var(--police-texte); font-weight:400; font-size:.95rem; color:rgba(var(--blanc-rgb),.5); margin:0; max-width:30rem; }
+
+  /* Dernier niveau : menu vertical + formulaire de contact, moitié-moitié (même axe que le bandeau au-dessus). */
+  .pied { display:flex; border-top:1px solid rgba(var(--blanc-rgb),.14); text-align:left; }
+  .pied-menu, .pied-contact { padding:3.5rem clamp(1.5rem, 4vw, 3rem); }
+  .pied-menu { flex:1 1 50%; border-right:1px solid rgba(var(--blanc-rgb),.14); }
+  .pied-contact { flex:1 1 50%; min-width:0; }
+  .pied-titre { font-size:.805rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.5); margin:0 0 1.5rem; }
+  .pied-menu ul { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1.1rem; }
+  .pied-menu a {
+    font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.85rem; letter-spacing:.18em; text-transform:uppercase;
+    color:rgba(var(--blanc-rgb),.9); text-decoration:none; transition:color 140ms ease;
+  }
+  .pied-menu a:hover { color:var(--rouge); }
+  .pied-menu a[aria-current="page"] { color:var(--blanc); text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:1px; }
+  .pied-intro { font-family:var(--police-texte); font-weight:400; font-size:.95rem; line-height:1.6; color:rgba(var(--blanc-rgb),.65); margin:0 0 2rem; }
+  #form-contact { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:44rem; }
+  .pied-champ { display:flex; flex-direction:column; gap:.6rem; min-width:0; }
+  .pied-champ span { font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.5); }
+  .pied-champ input {
+    font-size:.95rem; font-family:var(--police-texte); font-weight:400; color:var(--blanc);
+    background:transparent; border:1px solid rgba(var(--blanc-rgb),.3); border-radius:2px;
+    padding:.85rem 1rem; transition:border-color 140ms ease; width:100%;
+  }
+  .pied-champ input:focus { outline:none; border-color:rgba(var(--blanc-rgb),.8); }
+  /* Bouton d'envoi : comme sur la page Booking (gras ; rouge + texte blanc au survol). */
+  #form-contact button[type="submit"] {
+    grid-column:1 / -1; justify-self:start; margin-top:.5rem; padding:1.1rem 2.4rem;
+    font-family:'Archivo', 'Inter', sans-serif; font-weight:700; font-size:.85rem; letter-spacing:.18em; text-transform:uppercase;
+    color:#0b0b0b; background:var(--blanc); border:1px solid var(--blanc); border-radius:2px;
+    cursor:pointer; transition:background 140ms ease, color 140ms ease, border-color 140ms ease;
+  }
+  #form-contact button[type="submit"]:hover:not(:disabled) { background:var(--rouge); border-color:var(--rouge); color:var(--blanc); }
+  #form-contact button[type="submit"]:disabled { opacity:.5; cursor:not-allowed; }
+  .pied-statut { grid-column:1 / -1; font-family:var(--police-texte); font-weight:400; font-size:.9rem; color:rgba(var(--blanc-rgb),.6); margin:0; }
+  .pied-statut-erreur { color:#e11d2e; }
+  .pied-piege { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  /* Desktop : formulaire resserré (champs, espacements et bouton plus petits) ; le mobile garde des champs confortables au doigt. */
+  @media (min-width: 721px) {
+    .pied-menu, .pied-contact { padding-top:2.75rem; padding-bottom:2.75rem; }
+    .pied-intro { font-size:.875rem; margin-bottom:1.25rem; }
+    #form-contact { gap:.9rem 1rem; max-width:31rem; }
+    .pied-champ { gap:.4rem; }
+    .pied-champ span { font-size:.65rem; }
+    .pied-champ input { font-size:.875rem; padding:.5rem .75rem; }
+    #form-contact button[type="submit"] { margin-top:.35rem; padding:.75rem 1.7rem; font-size:.72rem; }
+    .pied-statut { font-size:.85rem; }
+  }
+  @media (max-width: 720px) {
+    .pied { flex-direction:column; }
+    .pied-menu { border-right:none; border-bottom:1px solid rgba(var(--blanc-rgb),.14); }
+    .pied-menu, .pied-contact { padding-top:2.5rem; padding-bottom:2.5rem; }
+    #form-contact { grid-template-columns:1fr; gap:1.25rem; }
+  }
 
   .cloture { border-top:1px solid rgba(var(--blanc-rgb),.14); padding-top:3rem; margin-top:0; }
   .copyright { font-size:.825rem; font-family:var(--police-texte); font-weight:400; color:rgba(var(--blanc-rgb),.4); padding:0 clamp(1.5rem, 4vw, 3rem) 3rem; margin:0; text-align:center; }

@@ -27,7 +27,9 @@ const signatures = [1, 2, 3, 4].map((n) => t(lang, `signature.${n}`));
   }
   /* Grand écran : le header (logo animé) est plus haut, on remonte le bloc de phrases. */
   @media (min-width: 801px) {
-    .signature { margin-top:-3rem; }
+    .signature { margin-top:-3rem; min-height:6rem; }
+    /* Desktop : taille doublée (le mobile garde 1.9rem). */
+    .phrase { font-size:clamp(2.64rem, 6.24vw, 5.14rem); white-space:nowrap; }
   }
 </style>
 
