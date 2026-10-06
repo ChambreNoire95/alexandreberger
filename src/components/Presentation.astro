@@ -21,6 +21,10 @@ const { lang = "fr" } = Astro.props;
     margin:0 auto; max-width:60rem; text-align:center;
     font-family:var(--police-texte); font-weight:400; font-size:1.15rem; line-height:1.75; color:rgba(var(--blanc-rgb),.8);
   }
+  /* Desktop : plus de filets, et plus d'air au-dessus (carrousel) et en dessous (bascule de titres). */
+  @media (min-width: 801px) {
+    .presentation { border:0; padding-top:4.5rem; padding-bottom:5.5rem; } /* le carrousel apporte déjà 3,5 rem + sa barre : mêmes 9 rem de chaque côté */
+  }
   @media (max-width: 800px) {
     .presentation { margin-bottom:2.5rem; padding:2rem 0; }
     .presentation p { font-size:1.05rem; }
