@@ -68,6 +68,8 @@ const description = t(lang, "accueil.description");
 // N'affiche dans le filtre que les types réellement utilisés par au moins un projet.
 const ORDRE_TYPES = ["Making-of", "Documentaire", "Activation / Aftermovie", "Institutionnel", "Brand Content", "RSE", "Fiction"];
 const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type === t));
+// Filtre « Type de film » : désactivé pour l'instant (rangée masquée, le reste du code est conservé). Passer à true pour le réactiver.
+const FILTRE_TYPE_ACTIF = false;
 ---
 
 <Layout title={titre} description={description} currentPath="/" lang={lang}>
@@ -84,7 +86,7 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   {/* Zone de filtres : trois rangées (type de film, univers, critères) qui se croisent. Les valeurs séparées par « | »
      sur chaque <li> sont lues par setupFiltres(). */}
   <div class="filtres-zone" id="filtres">
-    {typesPresents.length > 0 && (
+    {FILTRE_TYPE_ACTIF && typesPresents.length > 0 && (
       <div class="filtres-rang">
         <p class="filtres-label">{t(lang, "filtre.type")}</p>
         <div class="filtres" role="group" data-groupe="type" aria-label={t(lang, "filtre.aria.type")}>
@@ -210,6 +212,12 @@ const typesPresents = ORDRE_TYPES.filter((t) => projets.some((p) => p.data.type 
   }
   .filtres button:hover { color:var(--blanc); border-color:var(--rouge); }
   .filtres button[aria-pressed="true"] { background:var(--blanc); color:#0b0b0b; border-color:var(--blanc); font-weight:700; }
+  /* Desktop : boutons de filtre en blanc à 100 % (lisibles) ; au survol et à l'état actif, rouge plein, texte blanc. */
+  @media (min-width: 801px) {
+    .filtres button { color:var(--blanc); border-color:var(--blanc); }
+    .filtres button:not(:disabled):hover, .filtres button[aria-pressed="true"] { background:var(--rouge); border-color:var(--rouge); color:var(--blanc); }
+    .filtres button:disabled:hover { background:transparent; color:var(--blanc); border-color:var(--blanc); }
+  }
   .accroches { list-style:none; margin:4.5rem 0 0; padding:0; display:flex; flex-direction:column; align-items:center; gap:3.575rem; }
   .accroches { overflow-anchor:none; }
   .accroches li[hidden] { display:none; }
