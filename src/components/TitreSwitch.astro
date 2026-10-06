@@ -4,11 +4,13 @@ import { t, url, type Lang } from "../i18n";
 interface Props {
   actif: "commandes" | "creations";
   lang?: Lang;
+  /** Largeur maximale du contenu de la page (filtres, liste) : les deux titres s'alignent sur ses bords (desktop). */
+  largeur?: string;
 }
-const { actif, lang = "fr" } = Astro.props;
+const { actif, lang = "fr", largeur = "1240px" } = Astro.props;
 ---
 
-<div class="titre-switch">
+<div class="titre-switch" style={`--largeur-contenu:${largeur}`}>
   {actif === "commandes" ? (
     <h1 class="titre-page">{t(lang, "commandes")}</h1>
   ) : (
@@ -30,13 +32,14 @@ const { actif, lang = "fr" } = Astro.props;
   .titre-inactif { display:none; }
 
   /* Desktop : « Films de commande » calé à gauche, « Créations » calé à droite, dans la police des phrases du
-     header (Signature.astro : Archivo gras, sans capitales forcées), 30 % plus petite. Le titre de la page est
+     header (Signature.astro : Archivo gras, sans capitales forcées), à 35 % de leur taille, alignés sur les bords
+     du contenu qui suit (--largeur-contenu). Le titre de la page est
      blanc ; l'autre est un lien grisé, blanc au survol, avec une flèche rouge qui pointe vers son côté. */
   @media (min-width: 801px) {
-    .titre-switch { width:100%; justify-content:space-between; align-items:baseline; gap:2rem; }
+    .titre-switch { width:100%; max-width:var(--largeur-contenu); justify-content:space-between; align-items:baseline; gap:2rem; }
     .titre-switch :global(.titre-page), .titre-inactif {
       font-family:'Archivo', 'Inter', sans-serif; font-weight:700;
-      font-size:clamp(1.85rem, 4.37vw, 3.6rem); line-height:1.1;
+      font-size:clamp(.925rem, 2.185vw, 1.8rem); line-height:1.1;
       letter-spacing:normal; text-transform:none; white-space:nowrap;
     }
     .titre-switch :global(.titre-page) { color:var(--blanc); }

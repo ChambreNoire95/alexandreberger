@@ -151,10 +151,10 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       </div>
     </header>
     <script>
-      import { scrollerVersTitre } from "../lib/positionTitre";
+      import { scrollerVersCarrousel } from "../lib/positionTitre";
 
       // Clic sur « Films de commande » / « Créations » : la page suivante doit
-      // s'afficher directement calée sur le titre (comme après un filtre), sans
+      // s'afficher directement au-dessus du carrousel (100 px de marge au-dessus de lui), sans
       // repasser par le haut de page ni fondu. astro:after-swap a lieu après le
       // remplacement du DOM et la remise à zéro du scroll par Astro, mais avant
       // le premier affichage : le visiteur ne voit aucun saut.
@@ -172,7 +172,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
         if (versTitre) event.newDocument.documentElement.classList.add("sans-fondu");
       });
       document.addEventListener("astro:after-swap", () => {
-        if (versTitre) scrollerVersTitre();
+        if (versTitre) scrollerVersCarrousel();
       });
       document.addEventListener("astro:page-load", () => {
         versTitre = false;
