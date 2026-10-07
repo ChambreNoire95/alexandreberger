@@ -58,20 +58,19 @@ const BESOINS = ["Interviews", "Mise en scène / Direction artistique", "Tournag
 const criteresPresents = BESOINS.filter((x) => projets.some((p) => p.data.besoins?.includes(x)));
 
 // Rails : les 12 univers du CMS sont regroupés en 4 rangées, à l'affichage seulement (les fiches ne changent pas). Chaque
-// film figure dans UNE seule rangée : celle de son PREMIER univers. Rangées de la plus fournie à la moins fournie. Un film
+// film figure dans UNE seule rangée : celle de son PREMIER univers. L'ordre des rangées est celui de GROUPES ci-dessous (choisi par Alexandre). Un film
 // sans univers (ou d'un univers ajouté au CMS sans être rangé ici) tombe dans « Autres films », pour ne jamais disparaître.
 const GROUPES = [
   { cle: "cinema", univers: ["Série/Cinéma", "Musique"] },
+  { cle: "societe", univers: ["Société", "Éducation", "Environnement", "Sciences", "Solidarité", "Terroir / Gastronomie"] },
   { cle: "art", univers: ["Art", "Mode", "Culture"] },
   { cle: "sport", univers: ["Sport"] },
-  { cle: "societe", univers: ["Société", "Éducation", "Environnement", "Sciences", "Solidarité", "Terroir / Gastronomie"] },
 ];
 const groupeDe = (l: (typeof lignes)[number]) =>
   GROUPES.find((g) => g.univers.includes(l.p.data.secteurs?.[0] ?? ""))?.cle ?? "autres";
 const rails = [...GROUPES.map((g) => g.cle), "autres"]
   .map((cle) => ({ cle, titre: t(lang, `rails.${cle}`), films: lignes.filter((l) => groupeDe(l) === cle) }))
-  .filter((r) => r.films.length > 0)
-  .sort((a, b) => b.films.length - a.films.length);
+  .filter((r) => r.films.length > 0);
 const compte = (n: number) => `${n} ${t(lang, n > 1 ? "rails.films" : "rails.film")}`;
 
 const itemsCarrousel = await getItemsCarrousel(lang);
