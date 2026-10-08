@@ -67,6 +67,7 @@ const ROLES: Record<string, string> = {
   réalisatrice: "Director",
   producteur: "Producer",
   monteur: "Editor",
+  photographe: "Photographer",
   cadreur: "Camera operator",
   "chef opérateur": "Director of photography",
   scénariste: "Writer",

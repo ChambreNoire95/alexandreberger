@@ -216,7 +216,14 @@ const jsonLd = {
      article via du HTML brut (voir fiche "Semaine de la Critique") — pas
      reliée aux champs image1/2/3 du CMS, donc sans effet sur les autres fiches. */
   .corps :global(.galerie-169) { display:grid; grid-template-columns:repeat(3, 1fr); gap:.5rem; margin:1.5rem 0; }
-  .corps :global(.galerie-169 img) { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; border-radius:2px; margin:0; }
+  .corps :global(.galerie-169 img) { width:100%; height:auto; aspect-ratio:16/9; object-fit:cover; display:block; border-radius:2px; margin:0; }
+  /* Série de photographies (suite d'images en portrait dans le texte) : 3 colonnes, photos entières, sans recadrage.
+     Les colonnes se remplissent de haut en bas ; des photos en paysage peuvent s'y mêler sans laisser de trou. */
+  .corps :global(.galerie-photos) { column-count:3; column-gap:.5rem; margin:1.5rem 0; }
+  .corps :global(.galerie-photos img) { display:block; width:100%; height:auto; margin:0 0 .5rem; border-radius:2px; break-inside:avoid; }
+  @media (max-width: 800px) {
+    .corps :global(.galerie-photos) { column-count:2; }
+  }
   .liens-suivants {
     display:flex; flex-direction:column; gap:.75rem;
     margin-top:3.5rem; padding-top:2rem; border-top:1px solid rgba(var(--blanc-rgb),.14);
