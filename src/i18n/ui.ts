@@ -5,7 +5,7 @@ export const ui: Record<"fr" | "en", Record<string, string>> = {
   fr: {
     // ---- Layout : navigation, pied de page ----
     "nav.films": "Films",
-    "nav.booking": "Booking",
+    "nav.booking": "Contact",
     "menu.ouvrir": "Ouvrir le menu",
     "menu.secondaire": "Menu secondaire",
     "menu.sections": "Sections",
@@ -109,10 +109,10 @@ export const ui: Record<"fr" | "en", Record<string, string>> = {
     "autour.geocodage": "Géocodage",
 
     // ---- Booking ----
-    "booking.titre.page": "Booking — Alexandre Berger, réalisateur freelance",
+    "booking.titre.page": "Contact — Alexandre Berger, réalisateur freelance",
     "booking.description":
       "Demande de tournage auprès d'Alexandre Berger, réalisateur freelance en Île-de-France : documentaire, fiction et film de marque.",
-    "booking.titre": "Booking",
+    "booking.titre": "Contact",
     "booking.intro": "Décrivez votre projet dans le formulaire ci-dessous. Je reviendrai vers vous dans les plus brefs délais.",
     "booking.entreprise": "Entreprise / Institution / Structure *",
     "booking.nom": "Nom *",
@@ -174,7 +174,7 @@ export const ui: Record<"fr" | "en", Record<string, string>> = {
 
   en: {
     "nav.films": "Films",
-    "nav.booking": "Booking",
+    "nav.booking": "Contact",
     "menu.ouvrir": "Open menu",
     "menu.secondaire": "Secondary menu",
     "menu.sections": "Sections",
@@ -270,10 +270,10 @@ export const ui: Record<"fr" | "en", Record<string, string>> = {
     "autour.vide": "No shooting location has been added yet.",
     "autour.geocodage": "Geocoding",
 
-    "booking.titre.page": "Booking — Alexandre Berger, freelance director",
+    "booking.titre.page": "Contact — Alexandre Berger, freelance director",
     "booking.description":
       "Request a shoot with Alexandre Berger, freelance director and filmmaker in the Paris region: documentary, fiction and branded film.",
-    "booking.titre": "Booking",
+    "booking.titre": "Contact",
     "booking.intro": "Describe your project in the form below. I'll get back to you as soon as possible.",
     "booking.entreprise": "Company / Institution / Organisation *",
     "booking.nom": "Last name *",
