@@ -124,21 +124,15 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     {blocsJsonLd.map((bloc) => (
       <script type="application/ld+json" set:html={JSON.stringify(bloc)} />
     ))}
-    {/* Mobile : écran d'accueil (logo animé centré, sur la hauteur de l'écran, le site dessous) à l'arrivée sur « / » ;
-       une fois passé, le logo reste figé sur « 2.39 SCOPE » pour la session. Arrivée directe sur une autre page (lien Google, lien partagé, nouvel onglet) :
-       pas d'écran d'accueil, le logo est figé d'emblée sur « 2.39 SCOPE » (index 3 : voir LogoFormats.astro),
-       comme après l'écran d'accueil. Posé ici, avant le premier affichage, pour éviter tout flash. */}
+    {/* Mobile : pas d'écran d'accueil, on arrive directement sur la page. Le logo de l'en-tête y est toujours figé sur
+       « 2.39 SCOPE » (index 3 : voir LogoFormats.astro), sans cadre ni compteur. Posé ici, avant le premier affichage,
+       pour éviter tout flash. */}
     <script is:inline>
       (function () {
         try {
           if (!matchMedia("(max-width: 800px)").matches) return;
-          var h = document.documentElement;
-          var accueil = location.pathname === "/" || location.pathname === "/en" || location.pathname === "/en/";
-          if (sessionStorage.getItem("logo-fige-index") === null) {
-            if (accueil) { h.classList.add("splash"); return; }
-            sessionStorage.setItem("logo-fige-index", "3");
-          }
-          h.classList.add("logo-fige");
+          if (sessionStorage.getItem("logo-fige-index") === null) sessionStorage.setItem("logo-fige-index", "3");
+          document.documentElement.classList.add("logo-fige");
         } catch (e) {}
       })();
     </script>
@@ -178,10 +172,6 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
         </div>
         <a class="booking-btn" href={url(lang, "/booking")} data-nav aria-current={currentPath === "/booking" ? "page" : undefined}>{t(lang, "nav.booking")}</a>
       </div>
-      {/* Écran d'accueil mobile : flèche animée vers le bas (invitation à défiler). Invisible hors de cet écran. */}
-      <button type="button" class="splash-fleche" id="splash-fleche" aria-label={t(lang, "splash.defiler")}>
-        <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"/></svg>
-      </button>
     </header>
     <script>
       import { scrollerVersCarrousel } from "../lib/positionTitre";
@@ -285,32 +275,6 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       document.addEventListener("scroll", majVisibiliteRetourHaut, { passive: true });
     </script>
     <script>
-      // Écran d'accueil mobile (voir le CSS « html.splash ») : c'est une vraie première section, haute comme l'écran, avec
-      // le site juste en dessous. Rien n'est masqué ni bloqué : on fait défiler normalement (important pour Google, qui
-      // indexe la version mobile sans défiler ni cliquer). Une fois l'écran d'accueil passé, le logo se fige sur
-      // « 2.39 SCOPE » et s'en souvient pour le reste de la session ; la mise en page de la page en cours ne change pas
-      // (aucun décalage de contenu). La flèche animée fait défiler jusqu'au site.
-      const html = document.documentElement;
-      const surEcranAccueil = () => html.classList.contains("splash");
-      const basEcranAccueil = () => {
-        const menu = document.querySelector<HTMLElement>(".menu-wrap");
-        return menu ? menu.getBoundingClientRect().top + window.scrollY - 16 : window.innerHeight;
-      };
-      let logoFige = false;
-      const figerLogo = () => {
-        if (logoFige || !surEcranAccueil()) return;
-        logoFige = true;
-        window.dispatchEvent(new CustomEvent("logo-formats:figer", { detail: { label: "2.39 SCOPE" } }));
-      };
-      window.addEventListener("scroll", () => { if (surEcranAccueil() && window.scrollY >= basEcranAccueil() - 4) figerLogo(); }, { passive: true });
-      // Navigation avant d'avoir fait défiler : on fige quand même, pour que la page suivante ait le logo figé.
-      document.addEventListener("astro:before-preparation", figerLogo);
-      document.addEventListener("click", (e) => {
-        if (!surEcranAccueil() || !(e.target as HTMLElement).closest("#splash-fleche")) return;
-        const doux = !matchMedia("(prefers-reduced-motion: reduce)").matches;
-        window.scrollTo({ top: basEcranAccueil(), behavior: doux ? "smooth" : "auto" });
-      });
-
       // ClientRouter remplace les attributs de <html> à chaque navigation : on remet l'état « logo figé ».
       document.addEventListener("astro:after-swap", () => {
         try {
@@ -524,19 +488,6 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
   }
   .topbar { position:relative; text-align:left; }
-  /* Flèche de l'écran d'accueil mobile : cachée partout, affichée seulement sous html.splash (media query mobile), au bas
-     de la zone du logo. */
-  .splash-fleche {
-    display:none; position:absolute; left:50%; bottom:calc(2.25rem + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%);
-    align-items:center; justify-content:center; width:3.5rem; height:3.5rem; padding:0;
-    color:var(--blanc); background:transparent; border:0; cursor:pointer;
-    animation:splash-fleche 1.6s ease-in-out infinite;
-  }
-  @keyframes splash-fleche {
-    0%, 100% { transform:translate(-50%, 0); opacity:.35; }
-    50% { transform:translate(-50%, .8rem); opacity:1; }
-  }
-  @media (prefers-reduced-motion: reduce) { .splash-fleche { animation:none; opacity:.8; } }
   /* Logo animé de l'en-tête (LogoFormats) : compteur de format et espacement réduits à son échelle,
      et boîte réservée (largeur du cadre le plus large = 1000 px × échelle, hauteur du plus haut = 440 px × échelle)
      pour que le coin haut-gauche et la page ne bougent pas quand le cadre change de format. */
@@ -765,22 +716,10 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     .topbar .nom { font-size:1.3rem; }
     .topbar .role { font-size:.8rem; }
 
-    /* Écran d'accueil mobile : une vraie première section. Le logo animé est centré dans une zone haute comme l'écran
-       (plafonnée à 900 px), avec une flèche animée en bas ; le menu puis le site suivent juste dessous, dans le flux
-       normal de la page. Rien n'est masqué : la page défile normalement. --zone = hauteur de cette zone, moins la
-       marge haute de la page (2.5rem) ; 173px = hauteur du logo à cette échelle (440px × .33 + 28px). */
-    html.splash .topbar { --zone:calc(min(100svh, 900px) - 2.5rem); min-height:0; }
-    html.splash .topbar .logo-formats {
-      --s:.33 !important; gap:14px; min-height:calc(440px * .33 + 14px + 14px);
-      margin-block:max(0px, calc((var(--zone) - 173px) / 2));
-    }
-    html.splash .topbar .logo-formats .lf-format { font-size:14px; }
-    html.splash .topbar .lf-cadre { align-self:center; margin-block:auto; }
-    html.splash .topbar .lf-format { align-self:center; }
-    html.splash .splash-fleche { display:flex; bottom:auto; top:calc(var(--zone) - 5.75rem - env(safe-area-inset-bottom, 0px)); }
-    /* Logo figé : boîte réduite au cadre (donc cadre bien centré), plus de hauteur réservée. */
+    /* Mobile : logo toujours figé (classe posée dans le <head>) : boîte réduite au cadre (donc cadre bien centré), plus de
+       hauteur réservée. */
     html.logo-fige .topbar .logo-formats { width:auto; min-height:0; margin-bottom:.9rem; }
-    /* Une fois sur la page : version « 2.39 SCOPE » sans liseré blanc ni compteur rouge. */
+    /* Version « 2.39 SCOPE » sans liseré blanc ni compteur rouge. */
     html.logo-fige .topbar .lf-cadre { border-color:transparent; }
     html.logo-fige .topbar .lf-format { display:none; }
     /* Le header est centré sur mobile : sans ceci, le texte du logo en hérite (« BERGER » et le format

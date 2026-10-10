@@ -138,9 +138,7 @@ const libelle = lang === "en" ? "Alexandre Berger, director — back to home" : 
         window.addEventListener("logo-formats:figer", (e) => figerSur((e as CustomEvent).detail));
         return;
       }
-      // Écran d'accueil mobile (html.splash) : défilement plus rapide que dans le header.
-      const surEcranAccueil = document.documentElement.classList.contains("splash");
-      const duree = surEcranAccueil ? 1500 : Number(el.dataset.intervalle) || 1690;
+      const duree = Number(el.dataset.intervalle) || 1690;
       const minuteur = setInterval(() => {
         k = (k + 1) % compos.length;
         montrer(k);

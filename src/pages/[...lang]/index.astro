@@ -124,13 +124,20 @@ const FILTRE_TYPE_ACTIF = false;
   </div>
 
   {/* Rails (desktop) : une rangée par groupe d'univers, qui défile à l'horizontale (trackpad, flèches). Sur mobile, ils sont
-     remplacés par la liste complète des films (titre + rôle), centrée comme avant : première section ci-dessous. */}
+     remplacés par la liste complète des films (visuel au-dessus, puis titre + rôle, centrés) : première section ci-dessous.
+     Chaque liste ne charge ses images que sur l'écran où elle est affichée (nePasChargerSi). */}
   <div class="rails" id="rails" data-film={t(lang, "rails.film")} data-films={t(lang, "rails.films")}>
     <section class="rail rail-tous">
       <ul class="rail-piste">
-        {lignes.map(({ p }) => (
+        {lignes.map(({ p, image, alt, duree }) => (
           <li data-type={p.data.type || ""} data-univers={(p.data.secteurs ?? []).join("|")} data-criteres={(p.data.besoins ?? []).join("|")}>
             <a href={url(lang, `/projets/${p.id}`)}>
+              {image && (
+                <span class="projet-visuel">
+                  <OptimizedImage src={image} alt={alt} sizes="100vw" nePasChargerSi="(min-width: 801px)" />
+                  {duree && <span class="projet-duree" set:html={duree} />}
+                </span>
+              )}
               <span class="projet-texte">
                 <span class="accroche-titre">{p.data.titre}</span>
                 {p.data.role && p.data.client ? (
@@ -239,7 +246,8 @@ const FILTRE_TYPE_ACTIF = false;
     .filtres button:not(:disabled):hover, .filtres button[aria-pressed="true"] { background:var(--rouge); border-color:var(--rouge); color:var(--blanc); }
     .filtres button:disabled:hover { background:transparent; color:var(--blanc); border-color:var(--blanc); }
   }
-  /* Liste des films. Base (mobile) : seule la liste complète (.rail-tous), centrée, sans visuel ni description. */
+  /* Liste des films. Base (mobile) : seule la liste complète (.rail-tous) : visuel 16/9 au-dessus, titre et rôle centrés,
+     sans description. */
   .rails { width:100%; overflow-anchor:none; }
   .rail:not(.rail-tous), .rail-tete { display:none; }
   .rail[hidden] { display:none; }
@@ -265,7 +273,22 @@ const FILTRE_TYPE_ACTIF = false;
   }
   .accroche-description { font-family:var(--police-texte); font-weight:400; font-size:1rem; line-height:1.6; color:rgba(var(--blanc-rgb),.8); max-width:52rem; }
   .saut-mobile { display:none; }
-  .projet-visuel, .accroche-description { display:none; }
+  .accroche-description { display:none; }
+  /* Visuel du film (mobile et desktop) : 16/9, avec la pastille de durée en bas à droite (unités min, h… plus petites). */
+  .projet-visuel {
+    display:block; position:relative; width:100%; aspect-ratio:16/9;
+    overflow:hidden; border-radius:2px; background:#111; border-bottom:1px solid var(--blanc);
+  }
+  .projet-visuel :global(img) { width:100%; height:100%; object-fit:cover; display:block; }
+  .projet-duree {
+    position:absolute; right:.5rem; bottom:.5rem; padding:.15rem .45rem; border-radius:2px;
+    background:rgba(0,0,0,.75); color:var(--blanc); font-weight:700; font-size:.8rem; line-height:1.3; text-transform:uppercase;
+  }
+  .projet-duree :global(.duree-unite) { font-size:.75em; }
+  /* Mobile : chaque film occupe toute la largeur, le visuel au-dessus du titre. */
+  .rail-tous li { width:100%; }
+  .rail-tous a { gap:1.1rem; }
+  .rail-tous .projet-visuel { align-self:stretch; }
   @media (max-width: 800px) {
     .saut-mobile { display:inline; }
   }
@@ -305,18 +328,8 @@ const FILTRE_TYPE_ACTIF = false;
     /* 3 cartes par écran (4 à partir de 1100 px) : une rangée de 4 films tient entière, la suivante dépasse dans l'estompe. */
     .rail-piste li { flex:none; width:max(220px, calc((100% - 2rem) / 3)); scroll-snap-align:start; }
     .rail-piste a { align-items:stretch; gap:.85rem; text-align:left; }
-    .projet-visuel {
-      display:block; position:relative; width:100%; aspect-ratio:16/9;
-      overflow:hidden; border-radius:2px; background:#111; border-bottom:1px solid var(--blanc);
-    }
-    .projet-visuel :global(img) { width:100%; height:100%; object-fit:cover; display:block; transition:transform 600ms cubic-bezier(.2,.7,.2,1); }
+    .projet-visuel :global(img) { transition:transform 600ms cubic-bezier(.2,.7,.2,1); }
     .rail-piste a:hover .projet-visuel :global(img), .rail-piste a:focus-visible .projet-visuel :global(img) { transform:scale(1.05); }
-    /* Durée : pastille en bas à droite du visuel. Unités (min, h…) plus petites. */
-    .projet-duree {
-      position:absolute; right:.5rem; bottom:.5rem; padding:.15rem .45rem; border-radius:2px;
-      background:rgba(0,0,0,.75); color:var(--blanc); font-weight:700; font-size:.8rem; line-height:1.3; text-transform:uppercase;
-    }
-    .projet-duree :global(.duree-unite) { font-size:.75em; }
     .projet-texte { align-items:flex-start; min-width:0; gap:.5rem; }
     .accroche-titre { white-space:normal; font-size:1.08rem; }
     .accroche-description { display:block; font-size:.92rem; line-height:1.5; }
