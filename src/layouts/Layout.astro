@@ -5,6 +5,7 @@ import LogoFormats from "../components/LogoFormats.astro";
 import { url, sansLangue, autreLangue, t, dateFormatee, type Lang } from "../i18n";
 import { getCarnet } from "../lib/contenu";
 import logosClients from "../data/logos-clients.json";
+import FormContact from "../components/FormContact.astro";
 
 interface Props {
   title: string;
@@ -75,16 +76,6 @@ const alternates = {
 };
 const urlCanonique = alternates[lang];
 
-// Formulaire de contact du pied de page : textes lus par le script d'envoi.
-const textesContact = {
-  lang,
-  envoyer: t(lang, "contact.envoyer"),
-  envoi: t(lang, "booking.envoi"),
-  ok: t(lang, "contact.ok"),
-  erreur: t(lang, "booking.erreur"),
-  erreurReseau: t(lang, "booking.erreur.reseau"),
-};
-
 const entreesCarnet = await getCarnet(lang, ({ data }) => !data.brouillon);
 const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())[0];
 ---
@@ -138,7 +129,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     </script>
     <ClientRouter />
   </head>
-  <body>
+  <body data-page-contact={currentPath === "/booking" ? "" : undefined}>
     <header class="topbar" transition:persist>
       <LogoFormats echelle={0.268125} intervalle={3420} href={url(lang, "/")} lang={lang} />
       <div class="menu-wrap">
@@ -350,24 +341,10 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       </div>
     </section>
 
-    {/* Formulaire de contact, présent sur toutes les pages, mis en avant (cadre, titre fléché, bouton rouge). */}
+    {/* Formulaire de contact (components/FormContact.astro), présent sur toutes les pages, sauf sur la page Contact où il est déjà le contenu de la page (masqué via body[data-page-contact]). */}
     <section class="pied">
       <div class="pied-contact">
-        <div class="pied-cadre">
-        <h2 class="pied-accroche"><span class="fleche" aria-hidden="true">→</span> {t(lang, "contact.titre")}</h2>
-        <p class="pied-intro">{t(lang, "contact.intro")}</p>
-        <form id="form-contact" data-textes={JSON.stringify(textesContact)}>
-          <input type="text" name="site" class="pied-piege" tabindex="-1" autocomplete="off" aria-hidden="true" />
-          <label class="pied-champ"><span>{t(lang, "contact.prenom")}</span><input type="text" name="prenom" autocomplete="given-name" required /></label>
-          <label class="pied-champ"><span>{t(lang, "contact.nom")}</span><input type="text" name="nom" autocomplete="family-name" required /></label>
-          <label class="pied-champ"><span>{t(lang, "contact.structure")}</span><input type="text" name="structure" autocomplete="organization" required /></label>
-          <label class="pied-champ"><span>{t(lang, "contact.fonction")}</span><input type="text" name="fonction" autocomplete="organization-title" required /></label>
-          <label class="pied-champ"><span>{t(lang, "contact.email")}</span><input type="email" name="email" autocomplete="email" required /></label>
-          <label class="pied-champ"><span>{t(lang, "contact.telephone")}</span><input type="tel" name="telephone" autocomplete="tel" required /></label>
-          <button type="submit">{t(lang, "contact.envoyer")}</button>
-          <p class="pied-statut" role="status" hidden></p>
-        </form>
-        </div>
+        <FormContact lang={lang} />
       </div>
     </section>
     </div>
@@ -376,9 +353,10 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
       // du document, une seule fois, plutôt que de rattacher l'écouteur à chaque navigation. En phase de capture :
       // preventDefault() doit passer AVANT l'écouteur du ClientRouter, qui sinon soumet le formulaire en GET
       // (rechargement de la page avec les coordonnées dans l'adresse).
+      import { verifierPiecesJointes } from "../lib/pieces-jointes";
       document.addEventListener("submit", async (event) => {
         const form = event.target as HTMLFormElement;
-        if (form?.id !== "form-contact") return;
+        if (!form?.classList?.contains("form-contact")) return;
         event.preventDefault();
         const T = JSON.parse(form.dataset.textes ?? "{}") as Record<string, string>;
         const bouton = form.querySelector<HTMLButtonElement>('button[type="submit"]');
@@ -393,14 +371,24 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
           bouton.disabled = true;
           bouton.textContent = T.envoi ?? "Envoi en cours…";
         }
-        const donnees: Record<string, FormDataEntryValue> = Object.fromEntries(new FormData(form).entries());
-        donnees.lang = T.lang ?? "fr";
+        // Envoi en multipart : la page Contact peut joindre des fichiers (le pied de page n'en a pas).
+        const donnees = new FormData(form);
+        donnees.set("lang", T.lang ?? "fr");
+        const fichiers = (donnees.getAll("fichiers") as File[]).filter((f) => f instanceof File && f.size > 0);
+        donnees.delete("fichiers");
+        fichiers.forEach((f) => donnees.append("fichiers", f));
+        const souci = verifierPiecesJointes(fichiers);
+        if (souci) {
+          const message = souci.probleme === "nombre" ? T.fichiersNombre : souci.probleme === "taille" ? T.fichiersTaille : `${T.fichiersType}${souci.nom}`;
+          afficherStatut(message, false);
+          if (bouton) {
+            bouton.disabled = false;
+            bouton.textContent = T.envoyer ?? "Envoyer";
+          }
+          return;
+        }
         try {
-          const reponse = await fetch("/api/contact", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(donnees),
-          });
+          const reponse = await fetch("/api/contact", { method: "POST", body: donnees });
           const resultat = await reponse.json();
           if (reponse.ok && resultat.ok) {
             afficherStatut(T.ok ?? "Vos coordonnées ont bien été envoyées.", true);
@@ -620,6 +608,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   }
   .carnet-vide { font-family:var(--police-texte); font-weight:400; font-size:.95rem; color:rgba(var(--blanc-rgb),.5); margin:0; max-width:30rem; }
 
+  body[data-page-contact] .niveaux .pied { display:none; } /* page Contact : le formulaire est déjà dans la page */
   /* Formulaire de contact : pleine largeur sous le bandeau en dessous de 1200 px, sur la même ligne au-delà. */
   .pied { display:flex; border-top:1px solid rgba(var(--blanc-rgb),.14); text-align:left; }
   .pied-contact { flex:1 1 100%; min-width:0; padding:3.5rem clamp(1.5rem, 4vw, 3rem); display:flex; justify-content:center; }
@@ -632,7 +621,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   .pied-accroche { font-family:'Archivo', 'Inter', sans-serif; font-weight:700; font-size:1.35rem; letter-spacing:.02em; line-height:1.2; color:var(--blanc); margin:0 0 .6rem; text-wrap:balance; }
   .pied-accroche .fleche { font-family:'Inter', sans-serif; font-weight:400; }
   .pied-intro { font-family:var(--police-texte); font-weight:400; font-size:.95rem; line-height:1.6; color:rgba(var(--blanc-rgb),.65); margin:0 0 2rem; }
-  #form-contact { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:44rem; }
+  .form-contact { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:44rem; }
   .pied-champ { display:flex; flex-direction:column; gap:.6rem; min-width:0; }
   .pied-champ span { font-family:'Archivo', 'Inter', sans-serif; font-weight:200; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(var(--blanc-rgb),.5); }
   .pied-champ input {
@@ -640,16 +629,31 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     background:transparent; border:1px solid rgba(var(--blanc-rgb),.3); border-radius:2px;
     padding:.85rem 1rem; transition:border-color 140ms ease; width:100%;
   }
-  .pied-champ input:focus { outline:none; border-color:rgba(var(--blanc-rgb),.8); }
+  .pied-champ input:focus, .pied-champ textarea:focus { outline:none; border-color:rgba(var(--blanc-rgb),.8); }
+  /* Page Contact seulement : message libre et pièces jointes (facultatifs), sur toute la largeur du formulaire. */
+  .pied-champ-large { grid-column:1 / -1; }
+  .pied-champ .pied-champ-phrase { text-transform:none; letter-spacing:.02em; font-weight:400; font-size:.9rem; color:rgba(var(--blanc-rgb),.75); }
+  .pied-champ textarea {
+    font-size:.95rem; font-family:var(--police-texte); font-weight:400; line-height:1.5; color:var(--blanc);
+    background:transparent; border:1px solid rgba(var(--blanc-rgb),.3); border-radius:2px;
+    padding:.85rem 1rem; transition:border-color 140ms ease; width:100%; resize:vertical; min-height:7rem;
+  }
+  .pied-champ input[type="file"] { padding:.6rem .75rem; color:rgba(var(--blanc-rgb),.7); cursor:pointer; }
+  .pied-champ input[type="file"]::file-selector-button {
+    margin-right:.9rem; padding:.45rem .9rem; cursor:pointer;
+    font-family:'Archivo', 'Inter', sans-serif; font-weight:700; font-size:.65rem; letter-spacing:.14em; text-transform:uppercase;
+    color:#0b0b0b; background:var(--blanc); border:0; border-radius:2px;
+  }
+  .pied-note { font-family:var(--police-texte); font-size:.78rem; color:rgba(var(--blanc-rgb),.45); }
   /* Bouton d'envoi : rouge du site (comme le bouton Booking du header), blanc au survol. */
-  #form-contact button[type="submit"] {
+  .form-contact button[type="submit"] {
     grid-column:1 / -1; justify-self:start; margin-top:.5rem; padding:1.1rem 2.4rem;
     font-family:'Archivo', 'Inter', sans-serif; font-weight:700; font-size:.85rem; letter-spacing:.18em; text-transform:uppercase;
     color:var(--blanc); background:var(--rouge); border:1px solid var(--rouge); border-radius:2px;
     cursor:pointer; transition:background 140ms ease, color 140ms ease, border-color 140ms ease;
   }
-  #form-contact button[type="submit"]:hover:not(:disabled) { background:var(--blanc); border-color:var(--blanc); color:#0b0b0b; }
-  #form-contact button[type="submit"]:disabled { opacity:.5; cursor:not-allowed; }
+  .form-contact button[type="submit"]:hover:not(:disabled) { background:var(--blanc); border-color:var(--blanc); color:#0b0b0b; }
+  .form-contact button[type="submit"]:disabled { opacity:.5; cursor:not-allowed; }
   .pied-statut { grid-column:1 / -1; font-family:var(--police-texte); font-weight:400; font-size:.9rem; color:rgba(var(--blanc-rgb),.6); margin:0; }
   .pied-statut-erreur { color:#e11d2e; }
   .pied-piege { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
@@ -658,11 +662,13 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
     .pied-contact { padding-top:2.75rem; padding-bottom:2.75rem; }
     .pied-cadre { padding:1.5rem 1.6rem 1.75rem; }
     .pied-intro { font-size:.875rem; margin-bottom:1.25rem; }
-    #form-contact { gap:.9rem 1rem; max-width:31rem; }
+    .form-contact { gap:.9rem 1rem; max-width:31rem; }
     .pied-champ { gap:.4rem; }
     .pied-champ span { font-size:.65rem; }
     .pied-champ input { font-size:.875rem; padding:.5rem .75rem; }
-    #form-contact button[type="submit"] { margin-top:.35rem; padding:.75rem 1.7rem; font-size:.72rem; }
+    .pied-champ textarea { font-size:.875rem; padding:.6rem .75rem; }
+    .pied-champ .pied-champ-phrase { font-size:.85rem; }
+    .form-contact button[type="submit"] { margin-top:.35rem; padding:.75rem 1.7rem; font-size:.72rem; }
     .pied-statut { font-size:.85rem; }
   }
   /* Grand écran : les deux blocs (carnet, contact) sur une seule ligne, centrés en hauteur. */
@@ -680,7 +686,7 @@ const derniereEntree = entreesCarnet.sort((a, b) => b.data.date.valueOf() - a.da
   @media (max-width: 720px) {
     .pied-contact { padding-top:2.5rem; padding-bottom:2.5rem; }
     .pied-cadre { padding:1.5rem 1.25rem 1.75rem; }
-    #form-contact { grid-template-columns:1fr; gap:1.25rem; }
+    .form-contact { grid-template-columns:1fr; gap:1.25rem; }
   }
 
   .cloture { border-top:1px solid rgba(var(--blanc-rgb),.14); padding-top:3rem; margin-top:0; }

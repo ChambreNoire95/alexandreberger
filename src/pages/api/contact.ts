@@ -1,9 +1,12 @@
 import type { APIRoute } from "astro";
 import { Resend } from "resend";
 import { telephoneValide } from "../../lib/creneau";
+import { verifierPiecesJointes } from "../../lib/pieces-jointes";
 
 // Troisième route dynamique du site (avec /api/booking et /api/rappel) : formulaire de contact du pied de page.
-// Le visiteur ne laisse que ses coordonnées : notification à Alexandre, puis confirmation au visiteur dans sa langue.
+// Le visiteur laisse ses coordonnées : notification à Alexandre, puis confirmation au visiteur dans sa langue.
+// Sur la page Contact, il peut ajouter un message libre et des pièces jointes (facultatifs) : la requête arrive
+// alors en multipart/form-data (le JSON reste accepté).
 export const prerender = false;
 
 const EMAIL_NOTIFICATION = import.meta.env.BOOKING_NOTIFY_EMAIL || "alexandrebrgr@gmail.com";
@@ -16,7 +19,9 @@ const TAILLE_MAX: Record<Champ, number> = { prenom: 80, nom: 80, structure: 160,
 type DonneesContact = Partial<Record<Champ, string>> & {
   site?: string; // honeypot anti-spam, doit rester vide
   lang?: string; // langue de la page d'où part la demande ("fr" ou "en")
+  message?: string; // page Contact : précisions sur le projet (facultatif)
 };
+const MESSAGE_MAX = 5000;
 
 const TEXTES = {
   fr: {
@@ -26,6 +31,11 @@ const TEXTES = {
     telephone: "Numéro de téléphone invalide.",
     emailInvalide: "Adresse email invalide.",
     echec: "L'envoi a échoué. Merci de réessayer ou de m'écrire directement.",
+    fichiersNombre: "5 pièces jointes maximum.",
+    fichiersTaille: "Les pièces jointes dépassent 4 Mo au total.",
+    fichiersType: "Format de pièce jointe non accepté : ",
+    votreMessage: "Votre message :",
+    vosFichiers: "Pièces jointes reçues :",
     metier: "Réalisateur",
     sujet: "Vos coordonnées ont bien été reçues",
     bonjour: "Bonjour",
@@ -40,6 +50,11 @@ const TEXTES = {
     telephone: "Invalid phone number.",
     emailInvalide: "Invalid email address.",
     echec: "Sending failed. Please try again or write to me directly.",
+    fichiersNombre: "5 attachments maximum.",
+    fichiersTaille: "The attachments exceed 4 MB in total.",
+    fichiersType: "Attachment format not accepted: ",
+    votreMessage: "Your message:",
+    vosFichiers: "Attachments received:",
     metier: "Director",
     sujet: "Your details have been received",
     bonjour: "Hello",
@@ -64,7 +79,7 @@ function echapperHtml(valeur: unknown) {
   );
 }
 
-function emailConfirmationHtml(d: Record<Champ, string>, langue: "fr" | "en") {
+function emailConfirmationHtml(d: Record<Champ, string>, langue: "fr" | "en", message: string, nomsFichiers: string[]) {
   const x = TEXTES[langue];
   const lab = LABELS_CHAMPS[langue];
   const recap = CHAMPS.map((c) => `${echapperHtml(lab[c])}${langue === "en" ? ":" : " :"} ${echapperHtml(d[c])}`).join("<br />");
@@ -85,6 +100,9 @@ function emailConfirmationHtml(d: Record<Champ, string>, langue: "fr" | "en") {
                 </p>
                 <p style="font-size:13px;color:#777;margin:0 0 8px;">${x.recap}</p>
                 <p style="font-size:13px;line-height:1.7;color:#444;border-left:2px solid #e11d2e;padding-left:12px;margin:0 0 24px;">${recap}</p>
+                ${message ? `<p style="font-size:13px;color:#777;margin:0 0 8px;">${x.votreMessage}</p>
+                <p style="font-size:13px;line-height:1.7;color:#444;border-left:2px solid #e11d2e;padding-left:12px;margin:0 0 24px;">${echapperHtml(message).replace(/\n/g, "<br />")}</p>` : ""}
+                ${nomsFichiers.length ? `<p style="font-size:13px;line-height:1.7;color:#777;margin:0 0 24px;">${x.vosFichiers} ${nomsFichiers.map(echapperHtml).join(", ")}</p>` : ""}
                 <p style="font-size:13px;line-height:1.6;color:#777;margin:0;">${x.pied}</p>
               </td>
             </tr>
@@ -105,8 +123,15 @@ export const POST: APIRoute = async ({ request }) => {
   const resend = new Resend(cleApi);
 
   let donnees: DonneesContact;
+  let fichiers: File[] = [];
   try {
-    donnees = await request.json();
+    if ((request.headers.get("content-type") ?? "").includes("multipart/form-data")) {
+      const formulaire = await request.formData();
+      donnees = Object.fromEntries([...formulaire.entries()].filter(([, v]) => typeof v === "string")) as DonneesContact;
+      fichiers = formulaire.getAll("fichiers").filter((f): f is File => f instanceof File && f.size > 0);
+    } else {
+      donnees = await request.json();
+    }
   } catch {
     return reponseJson({ ok: false, erreur: TEXTES.fr.invalide }, 400);
   }
@@ -129,7 +154,19 @@ export const POST: APIRoute = async ({ request }) => {
   if (!telephoneValide(d.telephone)) return reponseJson({ ok: false, erreur: x.telephone }, 400);
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return reponseJson({ ok: false, erreur: x.emailInvalide }, 400);
 
+  const message = typeof donnees.message === "string" ? donnees.message.trim().slice(0, MESSAGE_MAX) : "";
+  const souci = verifierPiecesJointes(fichiers);
+  if (souci) {
+    const erreur = souci.probleme === "nombre" ? x.fichiersNombre : souci.probleme === "taille" ? x.fichiersTaille : `${x.fichiersType}${souci.nom}`;
+    return reponseJson({ ok: false, erreur }, 400);
+  }
+  const piecesJointes = await Promise.all(
+    fichiers.map(async (f) => ({ filename: f.name.slice(0, 120), content: Buffer.from(await f.arrayBuffer()) }))
+  );
+
   const lignes = CHAMPS.map((c) => `${LABELS_CHAMPS.fr[c]} : ${d[c]}`);
+  if (message) lignes.push("", "Message :", message);
+  if (piecesJointes.length) lignes.push("", `Pièces jointes : ${piecesJointes.map((p) => p.filename).join(", ")}`);
   const entete = langue === "en" ? "Langue du visiteur : anglais (il a rempli le formulaire sur la version anglaise du site)\n\n" : "";
 
   try {
@@ -139,6 +176,7 @@ export const POST: APIRoute = async ({ request }) => {
       replyTo: d.email,
       subject: `Contact${langue === "en" ? " (site en anglais)" : ""} — ${d.prenom} ${d.nom} — ${d.structure}`,
       text: `${entete}${lignes.join("\n")}`,
+      ...(piecesJointes.length ? { attachments: piecesJointes } : {}),
     });
   } catch (erreur) {
     console.error("Erreur envoi email contact:", erreur);
@@ -153,7 +191,7 @@ export const POST: APIRoute = async ({ request }) => {
       to: d.email,
       replyTo: EMAIL_NOTIFICATION,
       subject: x.sujet,
-      html: emailConfirmationHtml(d, langue),
+      html: emailConfirmationHtml(d, langue, message, piecesJointes.map((p) => p.filename)),
     });
   } catch (erreur) {
     console.error("Erreur envoi email de confirmation contact:", erreur);

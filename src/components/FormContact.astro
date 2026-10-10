@@ -1,0 +1,41 @@
+---
+// Formulaire de contact simple (prénom, nom, structure, fonction, mail, téléphone), envoyé à /api/contact.
+// Utilisé dans le pied de page (Layout.astro) et comme contenu de la page Contact (/booking).
+// Prop `complet` (page Contact seulement) : ajoute un message libre et des pièces jointes, tous deux facultatifs.
+// Styles (.pied-cadre, .form-contact…) et script d'envoi : dans Layout.astro (globaux, écouteur unique au niveau du document).
+import { t, type Lang } from "../i18n";
+import { PJ_ACCEPT } from "../lib/pieces-jointes";
+interface Props { lang: Lang; complet?: boolean }
+const { lang, complet = false } = Astro.props;
+const textesContact = {
+  lang,
+  envoyer: t(lang, "contact.envoyer"),
+  envoi: t(lang, "booking.envoi"),
+  ok: t(lang, "contact.ok"),
+  erreur: t(lang, "booking.erreur"),
+  erreurReseau: t(lang, "booking.erreur.reseau"),
+  fichiersNombre: t(lang, "contact.fichiers.nombre"),
+  fichiersTaille: t(lang, "contact.fichiers.taille"),
+  fichiersType: t(lang, "contact.fichiers.type"),
+};
+---
+
+<div class="pied-cadre">
+  <h2 class="pied-accroche"><span class="fleche" aria-hidden="true">→</span> {t(lang, "contact.titre")}</h2>
+  <p class="pied-intro">{t(lang, "contact.intro")}</p>
+  <form class="form-contact" data-textes={JSON.stringify(textesContact)}>
+  <input type="text" name="site" class="pied-piege" tabindex="-1" autocomplete="off" aria-hidden="true" />
+  <label class="pied-champ"><span>{t(lang, "contact.prenom")}</span><input type="text" name="prenom" autocomplete="given-name" required /></label>
+  <label class="pied-champ"><span>{t(lang, "contact.nom")}</span><input type="text" name="nom" autocomplete="family-name" required /></label>
+  <label class="pied-champ"><span>{t(lang, "contact.structure")}</span><input type="text" name="structure" autocomplete="organization" required /></label>
+  <label class="pied-champ"><span>{t(lang, "contact.fonction")}</span><input type="text" name="fonction" autocomplete="organization-title" required /></label>
+  <label class="pied-champ"><span>{t(lang, "contact.email")}</span><input type="email" name="email" autocomplete="email" required /></label>
+  <label class="pied-champ"><span>{t(lang, "contact.telephone")}</span><input type="tel" name="telephone" autocomplete="tel" required /></label>
+  {complet && (
+    <label class="pied-champ pied-champ-large"><span class="pied-champ-phrase">{t(lang, "contact.message")}</span><textarea name="message" rows="5" maxlength="5000"></textarea></label>
+    <label class="pied-champ pied-champ-large"><span>{t(lang, "contact.fichiers")}</span><input type="file" name="fichiers" multiple accept={PJ_ACCEPT} /><small class="pied-note">{t(lang, "contact.fichiers.note")}</small></label>
+  )}
+  <button type="submit">{t(lang, "contact.envoyer")}</button>
+  <p class="pied-statut" role="status" hidden></p>
+  </form>
+</div>
