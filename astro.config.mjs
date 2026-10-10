@@ -17,7 +17,7 @@ export default defineConfig({
   integrations: [sitemap({ i18n: { defaultLocale: 'fr', locales: { fr: 'fr-FR', en: 'en-GB' } } })],
   // "server" + prerender:true par page (voir chaque .astro) : tout le site
   // reste généré statiquement au build (SEO, cf. CLAUDE.md), à l'exception
-  // de la route /api/booking qui doit tourner en fonction serveur pour
+  // de la route /api/contact qui doit tourner en fonction serveur pour
   // traiter le formulaire de contact.
   output: 'server',
   adapter: vercel(),

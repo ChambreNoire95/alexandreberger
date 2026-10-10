@@ -30,7 +30,7 @@ Site vitrine d'**Alexandre Berger**, réalisateur freelance (Île-de-France), en
 
 ## 2. Stack et déploiement
 
-- **Astro 7**, `output: 'server'` + adaptateur `@astrojs/vercel`, mais **toutes les pages ont `export const prerender = true`** (site statique). Seules les routes `src/pages/api/*.ts` sont de vraies fonctions serveur : `booking`, `rappel`, `contact` (e-mails via **Resend**).
+- **Astro 7**, `output: 'server'` + adaptateur `@astrojs/vercel`, mais **toutes les pages ont `export const prerender = true`** (site statique). Seule `src/pages/api/contact.ts` est une vraie fonction serveur (e-mails via **Resend**).
 - `site: 'https://www.alexandreberger.com'` dans `astro.config.mjs` (URLs canoniques + sitemap). Si le domaine principal change : changer cette ligne **et** le `Sitemap:` de `public/robots.txt`.
 - `build.inlineStylesheets: 'auto'`. Transitions de page : `ClientRouter` (header, footer, bandeau en `transition:persist`).
 - Markdown : processeur **Sätteri** (`@astrojs/markdown-satteri`) avec un plugin hast maison (`src/lib/rehype-galerie.mjs`) : trois images consécutives ou plus dans un texte deviennent automatiquement une grille — `galerie-169` (3 colonnes recadrées en 16/9) si elles sont en paysage, **`galerie-photos`** (3 colonnes, 2 sur mobile, **photos entières sans recadrage**) si elles sont majoritairement en portrait ; le choix est automatique, d'après les dimensions du manifest. Le plugin ajoute aussi à chaque image du texte ses variantes WebP (`srcset`), ses dimensions et le chargement différé. **Pour ajouter des photos à une série** (ex. fiche « 1 an de sports à l'Université de Nanterre ») : les déposer dans le texte de la fiche dans Pages CMS, une par paragraphe, à la suite des autres ; puis `npm run build` et committer `public/uploads/_optimise`.
@@ -76,10 +76,10 @@ src/
   i18n/ui.ts                     Dictionnaires fr/en (toutes les chaînes de l'interface)
   layouts/Layout.astro           Head SEO, header, footer, bandeau, styles globaux (variables CSS)
   components/                    LogoFormats, CarrouselHome, Signature, TitreSwitch, OptimizedImage
-  lib/                           contenu.ts (fusion FR+EN), carrousel.ts, creneau.ts, geocode.ts, meta.ts,
+  lib/                           contenu.ts (fusion FR+EN), carrousel.ts, telephone.ts, pieces-jointes.ts, geocode.ts, meta.ts,
                                  video.ts, positionTitre.ts, image-config.mjs, rehype-galerie.mjs
   pages/[...lang]/               TOUTES les pages (route optionnelle : sans préfixe = FR, `en` = EN)
-  pages/api/                     booking.ts, rappel.ts
+  pages/api/                     contact.ts (seule route serveur)
   pages/_projets-satellites/     Désactivé (préfixe _ = non routé)
 ```
 
@@ -137,21 +137,15 @@ Entrées actuelles : `carrousel-ordre`, `bande-demo`, `projets-commandes`, `proj
 
 ---
 
-## 8. Page Booking et API associées
+## 8. Page Contact et API associée
 
-**État actuel (octobre 2026) : la page `/booking` s'appelle « Contact » et ne contient plus que le formulaire simple** (prénom, nom, structure, fonction, mail, téléphone → `/api/contact`), le même que dans le pied de page : composant `src/components/FormContact.astro`, utilisé par `Layout.astro` (pied de page) et par `booking.astro`. Styles (`.pied-cadre`, `.form-contact`, `.pied-champ`…) et script d'envoi restent dans `Layout.astro` (styles globaux, écouteur `submit` unique au niveau du document, repéré par la classe `form-contact`, plus par un id puisqu'il peut y avoir deux formulaires dans la page). **Sur la page Contact seulement** (prop `complet` de `FormContact`), deux champs **facultatifs** en plus : un **message libre** (« Si vous le souhaitez, dites-m'en plus sur votre projet : », 5000 caractères max) et des **pièces jointes** (5 fichiers max, **4 Mo au total** car une fonction Vercel refuse les requêtes de plus de 4,5 Mo ; extensions autorisées dans `src/lib/pieces-jointes.ts`, règles partagées navigateur ↔ route). Le formulaire part en `multipart/form-data` (le JSON reste accepté par `/api/contact`) ; les fichiers sont joints à la notification envoyée à Alexandre, le message et le nom des fichiers sont repris dans la confirmation au visiteur. Test sans envoi : même recette esbuild + faux Resend que pour `booking.ts` (§ tests). Sur la page Contact, le formulaire du pied de page est **masqué** (`<body data-page-contact>` → `.niveaux .pied { display:none }`) pour ne pas l'afficher deux fois. Les deux anciens formulaires (demande complète, rappel) ont été retirés de la page ; **les routes `/api/booking` et `/api/rappel`, `src/lib/creneau.ts` et les textes `booking.*` / `rappel.*` de `ui.ts` ne sont plus appelés par le site mais sont conservés** (à supprimer si Alexandre confirme qu'il n'y reviendra pas). Les puces ci-dessous décrivent l'ancienne page, pour mémoire.
+`src/pages/[...lang]/booking.astro` (adresse `/booking` conservée) + `src/components/FormContact.astro` + `src/pages/api/contact.ts` + `src/lib/pieces-jointes.ts` + `src/lib/telephone.ts` (`telephoneValide`).
 
-Ancienne page : `src/pages/[...lang]/booking.astro` (+ `src/pages/api/booking.ts`, `src/pages/api/rappel.ts`, `src/lib/creneau.ts`).
+**État actuel (octobre 2026) : la page `/booking` s'appelle « Contact » et ne contient plus que le formulaire simple** (prénom, nom, structure, fonction, mail, téléphone → `/api/contact`), le même que dans le pied de page : composant `src/components/FormContact.astro`, utilisé par `Layout.astro` (pied de page) et par `booking.astro`. Styles (`.pied-cadre`, `.form-contact`, `.pied-champ`…) et script d'envoi restent dans `Layout.astro` (styles globaux, écouteur `submit` unique au niveau du document, repéré par la classe `form-contact`, plus par un id puisqu'il peut y avoir deux formulaires dans la page). **Sur la page Contact seulement** (prop `complet` de `FormContact`), deux champs **facultatifs** en plus : un **message libre** (« Si vous le souhaitez, dites-m'en plus sur votre projet : », 5000 caractères max) et des **pièces jointes** (5 fichiers max, **4 Mo au total** car une fonction Vercel refuse les requêtes de plus de 4,5 Mo ; extensions autorisées dans `src/lib/pieces-jointes.ts`, règles partagées navigateur ↔ route). Le formulaire part en `multipart/form-data` (le JSON reste accepté par `/api/contact`) ; les fichiers sont joints à la notification envoyée à Alexandre, le message et le nom des fichiers sont repris dans la confirmation au visiteur. Test sans envoi : recette esbuild + faux Resend (§ tests). Sur la page Contact, le formulaire du pied de page est **masqué** (`<body data-page-contact>` → `.niveaux .pied { display:none }`) pour ne pas l'afficher deux fois.
 
-- **Deux formulaires** : (1) **demande complète** (entreprise, nom, prénom, **fonction / service obligatoire**, e-mail, téléphone, type de projet, durée, date, lieu, budget, références, description) ; (2) **« Vous préférez être rappelé ? »** (prénom + nom, fonction + structure *obligatoire*, téléphone, **e-mail obligatoire**, Quand = date + heure).
-- **Desktop (≥ 901 px)** : deux colonnes **2/3 – 1/3**, le petit formulaire dans un cadre (fond noir 90 %, liseré fin, flèche rouge avant le titre centré). Les cases de réponse des deux formulaires sont **alignées au pixel** : un script mesure l'écart entre les premiers champs et règle `--decalage` (espace sous le titre) à chaque redimensionnement.
-- **Mobile / < 901 px** : **étape de choix** (« Contactez-moi en remplissant un formulaire complet » / « Demandez à être rappelé ») ; attribut `data-mode` = `choix | complet | rappel`, lien « ← Autre façon de me contacter ». Arrivée avec des références sélectionnées → direct sur le formulaire complet ; `/booking#rappel` ouvre directement le rappel ; sans JS, les deux formulaires s'empilent.
-- Bouton d'envoi : **toujours en gras**, rouge + texte blanc au survol. Sélecteur d'heure du rappel : **liste déroulante par pas de 15 min, 08h00–20h00 (heure de Paris)** générée par `heuresRappel()` ; date minimale = aujourd'hui.
-- Le bloc « références » de Booking (sélection mémorisée en `sessionStorage`, clé `references-booking`) n'est plus alimenté depuis que la fenêtre de recherche a été supprimée : le code de lecture est conservé mais reste inactif.
-- **`/api/booking`** : valide, envoie (1) la notification à Alexandre, (2) une confirmation HTML au visiteur dans sa langue ; honeypot `site` ; messages d'erreur FR/EN ; la notification reste en français avec la mention « site en anglais ».
-- **`/api/rappel`** : même principe, notification à Alexandre (+ `replyTo` visiteur) et confirmation au visiteur (si elle échoue, la demande reste valide). Validation du téléphone, de l'e-mail et du créneau (`src/lib/creneau.ts`).
-
----
+- **`/api/contact`** : seule route dynamique du site. Valide (champs obligatoires, téléphone, e-mail, pièces jointes), envoie (1) la notification à Alexandre (`replyTo` visiteur, fichiers joints), (2) une confirmation HTML au visiteur dans sa langue (si elle échoue, la demande reste valide) ; honeypot `site` ; messages d'erreur FR/EN ; la notification reste en français avec la mention « site en anglais » le cas échéant.
+- **Supprimés en octobre 2026** (récupérables dans l'historique git, avant le commit de suppression) : les deux anciens formulaires de la page Booking (demande complète + « être rappelé » avec créneau), les routes `/api/booking` et `/api/rappel`, `src/lib/creneau.ts`, `libellesRecherche()` et les textes `booking.*` / `rappel.*` / `recherche.*` devenus inutiles. Il ne reste dans `ui.ts` que `booking.titre.page`, `booking.description` (méta description de la page), `booking.titre`, `booking.envoi`, `booking.erreur`, `booking.erreur.reseau` (noms de clés historiques, utilisés par le formulaire de contact).
+- Piège rencontré : `ui.ts` contenait deux clés `booking.description` (méta description et étiquette du champ « Description du projet * ») ; la seconde écrasait la première, la méta description de la page était donc « Description du projet * ». Corrigé avec la suppression ; **ne jamais réutiliser une clé existante dans `ui.ts`**.
 
 ## 9. SEO (rappel)
 
@@ -205,12 +199,12 @@ Toujours lire `git status` puis **committer des fichiers précis** (`git add che
 
 - Build : `npm run build` (doit se terminer par « Complete! »).
 - Visuel : `preview_start` « astro-dev » puis navigateur intégré ; redimensionner avec `resize_window` (`mobile` 375×812, ou largeur personnalisée 1440×900) et **toujours remettre `desktop` après**.
-- API e-mail **sans rien envoyer** (valable pour `booking.ts` et `rappel.ts`) : compiler la route avec un faux Resend, puis l'appeler directement.
+- API e-mail **sans rien envoyer** (route `contact.ts`) : compiler la route avec un faux Resend, puis l'appeler directement.
   ```bash
   mkdir -p /tmp/t && cat > /tmp/t/resend-stub.mjs <<'EOF'
   export class Resend { constructor(){ this.emails = { send: async (m) => { globalThis.__sent.push(m); return {}; } }; } }
   EOF
-  npx esbuild src/pages/api/rappel.ts --bundle --format=esm --platform=node --outfile=/tmp/t/api.bundle.mjs \
+  npx esbuild src/pages/api/contact.ts --bundle --format=esm --platform=node --outfile=/tmp/t/api.bundle.mjs \
     --alias:resend=/tmp/t/resend-stub.mjs \
     --define:import.meta.env='{"RESEND_API_KEY":"x","BOOKING_NOTIFY_EMAIL":"owner@test.fr"}' --log-level=error
   # puis un script node : globalThis.__sent = []; const { POST } = await import("/tmp/t/api.bundle.mjs");
