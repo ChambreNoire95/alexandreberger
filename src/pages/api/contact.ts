@@ -1,9 +1,9 @@
 import type { APIRoute } from "astro";
 import { Resend } from "resend";
-import { telephoneValide } from "../../lib/creneau";
+import { telephoneValide } from "../../lib/telephone";
 import { verifierPiecesJointes } from "../../lib/pieces-jointes";
 
-// Troisième route dynamique du site (avec /api/booking et /api/rappel) : formulaire de contact du pied de page.
+// Seule route dynamique du site : formulaire de contact (pied de page et page Contact).
 // Le visiteur laisse ses coordonnées : notification à Alexandre, puis confirmation au visiteur dans sa langue.
 // Sur la page Contact, il peut ajouter un message libre et des pièces jointes (facultatifs) : la requête arrive
 // alors en multipart/form-data (le JSON reste accepté).
