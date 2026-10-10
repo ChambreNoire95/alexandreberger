@@ -110,8 +110,19 @@ const FILTRE_TYPE_ACTIF = false;
         </div>
       </div>
     )}
+    {/* Univers : sur mobile seulement (boutons qui filtrent la liste). Sur desktop, ce sont les rangées elles-mêmes. */}
+    <div class="filtres-rang filtres-rang-univers">
+      <p class="filtres-label">{t(lang, "filtre.univers")}</p>
+      <div class="filtres" role="group" data-groupe="univers" aria-label={t(lang, "filtre.univers")}>
+        <button type="button" data-valeur="" aria-pressed="true">{t(lang, "filtre.tous")}</button>
+        {rails.map((rail) => (
+          <button type="button" data-valeur={rail.cle} aria-pressed="false">{rail.titre}</button>
+        ))}
+      </div>
+    </div>
+    {/* Critères : desktop seulement. */}
     {criteresPresents.length > 0 && (
-      <div class="filtres-rang">
+      <div class="filtres-rang filtres-rang-criteres">
         <p class="filtres-label">{t(lang, "filtre.criteres")}</p>
         <div class="filtres" role="group" data-groupe="criteres" aria-label={t(lang, "filtre.criteres")}>
           <button type="button" data-valeur="" aria-pressed="true">{t(lang, "filtre.tous")}</button>
@@ -129,8 +140,8 @@ const FILTRE_TYPE_ACTIF = false;
   <div class="rails" id="rails" data-film={t(lang, "rails.film")} data-films={t(lang, "rails.films")}>
     <section class="rail rail-tous">
       <ul class="rail-piste">
-        {lignes.map(({ p, image, alt, duree }) => (
-          <li data-type={p.data.type || ""} data-univers={(p.data.secteurs ?? []).join("|")} data-criteres={(p.data.besoins ?? []).join("|")}>
+        {lignes.map((ligne) => { const { p, image, alt, duree } = ligne; return (
+          <li data-type={p.data.type || ""} data-univers={groupeDe(ligne)} data-criteres={(p.data.besoins ?? []).join("|")}>
             <a href={url(lang, `/projets/${p.id}`)}>
               {image && (
                 <span class="projet-visuel">
@@ -148,7 +159,7 @@ const FILTRE_TYPE_ACTIF = false;
               </span>
             </a>
           </li>
-        ))}
+        ); })}
       </ul>
     </section>
     {rails.map((rail) => (
@@ -163,7 +174,7 @@ const FILTRE_TYPE_ACTIF = false;
         </div>
         <ul class="rail-piste">
           {rail.films.map(({ p, image, alt, description, duree }) => (
-            <li data-type={p.data.type || ""} data-univers={(p.data.secteurs ?? []).join("|")} data-criteres={(p.data.besoins ?? []).join("|")}>
+            <li data-type={p.data.type || ""} data-univers={rail.cle} data-criteres={(p.data.besoins ?? []).join("|")}>
               <a href={url(lang, `/projets/${p.id}`)}>
                 {image && (
                   <span class="projet-visuel">
@@ -226,9 +237,9 @@ const FILTRE_TYPE_ACTIF = false;
   @media (min-width: 801px) {
     .filtres-zone { flex-direction:row; align-items:flex-start; gap:0; }
     .filtres-rang { flex:1 1 0; min-width:0; align-items:flex-start; gap:1rem; padding:0 2.5rem; }
-    .filtres-rang:first-child { flex-grow:1.25; padding-left:0; }
+    .filtres-rang:not(.filtres-rang-univers) { padding-left:0; }
     .filtres-rang:last-child { padding-right:0; }
-    .filtres-rang + .filtres-rang { border-left:1px solid rgba(var(--blanc-rgb),.14); }
+    .filtres-rang:not(.filtres-rang-univers) + .filtres-rang { border-left:1px solid rgba(var(--blanc-rgb),.14); padding-left:2.5rem; }
     .filtres { justify-content:flex-start; }
   }
   .filtres button {
@@ -240,8 +251,17 @@ const FILTRE_TYPE_ACTIF = false;
   }
   .filtres button:hover { color:var(--blanc); border-color:var(--rouge); }
   .filtres button[aria-pressed="true"] { background:var(--blanc); color:#0b0b0b; border-color:var(--blanc); font-weight:700; }
+  /* Mobile : boutons pleins, blancs à texte noir ; rouge plein à texte blanc au survol et à l'état actif. */
+  @media (max-width: 800px) {
+    .filtres-rang-criteres { display:none; } /* sur mobile, seul le filtre Univers est proposé */
+    .filtres button { background:var(--blanc); border-color:var(--blanc); color:#0b0b0b; font-weight:700; }
+    .filtres button:not(:disabled):hover, .filtres button[aria-pressed="true"] { background:var(--rouge); border-color:var(--rouge); color:var(--blanc); }
+    .filtres button:disabled { border-style:solid; }
+    .filtres button:disabled:hover { background:var(--blanc); border-color:var(--blanc); color:#0b0b0b; }
+  }
   /* Desktop : boutons de filtre en blanc à 100 % (lisibles) ; au survol et à l'état actif, rouge plein, texte blanc. */
   @media (min-width: 801px) {
+    .filtres-rang-univers { display:none; } /* les univers sont les rangées elles-mêmes */
     .filtres button { color:var(--blanc); border-color:var(--blanc); }
     .filtres button:not(:disabled):hover, .filtres button[aria-pressed="true"] { background:var(--rouge); border-color:var(--rouge); color:var(--blanc); }
     .filtres button:disabled:hover { background:transparent; color:var(--blanc); border-color:var(--blanc); }
@@ -428,8 +448,9 @@ const FILTRE_TYPE_ACTIF = false;
     if (rails.length) window.addEventListener('resize', () => rails.forEach(majRail));
   }
 
-  // Filtres qui se croisent : type (un seul, désactivé pour l'instant), critères (plusieurs : le film doit tous les porter).
-  // Un bouton qui ne mènerait à aucun film avec le reste de la sélection est grisé. Les univers sont devenus les rails.
+  // Filtres qui se croisent : type (un seul, désactivé pour l'instant), univers (un seul : la clé de la rangée du film,
+  // boutons affichés sur mobile seulement, les rangées en tenant lieu sur desktop), critères (plusieurs : le film doit tous
+  // les porter). Un bouton qui ne mènerait à aucun film avec le reste de la sélection est grisé.
   function setupFiltres() {
     const zone = document.getElementById('filtres');
     const liste = document.getElementById('rails');
